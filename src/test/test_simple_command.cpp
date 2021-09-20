@@ -14,7 +14,6 @@
  *
  ******************************************************************************/
 
-#include "ros/init.h"
 #include <test/test_simple_command.hpp>
 
 TestSimpleCommand::TestSimpleCommand() {
@@ -28,13 +27,23 @@ void TestSimpleCommand::vehical_att_cb(
   vehical_att = *msg;
 }
 
+void TestSimpleCommand::print_vehical_att(const geometry_msgs::QuaternionStamped &att){
+    ROS_INFO("the quaternion is:\n");
+    ROS_INFO("w:%.2f\n", att.quaternion.w);
+    ROS_INFO("x:%.2f\n", att.quaternion.x);
+    ROS_INFO("y:%.2f\n", att.quaternion.y);
+    ROS_INFO("z:%.2f\n", att.quaternion.z);
+}
+
+
 int TestSimpleCommand::run() {
 
   ros::Rate rate(1);
   begin_time = ros::Time::now();
 
   while (ros::ok()) {
-    ROS_INFO("Hello");
+    ROS_DEBUG("hello test simple command!");
+    print_vehical_att(vehical_att);
     ros::spinOnce();
     rate.sleep();
   }

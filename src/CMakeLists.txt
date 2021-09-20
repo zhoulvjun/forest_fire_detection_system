@@ -1,4 +1,4 @@
-add_executable(test_simple_command src/test/test_simple_command.cpp)
+add_executable(test_simple_command test/test_simple_command.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

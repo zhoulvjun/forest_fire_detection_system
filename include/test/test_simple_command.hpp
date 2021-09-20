@@ -37,6 +37,7 @@ private:
   geometry_msgs::QuaternionStamped vehical_att;
 
   void vehical_att_cb(const geometry_msgs::QuaternionStamped::ConstPtr &msg);
+  void print_vehical_att(const geometry_msgs::QuaternionStamped &att);
 
 public:
   TestSimpleCommand();
