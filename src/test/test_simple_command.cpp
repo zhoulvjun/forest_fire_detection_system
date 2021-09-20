@@ -27,14 +27,28 @@ void TestSimpleCommand::vehical_att_cb(
   vehical_att = *msg;
 }
 
-void TestSimpleCommand::print_vehical_att(const geometry_msgs::QuaternionStamped &att){
-    ROS_INFO("the quaternion is:\n");
-    ROS_INFO("w:%.2f\n", att.quaternion.w);
-    ROS_INFO("x:%.2f\n", att.quaternion.x);
-    ROS_INFO("y:%.2f\n", att.quaternion.y);
-    ROS_INFO("z:%.2f\n", att.quaternion.z);
+void TestSimpleCommand::print_vehical_att(
+    const geometry_msgs::QuaternionStamped &att) {
+  ROS_INFO("the quaternion is:\n");
+  ROS_INFO("w:%.2f\n", att.quaternion.w);
+  ROS_INFO("x:%.2f\n", att.quaternion.x);
+  ROS_INFO("y:%.2f\n", att.quaternion.y);
+  ROS_INFO("z:%.2f\n", att.quaternion.z);
 }
 
+TestSimpleCommand::flight_task_vec
+TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
+    float each_len = len/num;
+    int point_num = 2*(num+1);
+
+    float x = 0.0;
+    float y = 0.0;
+    for (int i = 0; i < point_num; ++i) {
+
+
+        
+    }
+}
 
 int TestSimpleCommand::run() {
 

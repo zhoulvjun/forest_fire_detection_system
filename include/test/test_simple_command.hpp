@@ -10,13 +10,17 @@
  *
  *   @Date: 2021-09-19
  *
- *   @Description:
+ *   @Description: use the joystick srv, simple command.
  *
  ******************************************************************************/
 
 #ifndef __TEST_SIMPLE_COMMAND_HPP__
 #define __TEST_SIMPLE_COMMAND_HPP__
 
+// dji
+#include <dji_osdk_ros/FlightTaskControl.h>
+
+// ros
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Quaternion.h>
 #include <geometry_msgs/QuaternionStamped.h>
@@ -24,7 +28,10 @@
 #include <ros/ros.h>
 #include <ros/time.h>
 
+// c++
 #include <iostream>
+#include <vector>
+
 class TestSimpleCommand {
 
 private:
@@ -36,13 +43,22 @@ private:
 
   geometry_msgs::QuaternionStamped vehical_att;
 
+  /**
+   * the callback functions
+   * */
   void vehical_att_cb(const geometry_msgs::QuaternionStamped::ConstPtr &msg);
+
+  /**
+   * functions
+   * */
+  typedef std::vector<dji_osdk_ros::FlightTaskControl> flight_task_vec;
+
   void print_vehical_att(const geometry_msgs::QuaternionStamped &att);
+  flight_task_vec gernate_rectangle_command(float len, float wid, float num);
 
 public:
   TestSimpleCommand();
   ~TestSimpleCommand();
-
   int run();
 };
 
