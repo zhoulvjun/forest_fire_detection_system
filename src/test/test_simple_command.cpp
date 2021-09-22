@@ -36,18 +36,72 @@ void TestSimpleCommand::print_vehical_att(
   ROS_INFO("z:%.2f\n", att.quaternion.z);
 }
 
-TestSimpleCommand::flight_task_vec
+/**
+ * @param[in]   
+ * @param[out]  
+ * @return 
+ * @ref
+ * @see
+ * @note the function to generate the zegzag rectangle line command using the
+ * the dji FlightTaskControl msg.
+ */
+std::vector<TestSimpleCommand::ControlCommand>
 TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
-    float each_len = len/num;
-    int point_num = 2*(num+1);
+  float each_len = len / num;
+  int point_num = 2 * (num + 1);
+  ControlCommand command(0.0, 0.0, 0.0, 0.0);
+  std::vector<TestSimpleCommand::ControlCommand> ctrl_vec;
 
-    float x = 0.0;
-    float y = 0.0;
-    for (int i = 0; i < point_num; ++i) {
+  bool is_lower_left = true;
+  bool is_upper_left = false;
+  bool is_lower_right = false;
+  bool is_upper_right = false;
 
+  // turn left is positive
+  for (int i = 0; i < point_num-1; ++i) {
 
-        
+    if (is_lower_left) {
+      command.offset_x = wid;
+      command.offset_yaw = 90.0;
+      ctrl_vec.push_back(command);
+
+      is_lower_left = false;
+      is_upper_left = true;
+      is_lower_right = false;
+      is_upper_right = false;
+    } else if (is_upper_left) {
+      command.offset_x = each_len;
+      command.offset_yaw = -90.0;
+      ctrl_vec.push_back(command);
+
+      is_lower_left = false;
+      is_upper_left = false;
+      is_lower_right = false;
+      is_upper_right = true;
+    } else if (is_upper_right) {
+      command.offset_x = wid;
+      command.offset_yaw = -90.0;
+      ctrl_vec.push_back(command);
+
+      is_lower_left = false;
+      is_upper_left = false;
+      is_lower_right = true;
+      is_upper_right = false;
+    } else if (is_lower_right) {
+      command.offset_x = each_len;
+      command.offset_yaw = 90.0;
+      ctrl_vec.push_back(command);
+
+      is_lower_left = true;
+      is_upper_left = false;
+      is_lower_right = false;
+      is_upper_right = false;
+    } else {
+      ROS_INFO("the bool is wrong!");
     }
+  }
+
+  return ctrl_vec;
 }
 
 int TestSimpleCommand::run() {
@@ -67,6 +121,14 @@ int TestSimpleCommand::run() {
 int main(int argc, char **argv) {
   ros::init(argc, argv, "test_simple_command_node");
   TestSimpleCommand node;
-  node.run();
+
+  auto test_vec = node.gernate_rectangle_command(10.0, 3.0, 2);
+
+  for (int i = 0; i < test_vec.size(); ++i) {
+    std::cout << "point:" << i <<"-------"<< std::endl;
+    auto em = test_vec[i];
+    std::cout << "yaw:" << em.offset_yaw << std::endl;
+    std::cout << "x:" << em.offset_x << std::endl;
+  }
   return 0;
 }

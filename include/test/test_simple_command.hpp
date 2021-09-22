@@ -51,14 +51,25 @@ private:
   /**
    * functions
    * */
-  typedef std::vector<dji_osdk_ros::FlightTaskControl> flight_task_vec;
 
   void print_vehical_att(const geometry_msgs::QuaternionStamped &att);
-  flight_task_vec gernate_rectangle_command(float len, float wid, float num);
 
 public:
+  struct ControlCommand {
+    float offset_x;
+    float offset_y;
+    float offset_z;
+    float offset_yaw;
+
+    ControlCommand(float x, float y, float z, float yaw)
+        : offset_x(x), offset_y(y), offset_z(z), offset_yaw(yaw){};
+  };
   TestSimpleCommand();
   ~TestSimpleCommand();
+
+  std::vector<TestSimpleCommand::ControlCommand>
+  gernate_rectangle_command(float len, float wid, float num);
+
   int run();
 };
 
