@@ -20,6 +20,7 @@
 // dji
 #include <dji_osdk_ros/FlightTaskControl.h>
 #include <dji_osdk_ros/JoystickAction.h>
+#include <dji_osdk_ros/SetJoystickMode.h>
 #include <dji_osdk_ros/common_type.h>
 
 // ros
@@ -42,6 +43,7 @@ private:
 
   ros::Subscriber vehicle_att_subscriber;
   ros::ServiceClient task_control_client;
+  ros::ServiceClient set_joystick_mode_client;
 
   geometry_msgs::QuaternionStamped vehical_att;
   dji_osdk_ros::FlightTaskControl control_task;
@@ -57,7 +59,6 @@ private:
   void print_vehical_att(const geometry_msgs::QuaternionStamped &att);
 
 public:
-
   TestSimpleCommand();
   ~TestSimpleCommand();
 
@@ -69,8 +70,8 @@ public:
   bool moveByPosOffset(dji_osdk_ros::FlightTaskControl &task,
                        const dji_osdk_ros::JoystickCommand &offsetDesired,
                        float posThresholdInM, float yawThresholdInDeg);
-  void
-  print_control_command(const std::vector<dji_osdk_ros::JoystickCommand> &ctrl_command_vec);
+  void print_control_command(
+      const std::vector<dji_osdk_ros::JoystickCommand> &ctrl_command_vec);
 };
 
 #endif /* TEST_SIMPLE_COMMAND_HPP */

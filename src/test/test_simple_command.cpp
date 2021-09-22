@@ -23,6 +23,9 @@ TestSimpleCommand::TestSimpleCommand() {
 
   task_control_client =
       nh.serviceClient<dji_osdk_ros::FlightTaskControl>("/flight_task_control");
+
+  set_joystick_mode_client =
+      nh.serviceClient<dji_osdk_ros::SetJoystickMode>("set_joystick_mode");
 }
 
 TestSimpleCommand::~TestSimpleCommand() {}
@@ -145,8 +148,16 @@ int TestSimpleCommand::run() {
   char inputChar;
   TestSimpleCommand node;
 
+
   auto command_vec = node.gernate_rectangle_command(10.0, 3.0, 2);
   node.print_control_command(command_vec);
+
+  dji_osdk_ros::SetJoystickMode joystickMode;
+
+  ROS_INFO_STREAM("set the body axis!");
+  joystickMode.request.yaw_mode = joystickMode.request.HORIZONTAL_BODY;
+  set_joystick_mode_client.call(joystickMode);
+
 
   ROS_INFO_STREAM(
       "command generating finished, if you are ready to take off? y/n");
