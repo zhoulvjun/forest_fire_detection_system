@@ -70,7 +70,7 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
 
     if (is_lower_left) {
       command.x = wid;
-      command.yaw = 90.0;
+      command.y = 0.0;
       ctrl_vec.push_back(command);
 
       is_lower_left = false;
@@ -78,8 +78,8 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
       is_lower_right = false;
       is_upper_right = false;
     } else if (is_upper_left) {
-      command.x = each_len;
-      command.yaw = -90.0;
+      command.x = 0.0;
+      command.y = each_len;
       ctrl_vec.push_back(command);
 
       is_lower_left = false;
@@ -87,8 +87,8 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
       is_lower_right = false;
       is_upper_right = true;
     } else if (is_upper_right) {
-      command.x = wid;
-      command.yaw = -90.0;
+      command.x = -wid;
+      command.y = 0.0;
       ctrl_vec.push_back(command);
 
       is_lower_left = false;
@@ -96,8 +96,8 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
       is_lower_right = true;
       is_upper_right = false;
     } else if (is_lower_right) {
-      command.x = each_len;
-      command.yaw = 90.0;
+      command.x = 0.0;
+      command.y = each_len;
       ctrl_vec.push_back(command);
 
       is_lower_left = true;
@@ -149,7 +149,7 @@ int TestSimpleCommand::run() {
   TestSimpleCommand node;
 
 
-  auto command_vec = node.gernate_rectangle_command(10.0, 3.0, 2);
+  auto command_vec = node.gernate_rectangle_command(10.0, 3.0, 5);
   node.print_control_command(command_vec);
 
   dji_osdk_ros::SetJoystickMode joystickMode;
@@ -157,6 +157,8 @@ int TestSimpleCommand::run() {
   ROS_INFO_STREAM("set the body axis!");
   joystickMode.request.yaw_mode = joystickMode.request.HORIZONTAL_BODY;
   set_joystick_mode_client.call(joystickMode);
+
+  ROS_INFO_STREAM(joystickMode.response);
 
 
   ROS_INFO_STREAM(
