@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 
 # ------------------------------------------------------------------------------
@@ -29,11 +29,11 @@ class GetImageNode(object):
         self.image_frame = Image()
         self.rate = rospy.Rate(10)
 
-        # rospy.wait_for_service("setup_camera_stream")
+        rospy.wait_for_service("setup_camera_stream")
         self.set_camera_cli = rospy.ServiceProxy("setup_camera_stream",
                                                  SetupCameraStream)
 
-        rospy.Subscriber("dji_osdk_ros/main_camera_images",
+        rospy.Subscriber("dji_osdk_ros/fpv_camera_images",
                          Image, self.image_cb)
 
         self.image_pub = rospy.Publisher(
@@ -45,7 +45,8 @@ class GetImageNode(object):
     def run(self):
 
         set_camera_handle = SetupCameraStream()
-        self.set_camera_cli(set_camera_handle._request_class.FPV_CAM, 0)
+        result = self.set_camera_cli(0, 1)
+        print("the result is", result)
 
         while not rospy.is_shutdown():
             self.image_pub.publish(self.image_frame)
