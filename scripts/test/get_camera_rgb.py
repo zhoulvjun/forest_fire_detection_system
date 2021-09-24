@@ -18,7 +18,7 @@
 # ------------------------------------------------------------------------------
 
 import rospy
-from dji_osdk_ros.srv import _SetupCameraStream
+from dji_osdk_ros.srv import SetupCameraStream
 from sensor_msgs.msg import Image
 
 
@@ -27,9 +27,9 @@ class GetImageNode(object):
         self.image_frame = Image()
         self.rate = rospy.Rate(10)
 
-        rospy.wait_for_service("setup_camera_stream")
+        # rospy.wait_for_service("setup_camera_stream")
         self.set_camera_cli = rospy.ServiceProxy("setup_camera_stream",
-                                                 _SetupCameraStream)
+                                                 SetupCameraStream)
 
         rospy.Subscriber("dji_osdk_ros/main_camera_images",
                          Image, self.image_cb)
@@ -42,12 +42,8 @@ class GetImageNode(object):
 
     def run(self):
 
-        set_camera_handle = _SetupCameraStream.SetupCameraStreamRequest()
-        set_camera_handle.cameraType = set_camera_handle.MAIN_CAM
-        set_camera_handle.start = 0
-        result = self.set_camera_cli(set_camera_handle)
-
-        print("the result of setting camera is", result)
+        set_camera_handle = SetupCameraStream()
+        self.set_camera_cli(set_camera_handle._request_class.FPV_CAM, 0)
 
         while not rospy.is_shutdown():
             self.image_pub.publish(self.image_frame)
