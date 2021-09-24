@@ -17,8 +17,6 @@
 #
 # ------------------------------------------------------------------------------
 
-# FIXME: There is a bug when calling the severices.
-
 import rospy
 from dji_osdk_ros.srv import SetupCameraStream
 from sensor_msgs.msg import Image
@@ -45,12 +43,18 @@ class GetImageNode(object):
     def run(self):
 
         set_camera_handle = SetupCameraStream()
-        result = self.set_camera_cli(0, 1)
-        print("the result is", result)
+
+        result = self.set_camera_cli(
+            set_camera_handle._request_class.FPV_CAM, 1)
+        print("start the camera stream: ", result)
 
         while not rospy.is_shutdown():
             self.image_pub.publish(self.image_frame)
             self.rate.sleep()
+
+        result = self.set_camera_cli(
+            set_camera_handle._request_class.FPV_CAM, 0)
+        print("end the camera stream: ", result)
 
 
 if __name__ == '__main__':
