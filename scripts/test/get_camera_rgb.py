@@ -17,6 +17,8 @@
 #
 # ------------------------------------------------------------------------------
 
+# FIXME: There is a bug when calling the severices.
+
 import rospy
 from dji_osdk_ros.srv import SetupCameraStream
 from sensor_msgs.msg import Image
