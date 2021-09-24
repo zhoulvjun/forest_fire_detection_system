@@ -169,11 +169,16 @@ int TestSimpleCommand::run() {
   } else {
     control_task.request.task =
         dji_osdk_ros::FlightTaskControl::Request::TASK_TAKEOFF;
+
     ROS_INFO_STREAM("Takeoff request sending ...");
     task_control_client.call(control_task);
+
     if (control_task.response.result == false) {
+
       ROS_ERROR_STREAM("Takeoff task failed");
+
     } else {
+
       ROS_INFO_STREAM("Takeoff task successful");
       ros::Duration(2.0).sleep();
       ROS_INFO_STREAM("Move by position offset request sending ...");
@@ -181,6 +186,15 @@ int TestSimpleCommand::run() {
       for (int i = 0; ros::ok() && (i < command_vec.size()); ++i) {
         ROS_INFO_STREAM("moving to" << i << "point");
         moveByPosOffset(control_task, command_vec[i], 0.8, 1);
+      }
+
+      control_task.request.task =
+          dji_osdk_ros::FlightTaskControl::Request::TASK_GOHOME;
+      ROS_INFO_STREAM("going home now");
+      if (control_task.response.result == true) {
+        ROS_INFO_STREAM("GO home successful");
+      } else {
+        ROS_INFO_STREAM("Go home failed.");
       }
 
       control_task.request.task =
