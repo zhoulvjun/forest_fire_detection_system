@@ -9,7 +9,7 @@
 #
 #   @Author: Qiao Linhan
 #
-#   @Date: 2021-09-28
+#   @Date: 2021-09-29
 #
 #   @Email: 2015097272@qq.com
 #
@@ -19,10 +19,10 @@
 
 import torch
 import torchvision
-from unetdata000 import CarvanaDataset
+from fastaiunetdata000 import LoadDataset
 from torch.utils.data import DataLoader
 
-def save_checkpoint(state, filename = "my_checkpoint.pth.tar"):
+def save_checkpoint(state, filename = "pureunet.pth"):
     print(" ===> saving checkpoint")
     torch.save(state, filename)
 
@@ -35,7 +35,7 @@ def get_loaders(train_dir, train_maskdir, val_dir, val_maskdir,
                 num_workers = 4, pin_memory = True):
 
     # train data set 
-    train_ds = CarvanaDataset( 
+    train_ds = LoadDataset( 
         image_dir=train_dir,
         mask_dir=train_maskdir,
         transform=train_transform
@@ -50,7 +50,7 @@ def get_loaders(train_dir, train_maskdir, val_dir, val_maskdir,
     )
 
     # val data set
-    val_ds = CarvanaDataset( 
+    val_ds = LoadDataset( 
         image_dir=val_dir,
         mask_dir=val_maskdir,
         transform=val_transform

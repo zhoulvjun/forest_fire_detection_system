@@ -9,7 +9,7 @@
 #
 #   @Author: Qiao Linhan
 #
-#   @Date: 2021-09-28
+#   @Date: 2021-09-29
 #
 #   @Email: 2015097272@qq.com
 #
@@ -23,9 +23,9 @@ from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
-from unetmodel000 import UNET
+from fastaiunetmodel000 import pureunet
 
-from unetutils000 import (
+from fastaiunetutils000 import (
     load_checkpoint,
     save_checkpoint,
     get_loaders,
@@ -102,7 +102,7 @@ def main():
         ]
     )
 
-    model = UNET(in_channels=3, out_channels=1).to(DEVICE)
+    model = pureunet(in_channels=3, out_channels=1).to(DEVICE)
     loss_fn = nn.BCEWithLogitsLoss() # binary cross-entropy with logits
     # loss_fn = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr = LEARNING_RATE)
@@ -121,7 +121,7 @@ def main():
     )
 
     if LOAD_MODEL:
-        load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
+        load_checkpoint(torch.load("pureunet.pth.tar"), model)
 
     scaler = torch.cuda.amp.GradScaler()
 
