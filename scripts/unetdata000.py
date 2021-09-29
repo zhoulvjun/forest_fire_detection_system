@@ -23,22 +23,23 @@ from torch.utils.data import Dataset
 import numpy as np
 
 class CarvanaDataset(Dataset):
-    def __init__(self, image_dir, mask_dir, transform = None):
+    def __init__(self, image_dir, mask_dir, transform = None): # by default, no transform
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.transform = transform
-        self.images = os.listdir(image_dir)
+        self.images = os.listdir(image_dir) # list all files in folder
 
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self,index):
-        img_path = os.path.join(self.image_dir, self.iamges[index])
-        mask_path = os.path.join(self.mask_dir, self.iamges[index].replace(".jpg", "_mask.gif"))
-        image = np.array(Image.open(img_path).convert("RGB"))
-        mask = np.array(Image.open(mask_path).convert("L"), dtype = np.float32) # mask_path is going to be gray scale, for PIL, L
+        img_path = os.path.join(self.image_dir, self.images[index])
+        mask_path = os.path.join(self.mask_dir, 'Label_'+self.images[index])
+        image = np.array(Image.open(img_path).convert("RGB")) # might RGBA
+        # mask_path is going to be gray scale, for PIL, L
+        mask = np.array(Image.open(mask_path).convert("L"), dtype = np.float32) 
         # to see the mask, where it equals to 255
-        mask[mask == 255.0] = 1.0
+        mask[mask == 255.0] = 1.0 # going to use sigmoid
 
         if self.transform is not None:
             # data augmentation

@@ -31,7 +31,8 @@ class DoubleConv(nn.Module):
             nn.Conv2d(in_channels, out_channels, 3, 1, 1, bias = False), # kernel = 3, stride = 1, padding = 1
             nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace = True),
-            nn.Conv2d(out_channels, out_channels, 3, 1, 1, biase = False),
+            nn.Conv2d(out_channels, out_channels, 3, 1, 1, bias = False),
+            nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True)
         )
 
@@ -43,21 +44,21 @@ class UNET(nn.Module):
         super(UNET, self).__init__()
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
-        self.pool = nn.MaxPool2d(kernel = 2, stride = 2) # list
+        self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2) # list
         # down part of U-net
         for feature in features:
-            self.downs.append(DoubleConv(in_channels, out_channels))
+            self.downs.append(DoubleConv(in_channels, feature))
             in_channels = feature
 
         # up part of U-net, use the transpose convolutions
         for feature in reversed(features): 
             self.ups.append(
-                nn.ConvTranspose2d(feature*2, feature, kernel = 2, stride = 2)
+                nn.ConvTranspose2d(feature*2, feature, kernel_size = 2, stride = 2)
             )
             self.ups.append(DoubleConv(feature*2, feature))
 
         # bottle neck
-        self.bottleneck = DoubleConv(features[-1], feature[-1]*2)
+        self.bottleneck = DoubleConv(features[-1], features[-1]*2)
         # final layer
         self.final_conv = nn.Conv2d(features[0], out_channels, kernel_size = 1)
 
@@ -75,6 +76,8 @@ class UNET(nn.Module):
         for idx in range(0, len(self.ups), 2): # step of 2, up double Conv, up, double conv...
             x = self.ups[idx](x)
             skip_connection = skip_connections[idx//2]
+            # concat_skip = torch.cat((skip_connection, x), dim = 1)
+            # x = self.ups[idx+1](concat_skip)
 
             # what if input 161*161? there would be 80*80, then to 160*160
             if x.shape != skip_connection.shape:
@@ -85,11 +88,12 @@ class UNET(nn.Module):
             concat_skip = torch.cat((skip_connection, x), dim = 1)
             x = self.ups[idx+1](concat_skip)
 
-        return self.final_conv(x) 
+        return self.final_conv(x)
+        # return torch.sigmoid(self.final_conv(x))
 
 # test
 def test():
-    x = torch.randn((3, 1, 160, 160)) # batchsize = 3, channels = 1, inputsize = 160*160
+    x = torch.randn((3, 1, 255, 255)) # batchsize = 3, channels = 1, inputsize = 160*160
     model = UNET(in_channels=1, out_channels= 1)
     preds = model(x)
     print('preds shape:', preds.shape)
