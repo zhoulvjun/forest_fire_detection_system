@@ -133,15 +133,17 @@ def main():
             "state_dict": model.state_dict(),
             "optimizer": optimizer.state_dict()
         }
-        save_checkpoint(checkpoint)
+        #ßsave_checkpoint(checkpoint)
 
         # check accuracy
         check_accuracy(val_loader, model, device=DEVICE)
 
         # print some examples to a folder
-        save_predictions_as_imgs(
-            val_loader, model, folder = "forest_fire_detection_system/scripts/saved_images/", device = DEVICE
-        )
+        # save_predictions_as_imgs(
+        #     val_loader, model, folder = "forest_fire_detection_system/scripts/saved_images/", device = DEVICE
+        # )
+
+    torch.save(model.state_dict(), 'final.pth')
 
 if __name__ == '__main__':
     main()

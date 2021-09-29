@@ -8,7 +8,7 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = pureunet().to(device=DEVICE)
 # checkpoint = torch.load('my_checkpoint.pth.tar')
 # model.load_state_dict(torch.load(checkpoint['state_dict']))
-model.load_state_dict(torch.load("pureunet.pth")) #, map_location = torch.device("cpu")))
+model.load_state_dict(torch.load("final.pth")) #, map_location = torch.device("cpu")))
 model.eval()
 # img = Image.open("datas/fs/001.png")
 # # img = img.to(device = DEVICE)
