@@ -36,13 +36,16 @@ class FireSmokeDetector(object):
         self.rate = rospy.Rate(1)
         self.convertor = CvBridge()
 
+        self.ros_image = None
+
         # ros topic
         rospy.Subscriber("/camera/rgb/image_raw", Image, self.image_cb)
 
     def image_cb(self, msg):
+        print("call back")
         self.ros_image = msg
         self.cv_image = self.convertor.imgmsg_to_cv2(
-            img_msg=self.ros_image, desired_encoding='passthrough')
+            img_msg=self.ros_image, desired_encoding='bgr8')
 
     def load_model(self):
         pass
@@ -50,8 +53,11 @@ class FireSmokeDetector(object):
     def write_result(self):
         pass
 
-    def show_image_info(self, title:str):
-        cv2.imshow(title, self.cv_image)
+    def show_image_info(self, title: str):
+        if self.ros_image is None:
+            rospy.loginfo("no ros Image is received!")
+        else:
+            cv2.imshow(title, self.cv_image)
 
     def run(self):
         while not rospy.is_shutdown():

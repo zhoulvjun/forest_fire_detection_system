@@ -9,7 +9,7 @@ import rospy
 from cv_bridge import CvBridge, CvBridgeError
 
 capture = cv2.VideoCapture(0)
-capture.set(15,-0.1)
+capture.set(15, -0.1)
 if __name__ == "__main__":
     capture.open(0)
     rospy.init_node('Camera', anonymous=True)  # 定义节点
