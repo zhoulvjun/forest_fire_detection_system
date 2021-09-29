@@ -28,6 +28,8 @@ import cv2
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 
+# TODO: import the model(qiao)
+
 
 class FireSmokeDetector(object):
     def __init__(self):
@@ -48,14 +50,16 @@ class FireSmokeDetector(object):
     def write_result(self):
         pass
 
-    def show_image_info(self):
-        pass
+    def show_image_info(self, title:str):
+        cv2.imshow(title, self.cv_image)
 
     def run(self):
         while not rospy.is_shutdown():
-            self.show_image_info()
+            self.show_image_info("cv image from ros-Image")
             self.rate.sleep()
 
 
 if __name__ == '__main__':
     rospy.init_node("fire_smoke_detecting_node", anonymous=False)
+    detector = FireSmokeDetector()
+    detector.run()
