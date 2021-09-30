@@ -37,13 +37,12 @@ from unetutils000 import (
 LEARNING_RATE = 1e-4
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 BATCH_SIZE = 1 # 32
-NUM_EPOCHS = 1
+NUM_EPOCHS = 5
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 255 # original 1280
 IMAGE_WIDTH = 255 # original 1918
 PIN_MEMORY = True
-# LOAD_MODEL = False # original
-LOAD_MODEL = False
+LOAD_MODEL = False # original
 TRAIN_IMG_DIR = 'datas/fs'
 TRAIN_MASK_DIR = 'datas/fslabel'
 VAL_IMG_DIR = 'datas/fs'
@@ -128,20 +127,22 @@ def main():
     for epoch in range(NUM_EPOCHS):
         train_fn(train_loader, model, optimizer, loss_fn, scaler)
 
-        # save model 
-        checkpoint = {
-            "state_dict": model.state_dict(),
-            "optimizer": optimizer.state_dict()
-        }
-        save_checkpoint(checkpoint)
+        # # save model 
+        # checkpoint = {
+        #     "state_dict": model.state_dict(),
+        #     "optimizer": optimizer.state_dict()
+        # }
+        # save_checkpoint(checkpoint)
+
 
         # check accuracy
         check_accuracy(val_loader, model, device=DEVICE)
 
-        # print some examples to a folder
-        save_predictions_as_imgs(
-            val_loader, model, folder = "forest_fire_detection_system/scripts/saved_images/", device = DEVICE
-        )
+        # # print some examples to a folder
+        # save_predictions_as_imgs(
+        #     val_loader, model, folder = "forest_fire_detection_system/scripts/saved_images/", device = DEVICE
+        # )
 
+    torch.save(model.state_dict(),'trysave.pth')
 if __name__ == '__main__':
     main()

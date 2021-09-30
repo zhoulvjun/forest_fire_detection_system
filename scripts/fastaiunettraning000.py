@@ -34,10 +34,10 @@ from fastaiunetutils000 import (
 )
 
 # hyper-parameters etc.
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 1e-6
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 BATCH_SIZE = 1 # 32
-NUM_EPOCHS = 1
+NUM_EPOCHS = 5
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 255 # original 1280
 IMAGE_WIDTH = 255 # original 1918
