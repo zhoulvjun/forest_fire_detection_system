@@ -2,34 +2,33 @@ import torch
 import torchvision.transforms as transforms
 from PIL import Image
 from fastaiunetmodel000 import pureunet  # seg 4 classes
+import matplotlib.pyplot as plt
+
+
+def imshow(tensor, title=None):
+    image = tensor.clone()  # we clone the tensor to not do changes on it
+    image = transforms.ToPILImage()(image)
+    plt.imshow(image)
+    plt.show()
+    if title is not None:
+        plt.title(title)
+
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+transform_valid = transforms.Compose([
+    transforms.Resize((255, 255), interpolation=2),
+    transforms.ToTensor()
+]
+)
+
+img = Image.open("datas/database/000001.jpg")
+img_ = transform_valid(img).unsqueeze(0).to(DEVICE)
+
 model = pureunet(in_channels=3, out_channels=1).to(DEVICE)
-# checkpoint = torch.load('my_checkpoint.pth.tar')
-# model.load_state_dict(torch.load(checkpoint['state_dict']))
 model.load_state_dict(torch.load("final.pth"))
 model.eval()
-# img = Image.open("datas/fs/001.png")
-# # img = img.to(device = DEVICE)
-# prediction = model(img)
 
-# # def predict():
-
-# #     model = model.to(device = DEVICE)
-# #     model.eval()
-
-# #     img = Image.open("datas/fs/001.png")
-# #     transform = transforms.Compose([transforms.Resize(255)])
-# #     img = img.convert("RGB")
-# #     img = transform(img)
-# #     img = img.to(device = DEVICE)
-
-# #     with torch.no_grad():
-# #         prediction = model(img)
-
-# _, predicted = torch.max(prediction, 1)
-# classIndex = predicted[0]
-
-# # if __name__ == "__main__":
-#     # predict()
+pre = model(img_)
+imshow(img_[0])
+imshow(pre[0])

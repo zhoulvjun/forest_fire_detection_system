@@ -107,5 +107,5 @@ def test():
     assert preds.shape == x.shape
 
 
-if __name__ == "main":
+if __name__ == '__main__':
     test()
