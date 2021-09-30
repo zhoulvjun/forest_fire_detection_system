@@ -6,7 +6,8 @@ import numpy as np
 from std_msgs.msg import Header
 from sensor_msgs.msg import Image
 import rospy
-from cv_bridge import CvBridge, CvBridgeError
+
+# TODO: should rearrange this file!
 
 capture = cv2.VideoCapture(0)
 capture.set(15, -0.1)
@@ -19,9 +20,8 @@ if __name__ == "__main__":
 
     while not rospy.is_shutdown():
         ret, frame = capture.read()
-        # frame = cv2.flip(frame, 0)  # 镜像操作
-        # frame = cv2.flip(frame, 1)  # 镜像操作
-
+        c_b, c_g, c_r = cv2.split(frame)
+        frame = cv2.merge([c_r, c_g, c_b])
         ros_frame = Image()
         header = Header(stamp=rospy.Time.now())
         header.frame_id = "Camera"

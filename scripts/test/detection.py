@@ -22,8 +22,8 @@
 
 
 import rospy
-import torch
-import torchvision
+# import torch
+# import torchvision
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
@@ -33,19 +33,32 @@ from sensor_msgs.msg import Image
 
 class FireSmokeDetector(object):
     def __init__(self):
-        self.rate = rospy.Rate(1)
         self.convertor = CvBridge()
-
         self.ros_image = None
+        self.cv_image = None
 
-        # ros topic
-        rospy.Subscriber("/camera/rgb/image_raw", Image, self.image_cb)
+        self.rate = rospy.Rate(1)
+        self.image_sub = rospy.Subscriber(
+            "/camera/rgb/image_raw", Image, self.image_cb)
 
     def image_cb(self, msg):
-        print("call back")
         self.ros_image = msg
-        self.cv_image = self.convertor.imgmsg_to_cv2(
-            img_msg=self.ros_image, desired_encoding='bgr8')
+
+        if self.ros_image is not None:
+            self.cv_image = self.convertor.imgmsg_to_cv2(
+                self.ros_image, 'bgr8')
+        else:
+            rospy.loginfo("waiting for the image")
+
+    def image_cb2(self, msg):
+        self.ros_image = msg
+
+        if self.ros_image is not None:
+            # TODO: without cv_bridge?
+            pass
+        else:
+            rospy.loginfo("waiting for the image")
+        pass
 
     def load_model(self):
         pass
@@ -54,10 +67,11 @@ class FireSmokeDetector(object):
         pass
 
     def show_image_info(self, title: str):
-        if self.ros_image is None:
-            rospy.loginfo("no ros Image is received!")
+        if self.cv_image is None:
+            rospy.loginfo("no ros Image to show!")
         else:
             cv2.imshow(title, self.cv_image)
+            cv2.waitKey(3)
 
     def run(self):
         while not rospy.is_shutdown():
@@ -66,6 +80,6 @@ class FireSmokeDetector(object):
 
 
 if __name__ == '__main__':
-    rospy.init_node("fire_smoke_detecting_node", anonymous=False)
+    rospy.init_node("fire_smoke_detecting_node", anonymous=True)
     detector = FireSmokeDetector()
     detector.run()
