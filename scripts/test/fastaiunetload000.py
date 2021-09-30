@@ -1,21 +1,21 @@
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from fastaiunetmodel000 import pureunet # seg 4 classes
+from fastaiunetmodel000 import pureunet  # seg 4 classes
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-model = pureunet(num_classes = 4)
+model = pureunet(in_channels=3, out_channels=1).to(DEVICE)
 # checkpoint = torch.load('my_checkpoint.pth.tar')
 # model.load_state_dict(torch.load(checkpoint['state_dict']))
-model.load_state_dict(torch.load("trysave.pth"))
+model.load_state_dict(torch.load("final.pth"))
 model.eval()
 # img = Image.open("datas/fs/001.png")
 # # img = img.to(device = DEVICE)
 # prediction = model(img)
 
 # # def predict():
-    
+
 # #     model = model.to(device = DEVICE)
 # #     model.eval()
 
@@ -33,8 +33,3 @@ model.eval()
 
 # # if __name__ == "__main__":
 #     # predict()
-
-
-
-
-
