@@ -42,8 +42,8 @@ class FireSmokeDetector(object):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.detector = UnetModel.pureunet(
             in_channels=3, out_channels=1) .to(self.device)
-        self.detector.load_state_dict(torch.load("final.pth")
-                                      )
+        self.dic_path = '/home/ls/catkin_ws/src/forest_fire_detection_system/scripts/vision/final.pth'
+        self.detector.load_state_dict(torch.load(self.dic_path))
 
     def image_cb(self, msg):
         self.ros_image = msg
@@ -70,7 +70,7 @@ class FireSmokeDetector(object):
         # change the shape order and add bathsize
         img_ = torch.from_numpy(img).float().permute(2, 0, 1).unsqueeze(0)
 
-        return img_
+        return img_.to(self.device)
 
     def tensor_to_cv(self, ten):
         """
@@ -80,7 +80,7 @@ class FireSmokeDetector(object):
 
         """
         # tensor --> numpy
-        np_array = ten.numpy()
+        np_array = ten.detach().numpy()
 
         # normalize
         maxValue = np_array.max()
@@ -96,19 +96,23 @@ class FireSmokeDetector(object):
         img_ = self.cv_to_tesnor(self.cv_image)
         self.model_result = self.detector(img_)
 
-    def show_cv_image(self, title: str):
-        if self.cv_image is None:
-            rospy.loginfo("no ros Image to show!")
-        else:
-            cv2.imshow(title, self.cv_image)
-            cv2.waitKey(3)
+    def show_cv_image(self,mat, title: str):
+        cv2.imshow(title, mat)
+        cv2.waitKey(3)
 
     def write_cv_file(self):
         pass
 
     def run(self):
         while not rospy.is_shutdown():
-            self.feed_img_2_model()
+            if self.cv_image is not None:
+                self.feed_img_2_model()
+                mat = self.tensor_to_cv(self.model_result[0].cpu())
+                self.show_cv_image(mat,'result')
+
+
+            else:
+                rospy.loginfo("waiting for ros image!")
             self.rate.sleep()
 
 
