@@ -17,14 +17,14 @@
 #
 # ------------------------------------------------------------------------------
 
-import rospy
 import cv2
-import torch
-import numpy as np
 from cv_bridge import CvBridge
+import numpy as np
+import rospy
 from sensor_msgs.msg import Image
 
 from UnetDetModel import UnetModel
+import torch
 
 
 class FireSmokeDetector(object):
@@ -84,8 +84,9 @@ class FireSmokeDetector(object):
 
         # normalize
         maxValue = np_array.max()
-        np_array = np_array*255/maxValue
-        mat = np.uint8(np_array)
+        mat = np_array/maxValue  # (0~1)
+        # np_array = np_array*255/maxValue
+        # mat = np.uint8(np_array)
 
         # change thw dimension shape to fit cv image
         mat = np.transpose(mat, (1, 2, 0))
@@ -96,7 +97,7 @@ class FireSmokeDetector(object):
         img_ = self.cv_to_tesnor(self.cv_image)
         self.model_result = self.detector(img_)
 
-    def show_cv_image(self,mat, title: str):
+    def show_cv_image(self, mat, title: str):
         cv2.imshow(title, mat)
         cv2.waitKey(3)
 
@@ -108,8 +109,7 @@ class FireSmokeDetector(object):
             if self.cv_image is not None:
                 self.feed_img_2_model()
                 mat = self.tensor_to_cv(self.model_result[0].cpu())
-                self.show_cv_image(mat,'result')
-
+                self.show_cv_image(mat, 'result')
 
             else:
                 rospy.loginfo("waiting for ros image!")
