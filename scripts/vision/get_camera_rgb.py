@@ -3,11 +3,11 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Lee Ltd. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
 #
 #   @Filename: get_camera_rgb.py
 #
-#   @Author: lee-shun
+#   @Author: Shun Li
 #
 #   @Date: 2021-09-24
 #

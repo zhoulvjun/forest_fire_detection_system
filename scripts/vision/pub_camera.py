@@ -1,5 +1,21 @@
-#! /usr/bin/env python3
-# coding=utf-8
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- #
+
+# ------------------------------------------------------------------------------
+#
+#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#
+#   @Filename: pub_camera.py
+#
+#   @Author: Shun Li
+#
+#   @Date: 2021-09-24
+#
+#   @Email: 2015097272@qq.com
+#
+#   @Description:
+#
+# ------------------------------------------------------------------------------
 
 import cv2
 import numpy as np

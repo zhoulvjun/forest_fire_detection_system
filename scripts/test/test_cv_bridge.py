@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*- #
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Lee Ltd. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
 #
 #   @Filename: test_cv_bridge.py
 #
-#   @Author: lee-shun
+#   @Author: Shun Li
 #
 #   @Date: 2021-09-29
 #

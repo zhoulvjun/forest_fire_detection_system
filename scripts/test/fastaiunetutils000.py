@@ -3,7 +3,7 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Lee Ltd. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
 #
 #   @Filename: detection.py
 #
@@ -11,7 +11,7 @@
 #
 #   @Date: 2021-09-29
 #
-#   @Email: 2015097272@qq.com
+#   @Email: 742954173@qq.com
 #
 #   @Description:
 #
