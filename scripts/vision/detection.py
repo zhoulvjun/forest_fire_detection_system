@@ -101,8 +101,15 @@ class FireSmokeDetector(object):
         cv2.imshow(title, mat)
         cv2.waitKey(3)
 
-    def write_cv_file(self):
-        pass
+    def write_cv_file(self, cv_image):
+
+        frameSize = (500, 500)
+        wirte = cv2.VideoWriter(
+            'output_video.avi', cv2.VideoWriter_fourcc(*'DIVX'), 60, frameSize)
+        for filename in glob.glob('D:/images/*.jpg'):
+            img = cv2.imread(filename)
+            out.write(img)
+        out.release()
 
     def run(self):
         while not rospy.is_shutdown():
