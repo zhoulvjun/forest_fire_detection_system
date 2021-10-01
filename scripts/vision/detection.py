@@ -3,11 +3,11 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Lee Ltd. All rights reserved.
+#   Copyright (C) 2021 Concordia NavLab. All rights reserved.
 #
 #   @Filename: detection.py
 #
-#   @Author: Qiao Linhan
+#   @Author: Shun Li
 #
 #   @Date: 2021-09-20
 #
@@ -17,18 +17,14 @@
 #
 # ------------------------------------------------------------------------------
 
-# TODO: 1. check if the fastai can be installed on jetson;
-# TODO: 2. the cv_bridge is good with ros-opencv and opencv4?
-
-
 import rospy
-# import torch
-# import torchvision
 import cv2
-from cv_bridge import CvBridge, CvBridgeError
+import torch
+import numpy as np
+from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
-# TODO: import the model(qiao)
+from UnetDetModel import UnetModel
 
 
 class FireSmokeDetector(object):
@@ -37,9 +33,17 @@ class FireSmokeDetector(object):
         self.ros_image = None
         self.cv_image = None
 
+        # ros stuff
         self.rate = rospy.Rate(1)
         self.image_sub = rospy.Subscriber(
             "/camera/rgb/image_raw", Image, self.image_cb)
+
+        # detection model
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.detector = UnetModel.pureunet(
+            in_channels=3, out_channels=1) .to(self.device)
+        self.detector.load_state_dict(torch.load("final.pth")
+                                      )
 
     def image_cb(self, msg):
         self.ros_image = msg
@@ -50,32 +54,61 @@ class FireSmokeDetector(object):
         else:
             rospy.loginfo("waiting for the image")
 
-    def image_cb2(self, msg):
-        self.ros_image = msg
+    def cv_to_tesnor(self, cv_img, re_width=255, re_height=255):
+        """
 
-        if self.ros_image is not None:
-            # TODO: without cv_bridge?
-            pass
-        else:
-            rospy.loginfo("waiting for the image")
-        pass
+        Note: The input tensor could be (0.0~255.0), but should be float
 
-    def load_model(self):
-        pass
+        """
 
-    def write_result(self):
-        pass
+        # cv(BGR) --> tensor(RGB)
+        img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
 
-    def show_image_info(self, title: str):
+        # resize the image for tensor
+        img = cv2.resize(img, (re_width, re_height))
+
+        # change the shape order and add bathsize
+        img_ = torch.from_numpy(img).float().permute(2, 0, 1).unsqueeze(0)
+
+        return img_
+
+    def tensor_to_cv(self, ten):
+        """
+
+        Note: The tensor could be any value, but cv_image should in (0~255)
+        <uint8>
+
+        """
+        # tensor --> numpy
+        np_array = ten.numpy()
+
+        # normalize
+        maxValue = np_array.max()
+        np_array = np_array*255/maxValue
+        mat = np.uint8(np_array)
+
+        # change thw dimension shape to fit cv image
+        mat = np.transpose(mat, (1, 2, 0))
+
+        return mat
+
+    def feed_img_2_model(self):
+        img_ = self.cv_to_tesnor(self.cv_image)
+        self.model_result = self.detector(img_)
+
+    def show_cv_image(self, title: str):
         if self.cv_image is None:
             rospy.loginfo("no ros Image to show!")
         else:
             cv2.imshow(title, self.cv_image)
             cv2.waitKey(3)
 
+    def write_cv_file(self):
+        pass
+
     def run(self):
         while not rospy.is_shutdown():
-            self.show_image_info("cv image from ros-Image")
+            self.feed_img_2_model()
             self.rate.sleep()
 
 
