@@ -55,7 +55,7 @@ class FireSmokeDetector(object):
         self.detector.load_state_dict(torch.load(self.param_path))
 
         # hint
-        rospy.loginfo("loading params from:",self.param_path)
+        rospy.loginfo("loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final.pth")
 
     def image_cb(self, msg):
 
