@@ -69,26 +69,8 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
   for (int i = 0; i < point_num - 1; ++i) {
 
     if (is_lower_left) {
-      command.x = wid;
-      command.y = 0.0;
-      ctrl_vec.push_back(command);
-
-      is_lower_left = false;
-      is_upper_left = true;
-      is_lower_right = false;
-      is_upper_right = false;
-    } else if (is_upper_left) {
       command.x = 0.0;
-      command.y = each_len;
-      ctrl_vec.push_back(command);
-
-      is_lower_left = false;
-      is_upper_left = false;
-      is_lower_right = false;
-      is_upper_right = true;
-    } else if (is_upper_right) {
-      command.x = -wid;
-      command.y = 0.0;
+      command.y = wid;
       ctrl_vec.push_back(command);
 
       is_lower_left = false;
@@ -96,8 +78,26 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
       is_lower_right = true;
       is_upper_right = false;
     } else if (is_lower_right) {
+      command.x = each_len;
+      command.y = 0.0;
+      ctrl_vec.push_back(command);
+
+      is_lower_left = false;
+      is_upper_left = false;
+      is_lower_right = false;
+      is_upper_right = true;
+    } else if (is_upper_right) {
       command.x = 0.0;
-      command.y = each_len;
+      command.y = -wid;
+      ctrl_vec.push_back(command);
+
+      is_lower_left = false;
+      is_upper_left = true;
+      is_lower_right = false;
+      is_upper_right = false;
+    } else if (is_upper_left) {
+      command.x = each_len;
+      command.y = 0.0;
       ctrl_vec.push_back(command);
 
       is_lower_left = true;
