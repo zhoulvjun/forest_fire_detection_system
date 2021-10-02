@@ -43,7 +43,7 @@ class FireSmokeDetector(object):
         self.cv_image = None
 
         # ros stuff
-        self.rate = rospy.Rate(1)
+        self.rate = rospy.Rate(5)
         self.image_sub = rospy.Subscriber(
             "/camera/rgb/image_raw", Image, self.image_cb)
 
@@ -112,10 +112,6 @@ class FireSmokeDetector(object):
 
     def run(self):
 
-        # for save the original video
-        output_org_video = cv2.VideoWriter('org_video.avi', cv2.VideoWriter_fourcc(
-            *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
-
         # for save the masked video
         output_masked_video = cv2.VideoWriter('mask_video.avi', cv2.VideoWriter_fourcc(
             *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
@@ -125,8 +121,7 @@ class FireSmokeDetector(object):
             if self.cv_image is None:
                 rospy.loginfo("Waiting for ros image!")
             else:
-                # Step 0: subscribe the image, covert to cv image, and store
-                output_org_video.write(self.cv_image)
+                # Step 0: subscribe the image, covert to cv image.
 
                 # Step 1: convert the cv image to tensor.
                 tensor_img = self.cv_to_tesnor(self.cv_image)
@@ -157,10 +152,9 @@ class FireSmokeDetector(object):
             self.rate.sleep()
 
         # end of the saving video
-        output_org_video.release()
         output_masked_video.release()
 
-        rospy.loginfo("end of the saving video!")
+        rospy.loginfo("end of the saving masked video!")
 
 
 if __name__ == '__main__':

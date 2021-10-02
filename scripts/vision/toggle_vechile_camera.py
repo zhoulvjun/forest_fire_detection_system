@@ -27,7 +27,7 @@ from sensor_msgs.msg import Image
 class GetImageNode(object):
     def __init__(self):
         self.image_frame = Image()
-        self.rate = rospy.Rate(10)
+        self.rate = rospy.Rate(5)
 
         rospy.wait_for_service("setup_camera_stream")
         self.set_camera_cli = rospy.ServiceProxy("setup_camera_stream",
