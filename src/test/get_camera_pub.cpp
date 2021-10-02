@@ -4,7 +4,7 @@
 *
 *   @Filename: get_camera_pub.cpp
 *
-*   @Author: lee-shun
+*   @Author: Shun Li
 *
 *   @Email: 2015097272@qq.com
 *

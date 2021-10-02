@@ -4,7 +4,7 @@
  *
  *   @Filename: test_simple_command.cpp
  *
- *   @Author: lee-shun
+ *   @Author: Shun Li
  *
  *   @Email: 2015097272@qq.com
  *
