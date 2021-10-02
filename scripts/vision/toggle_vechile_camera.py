@@ -21,6 +21,8 @@ import rospy
 from dji_osdk_ros.srv import SetupCameraStream
 from sensor_msgs.msg import Image
 
+# TODO: change the CAMera to MAIN camera
+
 
 class GetImageNode(object):
     def __init__(self):
