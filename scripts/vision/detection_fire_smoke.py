@@ -29,6 +29,7 @@ from cv_bridge import CvBridge
 import torch
 from UnetDetModel import UnetModel
 
+# The parameters to control the final imgae size
 RESIZE_WIDTH = 255
 RESIZE_HEIGHT = 255
 
@@ -111,8 +112,12 @@ class FireSmokeDetector(object):
 
     def run(self):
 
-        # for save the video
-        output_video = cv2.VideoWriter('mask_video.avi', cv2.VideoWriter_fourcc(
+        # for save the original video
+        output_org_video = cv2.VideoWriter('org_video.avi', cv2.VideoWriter_fourcc(
+            *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
+
+        # for save the masked video
+        output_masked_video = cv2.VideoWriter('mask_video.avi', cv2.VideoWriter_fourcc(
             *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
 
         while not rospy.is_shutdown():
@@ -120,7 +125,8 @@ class FireSmokeDetector(object):
             if self.cv_image is None:
                 rospy.loginfo("Waiting for ros image!")
             else:
-                # Step 0: subscribe the image, covert to cv image.
+                # Step 0: subscribe the image, covert to cv image, and store
+                output_org_video.write(self.cv_image)
 
                 # Step 1: convert the cv image to tensor.
                 tensor_img = self.cv_to_tesnor(self.cv_image)
@@ -146,12 +152,15 @@ class FireSmokeDetector(object):
                 self.show_cv_image(cv_final_img, 'cv_mask')
 
                 # Step 6: save the video.
-                output_video.write(cv_final_img)
+                output_masked_video.write(cv_final_img)
 
             self.rate.sleep()
 
         # end of the saving video
-        output_video.release()
+        output_org_video.release()
+        output_masked_video.release()
+
+        rospy.loginfo("end of the saving video!")
 
 
 if __name__ == '__main__':
