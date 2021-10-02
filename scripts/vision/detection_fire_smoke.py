@@ -113,6 +113,9 @@ class FireSmokeDetector(object):
     def run(self):
 
         # for save the masked video
+        output_org_video = cv2.VideoWriter('org_video.avi', cv2.VideoWriter_fourcc(
+            *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
+        # for save the masked video
         output_masked_video = cv2.VideoWriter('mask_video.avi', cv2.VideoWriter_fourcc(
             *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
 
@@ -135,6 +138,9 @@ class FireSmokeDetector(object):
                 # Step 4: merge the cv_mask and original cv_mask
                 cv_final_img = cv2.resize(
                     self.cv_image, (RESIZE_WIDTH, RESIZE_HEIGHT))
+
+                # save before merge
+                output_org_video.write(cv_final_img)
 
                 cv_final_img[:, :, 0] = cv_mask[:, :, 0] * \
                     0.5 + cv_final_img[:, :, 0]*0.7
