@@ -154,11 +154,11 @@ int TestSimpleCommand::run() {
 
   dji_osdk_ros::SetJoystickMode joystickMode;
 
-  ROS_INFO_STREAM("set the body axis!");
-  joystickMode.request.yaw_mode = joystickMode.request.HORIZONTAL_BODY;
-  set_joystick_mode_client.call(joystickMode);
+  /* ROS_INFO_STREAM("set the body axis!"); */
+  /* joystickMode.request.yaw_mode = joystickMode.request.HORIZONTAL_BODY; */
+  /* set_joystick_mode_client.call(joystickMode); */
 
-  ROS_INFO_STREAM(joystickMode.response);
+  /* ROS_INFO_STREAM(joystickMode.response); */
 
 
   ROS_INFO_STREAM(
