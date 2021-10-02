@@ -17,18 +17,26 @@
 #
 # ------------------------------------------------------------------------------
 
-import cv2
-from cv_bridge import CvBridge
+import os
 import numpy as np
+
 import rospy
 from sensor_msgs.msg import Image
 
-from UnetDetModel import UnetModel
+import cv2
+from cv_bridge import CvBridge
+
 import torch
+from UnetDetModel import UnetModel
+
+RESIZE_WIDTH = 255
+RESIZE_HEIGHT = 255
 
 
 class FireSmokeDetector(object):
+
     def __init__(self):
+
         self.convertor = CvBridge()
         self.ros_image = None
         self.cv_image = None
@@ -42,19 +50,24 @@ class FireSmokeDetector(object):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.detector = UnetModel.pureunet(
             in_channels=3, out_channels=1) .to(self.device)
-        self.dic_path = '/home/ls/catkin_ws/src/forest_fire_detection_system/scripts/vision/final.pth'
-        self.detector.load_state_dict(torch.load(self.dic_path))
+        self.param_path = os.path.expanduser(
+            '~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final.pth')
+        self.detector.load_state_dict(torch.load(self.param_path))
+
+        # hint
+        rospy.loginfo("loading params from:",self.param_path)
 
     def image_cb(self, msg):
+
         self.ros_image = msg
 
-        if self.ros_image is not None:
+        if self.ros_image is None:
+            rospy.loginfo("waiting for the image")
+        else:
             self.cv_image = self.convertor.imgmsg_to_cv2(
                 self.ros_image, 'bgr8')
-        else:
-            rospy.loginfo("waiting for the image")
 
-    def cv_to_tesnor(self, cv_img, re_width=255, re_height=255):
+    def cv_to_tesnor(self, cv_img, re_width=RESIZE_WIDTH, re_height=RESIZE_HEIGHT):
         """
 
         Note: The input tensor could be (0.0~255.0), but should be float
@@ -84,43 +97,61 @@ class FireSmokeDetector(object):
 
         # normalize
         maxValue = np_array.max()
-        mat = np_array/maxValue  # (0~1)
-        # np_array = np_array*255/maxValue
-        # mat = np.uint8(np_array)
+        np_array = (np_array/maxValue)*255
+        mat = np.uint8(np_array)
 
         # change thw dimension shape to fit cv image
         mat = np.transpose(mat, (1, 2, 0))
 
         return mat
 
-    def feed_img_2_model(self):
-        img_ = self.cv_to_tesnor(self.cv_image)
-        self.model_result = self.detector(img_)
-
     def show_cv_image(self, mat, title: str):
         cv2.imshow(title, mat)
         cv2.waitKey(3)
 
-    def write_cv_file(self, cv_image):
-
-        frameSize = (500, 500)
-        wirte = cv2.VideoWriter(
-            'output_video.avi', cv2.VideoWriter_fourcc(*'DIVX'), 60, frameSize)
-        for filename in glob.glob('D:/images/*.jpg'):
-            img = cv2.imread(filename)
-            out.write(img)
-        out.release()
-
     def run(self):
-        while not rospy.is_shutdown():
-            if self.cv_image is not None:
-                self.feed_img_2_model()
-                mat = self.tensor_to_cv(self.model_result[0].cpu())
-                self.show_cv_image(mat, 'result')
 
+        # for save the video
+        output_video = cv2.VideoWriter('mask_video.avi', cv2.VideoWriter_fourcc(
+            *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
+
+        while not rospy.is_shutdown():
+
+            if self.cv_image is None:
+                rospy.loginfo("Waiting for ros image!")
             else:
-                rospy.loginfo("waiting for ros image!")
+                # Step 0: subscribe the image, covert to cv image.
+
+                # Step 1: convert the cv image to tensor.
+                tensor_img = self.cv_to_tesnor(self.cv_image)
+
+                # Step 2: feed tensor to detector
+                tensor_mask = self.detector(tensor_img)
+
+                # Step 3: mask to cv image mask
+                cv_mask = self.tensor_to_cv(tensor_mask[0].cpu())
+
+                # Step 4: merge the cv_mask and original cv_mask
+                cv_final_img = cv2.resize(
+                    self.cv_image, (RESIZE_WIDTH, RESIZE_HEIGHT))
+
+                cv_final_img[:, :, 0] = cv_mask[:, :, 0] * \
+                    0.5 + cv_final_img[:, :, 0]*0.7
+
+                channel_max = cv_final_img[:, :, 0].max()
+                norm_channel = (cv_final_img[:, :, 0]/channel_max)*255
+                cv_final_img[:, :, 0] = np.uint8(norm_channel)
+
+                # Step 5: show the mask
+                self.show_cv_image(cv_final_img, 'cv_mask')
+
+                # Step 6: save the video.
+                output_video.write(cv_final_img)
+
             self.rate.sleep()
+
+        # end of the saving video
+        output_video.release()
 
 
 if __name__ == '__main__':
