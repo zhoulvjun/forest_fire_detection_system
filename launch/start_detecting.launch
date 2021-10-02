@@ -1,0 +1,4 @@
+<launch>
+    <node name="bar1" pkg="forest_fire_detection_system" type="bar" args="--test" respawn="true" output="sceen">
+        <\node>
+</launch>
