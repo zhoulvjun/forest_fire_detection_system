@@ -2,3 +2,5 @@ __pycache__/
 *.pth
 *.jpg
 *.pth.tar
+*.avi
+*.mp4
