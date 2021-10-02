@@ -58,7 +58,7 @@ class GetImageNode(object):
 
 
 if __name__ == '__main__':
-    rospy.init_node('get_image_node', anonymous=True)
+    rospy.init_node('toggle_vechile_camera_node', anonymous=True)
 
     node = GetImageNode()
     node.run()

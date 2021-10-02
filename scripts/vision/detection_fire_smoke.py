@@ -155,6 +155,6 @@ class FireSmokeDetector(object):
 
 
 if __name__ == '__main__':
-    rospy.init_node("fire_smoke_detecting_node", anonymous=True)
+    rospy.init_node("detection_fire_smoke_node", anonymous=True)
     detector = FireSmokeDetector()
     detector.run()
