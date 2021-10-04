@@ -33,7 +33,7 @@ class GetImageNode(object):
         self.set_camera_cli = rospy.ServiceProxy("setup_camera_stream",
                                                  SetupCameraStream)
 
-        rospy.Subscriber("dji_osdk_ros/fpv_camera_images",
+        rospy.Subscriber("dji_osdk_ros/main_camera_images",
                          Image, self.image_cb)
 
         self.image_pub = rospy.Publisher(
@@ -47,7 +47,7 @@ class GetImageNode(object):
         set_camera_handle = SetupCameraStream()
 
         result = self.set_camera_cli(
-            set_camera_handle._request_class.FPV_CAM, 1)
+            set_camera_handle._request_class.MAIN_CAM, 1)
         print("start the camera stream: ", result)
 
         while not rospy.is_shutdown():
@@ -55,7 +55,7 @@ class GetImageNode(object):
             self.rate.sleep()
 
         result = self.set_camera_cli(
-            set_camera_handle._request_class.FPV_CAM, 0)
+            set_camera_handle._request_class.MAIN_CAM, 0)
         print("end the camera stream: ", result)
 
 

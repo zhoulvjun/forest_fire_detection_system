@@ -43,7 +43,7 @@ class FireSmokeDetector(object):
         self.cv_image = None
 
         # ros stuff
-        self.rate = rospy.Rate(5)
+        self.rate = rospy.Rate(1)
         self.image_sub = rospy.Subscriber(
             "/camera/rgb/image_raw", Image, self.image_cb)
 
