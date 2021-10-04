@@ -2,3 +2,4 @@ __pycache__/
 *.pth
 *.pth.tar
 saved_images/
+datas/
