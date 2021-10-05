@@ -76,7 +76,6 @@ class unettiny(nn.Module):
 # test model
 def test(x):
     x = torch.random((1, 3, 255, 255))
-    plt.show(x[0])
     model = unettiny(in_channels=3, out_channels=1)
     preds = model(x)
     print(x.shape, preds.shape)
