@@ -26,6 +26,10 @@ TestSimpleCommand::TestSimpleCommand() {
 
   set_joystick_mode_client =
       nh.serviceClient<dji_osdk_ros::SetJoystickMode>("set_joystick_mode");
+
+  obtain_ctrl_authority_client =
+      nh.serviceClient<dji_osdk_ros::ObtainControlAuthority>(
+          "obtain_release_control_authority");
 }
 
 TestSimpleCommand::~TestSimpleCommand() {}
@@ -146,21 +150,10 @@ int TestSimpleCommand::run() {
   ros::Rate rate(1);
   begin_time = ros::Time::now();
   char inputChar;
-  TestSimpleCommand node;
 
-
-  auto command_vec = node.gernate_rectangle_command(10.0, 3.0, 5);
-  node.print_control_command(command_vec);
-
-  dji_osdk_ros::SetJoystickMode joystickMode;
-
-  /* ROS_INFO_STREAM("set the body axis!"); */
-  /* joystickMode.request.yaw_mode = joystickMode.request.HORIZONTAL_BODY; */
-  /* set_joystick_mode_client.call(joystickMode); */
-
-  /* ROS_INFO_STREAM(joystickMode.response); */
-
-
+  /* gererate the zigzag path */
+  auto command_vec = gernate_rectangle_command(10.0, 3.0, 5);
+  print_control_command(command_vec);
   ROS_INFO_STREAM(
       "command generating finished, if you are ready to take off? y/n");
   std::cin >> inputChar;
@@ -168,40 +161,53 @@ int TestSimpleCommand::run() {
   if (inputChar == 'n') {
     ROS_INFO_STREAM("exist!");
     return 0;
+
   } else {
+    /* 0. Obtain the control authority */
+    ROS_INFO_STREAM("Obtain the control authority ...");
+    obtainCtrlAuthority.request.enable_obtain = true;
+    obtain_ctrl_authority_client.call(obtainCtrlAuthority);
+
+    /* 1. Take off */
+    ROS_INFO_STREAM("Takeoff request sending ...");
     control_task.request.task =
         dji_osdk_ros::FlightTaskControl::Request::TASK_TAKEOFF;
-
-    ROS_INFO_STREAM("Takeoff request sending ...");
     task_control_client.call(control_task);
 
     if (control_task.response.result == false) {
-
-      ROS_ERROR_STREAM("Takeoff task failed");
-
+      ROS_ERROR_STREAM("Takeoff task failed!");
     } else {
 
-      ROS_INFO_STREAM("Takeoff task successful");
+      ROS_INFO_STREAM("Takeoff task successful!");
       ros::Duration(2.0).sleep();
-      ROS_INFO_STREAM("Move by position offset request sending ...");
 
+      /* 2. Move to a higher attitude */
+      ROS_INFO_STREAM("Moving to a higher attitude!");
+      moveByPosOffset(control_task, {0.0, 0.0, 2.0, 0.0}, 0.8, 1);
+
+      /* 3. Move following the zigzag path */
+      ROS_INFO_STREAM("Move by position offset request sending ...");
       for (int i = 0; ros::ok() && (i < command_vec.size()); ++i) {
         ROS_INFO_STREAM("moving to" << i << "point");
         moveByPosOffset(control_task, command_vec[i], 0.8, 1);
       }
 
+      /* 4. Go home */
+      ROS_INFO_STREAM("going home now");
       control_task.request.task =
           dji_osdk_ros::FlightTaskControl::Request::TASK_GOHOME;
-      ROS_INFO_STREAM("going home now");
+      task_control_client.call(control_task);
       if (control_task.response.result == true) {
         ROS_INFO_STREAM("GO home successful");
       } else {
         ROS_INFO_STREAM("Go home failed.");
       }
 
+      /* 5. Landing */
       control_task.request.task =
           dji_osdk_ros::FlightTaskControl::Request::TASK_LAND;
-      ROS_INFO_STREAM("Landing request sending ...");
+      ROS_INFO_STREAM(
+          "Landing request sending ... need your confirmation on the remoter!");
       task_control_client.call(control_task);
       if (control_task.response.result == true) {
         ROS_INFO_STREAM("Land task successful");

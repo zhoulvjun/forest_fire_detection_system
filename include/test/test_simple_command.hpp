@@ -21,6 +21,7 @@
 #include <dji_osdk_ros/FlightTaskControl.h>
 #include <dji_osdk_ros/JoystickAction.h>
 #include <dji_osdk_ros/SetJoystickMode.h>
+#include <dji_osdk_ros/ObtainControlAuthority.h>
 #include <dji_osdk_ros/common_type.h>
 
 // ros
@@ -44,9 +45,13 @@ private:
   ros::Subscriber vehicle_att_subscriber;
   ros::ServiceClient task_control_client;
   ros::ServiceClient set_joystick_mode_client;
+  ros::ServiceClient obtain_ctrl_authority_client;
 
   geometry_msgs::QuaternionStamped vehical_att;
   dji_osdk_ros::FlightTaskControl control_task;
+  dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
+  
+
 
   /**
    * the callback functions
