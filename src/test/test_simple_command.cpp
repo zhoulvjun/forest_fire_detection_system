@@ -69,6 +69,11 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
   bool is_lower_right = false;
   bool is_upper_right = false;
 
+  command.x = 0.0;
+  command.y = 0.0;
+  command.z = 0.0;
+  command.yaw = 0.0;
+
   // turn left is positive
   for (int i = 0; i < point_num - 1; ++i) {
 
@@ -152,7 +157,7 @@ int TestSimpleCommand::run() {
   char inputChar;
 
   /* gererate the zigzag path */
-  auto command_vec = gernate_rectangle_command(10.0, 3.0, 5);
+  auto command_vec = gernate_rectangle_command(10.0, 5.0, 5);
   print_control_command(command_vec);
   ROS_INFO_STREAM(
       "command generating finished, if you are ready to take off? y/n");
@@ -188,7 +193,7 @@ int TestSimpleCommand::run() {
       /* 3. Move following the zigzag path */
       ROS_INFO_STREAM("Move by position offset request sending ...");
       for (int i = 0; ros::ok() && (i < command_vec.size()); ++i) {
-        ROS_INFO_STREAM("moving to" << i << "point");
+        ROS_INFO_STREAM("moving to the No. " << i << " point");
         moveByPosOffset(control_task, command_vec[i], 0.8, 1);
       }
 
