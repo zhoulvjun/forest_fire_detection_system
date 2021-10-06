@@ -11,6 +11,8 @@ from torch.nn.modules.batchnorm import BatchNorm2d
 from torch.nn.modules.channelshuffle import ChannelShuffle
 import torchvision.transforms.functional as TF
 
+from PIL import Image
+from torchvision import transforms
 # first conv, kernel_size = 7x7
 class Conv0(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -26,6 +28,18 @@ class Conv0(nn.Module):
 
 # depthwise Conv: use "SqueezeNet" to decrease the num of parameters
 # downsqueeze1, replaced the convs, channels (55, 55) (27, 27), (13, 13)
+
+class DWconv(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(DWconv, self).__init__()
+        self.depth_conv = nn.Conv2d(in_channels, out_channels,
+                                    kernel_size=3, stride=1, padding=1, groups=1)
+        self.point_conv = nn.Conv2d(in_channels, out_channels,
+                                    kernel_size=1, stride=1, padding=0, groups=1)
+
+    def forward(x):
+        x = DWconv(x)
+
 class squeeze(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(squeeze, self).__init__()
@@ -35,9 +49,9 @@ class squeeze(nn.Module):
             nn.ReLU(inplace = True),
             # pip install torch-dwconv did not work well, could try again
             # dwconv
-            nn.Conv2d(in_channels, out_channels, 
-                      kernel_size=3, stride=1, padding=0, dilation=1, groups=1,bias=True),
-            nn.ChannelShuffle(2),
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1, groups=1),
+            nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0, groups=1),
+            nn.ChannelShuffle(5),
             nn.ReLU(inplace = True),
         )
     def forward(self, x):
@@ -84,12 +98,13 @@ class unetlight(nn.Module):
         self.pools = nn.MaxPool2d(kernel_size=3, stride=3)
 
         # begin layer, conv0
-        self.begin_conv = Conv0(in_channels, begin_channels)
+        self.begin = Conv0(in_channels, begin_channels)
 
         # down sampling part
+        # self.downs.append(Conv0(in_channels, begin_channels))
         for feature in features:
             self.downs.append(squeeze(begin_channels, feature))
-            in_channels = feature
+            begin_channels = feature
 
         # up sampling part
         for feature in reversed(features):
@@ -106,7 +121,7 @@ class unetlight(nn.Module):
     def forward(self, x):
         skip_connections = []
 
-        x = self.begin_conv(x)
+        x = self.begin(x)
         skip_connections.append(x)
         x = self.pools(x)
 
@@ -132,18 +147,11 @@ class unetlight(nn.Module):
 
         return self.final_conv(x)
 
-# # test model
-# def test(x):
-#     x = torch.random((1, 3, 255, 255))
-#     model = unetlight(in_channels=3, out_channels=1)
-#     preds = model(x)
-#     print(x.shape, preds.shape)
+img_path = "/Users/qiao/dev/datas/wildfireeg001.jpg"
+img = Image.open(img_path)
+img_tensor = transforms.ToTensor()(img).unsqueeze(0)
+print(img_tensor.shape)
 
-# if __name__ == "main":
-#     test()
-
-# x = torch.random((1, 3, 255, 255))
 model = unetlight()
-# preds = model(x)
-print(model)
+preds = model(img_tensor)
 
