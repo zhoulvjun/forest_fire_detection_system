@@ -55,12 +55,23 @@ def check_performance(loader, model, device = DEVICE):
 
     model.train()
 
-trainset, valset = train_test_split(loadDataset, random_state = 0.2, shuffle = False) # original, shuffle = True
+def get_loaders(train_dir, train_maskdir,
+                batch_size, train_transform,
+                num_workers = 4, pin_memory = True):
 
-trainset = DataLoader(trainset, batch_size=1, shuffle = False, sampler = None)
-# DataLoader(dataset, batch_size=1, shuffle=False, sampler=None,
-#            batch_sampler=None, num_workers=0, collate_fn=None,
-#            pin_memory=False, drop_last=False, timeout=0,
-#            worker_init_fn=None, *, prefetch_factor=2,
-#            persistent_workers=False)       
+    # train data set 
+    train_ds = loadDataset( 
+        image_dir=train_dir,
+        mask_dir=train_maskdir,
+        transform=train_transform
+    )
 
+    train_loader = DataLoader(
+        train_ds,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        shuffle=True
+    )
+
+    return train_loader

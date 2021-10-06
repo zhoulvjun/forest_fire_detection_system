@@ -28,7 +28,7 @@ class Conv0(nn.Module):
 # downsqueeze1, replaced the convs, channels (55, 55) (27, 27), (13, 13)
 class squeeze(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(squeeze, self).__init__
+        super(squeeze, self).__init__()
         self.downSQ = nn.Sequential(
             # fire?
             nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=1, bias=False),
@@ -78,7 +78,7 @@ class unetlight(nn.Module):
                  begin_channels = 112,
                  out_channels = 1,
                  features = [55, 27, 13]):
-        super(unetlight, self).__init__
+        super(unetlight, self).__init__()
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
         self.pools = nn.MaxPool2d(kernel_size=3, stride=3)
@@ -100,7 +100,8 @@ class unetlight(nn.Module):
         self.bottleneck = Conv1(features[-1], features[-1]*2)
 
         # final layer
-        self.final_conv = nn.Conv2d(feature[0], out_channels, kernel_size=1)
+        self.final_conv_1 = Conv1(features[0], begin_channels)
+        self.final_conv = nn.Conv2d(begin_channels, out_channels, kernel_size=1)
 
     def forward(self, x):
         skip_connections = []
@@ -131,15 +132,18 @@ class unetlight(nn.Module):
 
         return self.final_conv(x)
 
-# test model
-def test(x):
-    x = torch.random((1, 3, 255, 255))
-    model = unetlight(in_channels=3, out_channels=1)
-    preds = model(x)
-    print(x.shape, preds.shape)
+# # test model
+# def test(x):
+#     x = torch.random((1, 3, 255, 255))
+#     model = unetlight(in_channels=3, out_channels=1)
+#     preds = model(x)
+#     print(x.shape, preds.shape)
 
-if __name__ == "main":
-    test()
+# if __name__ == "main":
+#     test()
 
-
+# x = torch.random((1, 3, 255, 255))
+model = unetlight()
+# preds = model(x)
+print(model)
 
