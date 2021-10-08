@@ -20,8 +20,8 @@
 // dji
 #include <dji_osdk_ros/FlightTaskControl.h>
 #include <dji_osdk_ros/JoystickAction.h>
-#include <dji_osdk_ros/SetJoystickMode.h>
 #include <dji_osdk_ros/ObtainControlAuthority.h>
+#include <dji_osdk_ros/SetJoystickMode.h>
 #include <dji_osdk_ros/common_type.h>
 
 // ros
@@ -50,8 +50,6 @@ private:
   geometry_msgs::QuaternionStamped vehical_att;
   dji_osdk_ros::FlightTaskControl control_task;
   dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
-  
-
 
   /**
    * the callback functions
