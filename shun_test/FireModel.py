@@ -7,8 +7,8 @@ class DWconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(DWconv, self).__init__()
         self.dwconv = nn.Sequential(
-        nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1, groups=1),
-        nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0, groups=1),
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1,),
+        nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0,),
         )
 
     def forward(self, x):
@@ -17,6 +17,7 @@ class DWconv(nn.Module):
 # NOTE: squeeze is 1x1 conv
 
 
+# TODO: Use the shuffle
 class Fire(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(Fire, self).__init__()
