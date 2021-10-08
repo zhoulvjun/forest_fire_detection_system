@@ -58,7 +58,7 @@ void TestSimpleCommand::print_vehical_att(
  * the dji FlightTaskControl msg.
  */
 std::vector<dji_osdk_ros::JoystickCommand>
-TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
+TestSimpleCommand::generate_zigzag_path(float len, float wid, float num) {
   float each_len = len / num;
   int point_num = 2 * (num + 1);
   dji_osdk_ros::JoystickCommand command;
@@ -74,7 +74,6 @@ TestSimpleCommand::gernate_rectangle_command(float len, float wid, float num) {
   command.z = 0.0;
   command.yaw = 0.0;
 
-  // turn left is positive
   for (int i = 0; i < point_num - 1; ++i) {
 
     if (is_lower_left) {
@@ -125,10 +124,11 @@ void TestSimpleCommand::print_control_command(
     const std::vector<dji_osdk_ros::JoystickCommand> &ctrl_command_vec) {
 
   for (int i = 0; i < ctrl_command_vec.size(); ++i) {
-    std::cout << "point:" << i << "-------" << std::endl;
     auto em = ctrl_command_vec[i];
-    std::cout << "yaw:" << em.yaw << std::endl;
-    std::cout << "x:" << em.x << std::endl;
+    ROS_INFO_STREAM( "point:" << i << "-------");
+    ROS_INFO_STREAM( "x:" << em.x );
+    ROS_INFO_STREAM( "y:" << em.y );
+    ROS_INFO_STREAM( "yaw:" << em.yaw);
   }
 }
 
@@ -150,6 +150,7 @@ bool TestSimpleCommand::moveByPosOffset(
   return task.response.result;
 }
 
+/* TODO: To test the control authority! */
 int TestSimpleCommand::run() {
 
   ros::Rate rate(1);
@@ -157,7 +158,7 @@ int TestSimpleCommand::run() {
   char inputChar;
 
   /* gererate the zigzag path */
-  auto command_vec = gernate_rectangle_command(10.0, 5.0, 5);
+  auto command_vec = generate_zigzag_path(10.0, 5.0, 5);
   print_control_command(command_vec);
   ROS_INFO_STREAM(
       "command generating finished, if you are ready to take off? y/n");
@@ -193,7 +194,7 @@ int TestSimpleCommand::run() {
       /* 3. Move following the zigzag path */
       ROS_INFO_STREAM("Move by position offset request sending ...");
       for (int i = 0; ros::ok() && (i < command_vec.size()); ++i) {
-        ROS_INFO_STREAM("moving to the No. " << i << " point");
+        ROS_INFO_STREAM("Moving to the point: " << i << "!");
         moveByPosOffset(control_task, command_vec[i], 0.8, 1);
       }
 

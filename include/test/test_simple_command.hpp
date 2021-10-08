@@ -68,7 +68,7 @@ public:
   int run();
 
   std::vector<dji_osdk_ros::JoystickCommand>
-  gernate_rectangle_command(float len, float wid, float num);
+  generate_zigzag_path(float len, float wid, float num);
 
   bool moveByPosOffset(dji_osdk_ros::FlightTaskControl &task,
                        const dji_osdk_ros::JoystickCommand &offsetDesired,
