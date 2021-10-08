@@ -44,12 +44,8 @@ class DWconv(nn.Module):
     def forward(self, x):
         return self.dwconv(x)
 
-<<<<<<< HEAD
 class Fire(nn.Module):
-=======
-# checked
-class squeeze(nn.Module):
->>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
+
     def __init__(self, in_channels, out_channels):
         super(Fire, self).__init__()
         self.downSQ = nn.Sequential(
@@ -62,13 +58,8 @@ class squeeze(nn.Module):
         )
     def forward(self, x):
         return self.downSQ(x)
-
-<<<<<<< HEAD
 class Conv33(nn.Module):
-=======
-# checked
-class Conv1(nn.Module):
->>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
+
     def __init__(self, in_channels, out_channels):
         super(Conv33, self).__init__()
         self.conv3 = nn.Sequential(
@@ -90,12 +81,9 @@ class Conv11(nn.Module):
     def forward(self, x):
         return self.conv11(x)
 
-<<<<<<< HEAD
+
 class deFire(nn.Module):
-=======
-# checked
-class desqueeze(nn.Module):
->>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
+
     def __init__(self, in_channels, out_channels):
         super(deFire, self).__init__()
         self.upSQ = nn.Sequential(
@@ -124,15 +112,7 @@ class upblock(nn.Module):
 class finalconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(finalconv, self).__init__()
-        self.final = nn.Sequential(
-<<<<<<< HEAD
-            Conv11(in_channels, out_channels),
-=======
-            Conv1(in_channels, out_channels),
-            nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False)
->>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
-        )
-
+        self.final = nn.Conv2d(in_channels, out_channels, 3, 1, 1)
     def forward(self, x):
         return self.final(x)
 
@@ -146,7 +126,7 @@ class unetlight(nn.Module):
                  features = [55, 27, 13]):
         super(unetlight, self).__init__()
         self.ups = nn.ModuleList()
-<<<<<<< HEAD
+
         self.pools = nn.MaxPool2d(kernel_size=3, stride=1)
 
         # down sampling part
@@ -173,56 +153,36 @@ class unetlight(nn.Module):
         self.down05.append(Fire(features[1], features[2]))
         self.down05.append(Conv11(features[2], features[2]))
         self.down05.append(Conv33(features[2], features[2]))
-=======
-        self.downs = nn.ModuleList()
-
-        # TODO:
-        self.pools = nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
-
-        # begin layer, conv0
-        self.begin = Conv0(in_channels, begin_channels)
-
-        # down sampling part
-        # self.downs.append(Conv0(in_channels, begin_channels))
-        # 1
-        self.downs.append(squeeze(begin_channels, features[0]))
-        for i in range(1):
-            self.downs.append(squeeze(features[0],features[0]))
-        self.downs.append(self.pools)
->>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
 
         # up sampling part
         for feature in reversed(features):
             self.ups.append(upblock(feature*2, feature))
         self.ups.append(upblock(features[0], begin_channels))
 
-
-        # # bottle neck
-        # self.bottleneck = Conv1(features[-1], features[-1]*2)
-
         # final layer
-        self.finalconv = finalconv(features[0], in_channels)
+        self.finalconv = finalconv(begin_channels, in_channels)
+
     def forward(self, x):
         skip_connections = []
-
+        # 3-112
         x = self.down00(x)
         skip_connections.append(x)
         x = self.pools(x)
-
+        # 112-55
         x = self.down01(x)
         skip_connections.append(x)
 
         x = self.down02(x)
         skip_connections.append(x)
         x = self.pools(x)
-
+        # 55-27
         x = self.down03(x)
         x = self.pools(x)
-
+        # 27-13
         x = self.down04(x)
         skip_connections.append(x)
         x = self.pools(x)
-
+        # 13-13
         x = self.down05(x)
 
         skip_connections = skip_connections[::-1]
@@ -237,23 +197,18 @@ class unetlight(nn.Module):
 
             concat_skip = torch.cat((skip_connections, x), dim = 1)
             x = self.ups[idx+1](concat_skip)
-<<<<<<< HEAD
-=======
-
-        return self.final_conv(x)
->>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
 
         return self.finalconv(x)
 
 # test whether net model works fine
 # load the image
-img_path = "datas/wildfireeg001.jpg"
-img = Image.open(img_path)
-img_tensor = transforms.ToTensor()(img).unsqueeze(0)
-print(img_tensor)
-# img_tensor = transforms.ToTensor()(img)
-plt.imshow(transforms.ToPILImage()(img_tensor))
+# img_path = "datas/wildfireeg001.jpg"
+# img = Image.open(img_path)
+# img_tensor = transforms.ToTensor()(img).unsqueeze(0)
+# print(img_tensor)
+# # img_tensor = transforms.ToTensor()(img)
+# plt.imshow(transforms.ToPILImage()(img_tensor))
 model = unetlight()
-
-preds = model(img_tensor)
+model.eval()
+# preds = model(img_tensor)
 

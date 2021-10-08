@@ -32,12 +32,10 @@ class Conv1(nn.Module):
 
         self.conv1 = nn.Sequential(
             # kernel = 7, stride = 1, padding = 3
-            nn.Conv2d(in_channels, out_channels, kernel_size=7, stride=1,
-                      padding=3, bias=False),
+            nn.Conv2d(in_channels, out_channels, kernel_size=7, stride=1, padding=3, bias=False),
             nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True),
         )
-
     def forward(self, x):
         return self.conv1(x)
 
@@ -46,35 +44,37 @@ class unetlight(nn.Module):
     def __init__(self):
 
         super(unetlight, self).__init__()
-
         self.in_channels = 3
         self.begin_channels = 112
         self.out_channels = 1
         self.features = [55, 27, 13]
 
         # net
+        # input
         self.conv1 = Conv1(self.in_channels, self.begin_channels)
-
+        # p1, sk1
         self.maxpool = nn.MaxPool2d(3, 1, 1)
 
         self.fire_f2 = Fire(self.begin_channels, self.features[0])
         self.fire_f3 = Fire(self.features[0], self.features[0])
+        # sk2, skip connection
         self.fire_f4 = Fire(self.features[0], self.features[0])
-
+        # p2
         self.fire_f5 = Fire(self.features[0], self.features[1])
+        # sk3
         self.fire_f6 = Fire(self.features[1], self.features[1])
         self.fire_f7 = Fire(self.features[1], self.features[1])
         self.fire_f8 = Fire(self.features[1], self.features[1])
-
+        # p3
         self.fire_f9 = Fire(self.features[1], self.features[2])
-
+        # final
         self.double_conv = nn.Sequential(
             nn.Conv2d(self.features[2], self.features[2], 1, 1, 0),
             nn.ReLU(),
             nn.Conv2d(self.features[2], self.features[2], 3, 1, 1),
             nn.ReLU(),
         )
-
+        
         self.defire_d1 = DeFire(self.features[2], self.features[1])
         self.half_conv1 = nn.Sequential(
                 nn.Conv2d( self.features[1]*2, self.features[1], 3, 1, 1),
