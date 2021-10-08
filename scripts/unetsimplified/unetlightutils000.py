@@ -75,3 +75,8 @@ def get_loaders(train_dir, train_maskdir,
     )
 
     return train_loader
+
+
+x_train, y_train, x_val, y_val = map(torch.tensor, (x_train, y_train, x_val, y_val))
+
+n, c = x_train.shape

@@ -3,6 +3,7 @@
 # so taht the U-net could work on M300
 # based on the strucutre https://ieeexplore.ieee.org/abstract/document/9319207
 # attention not applied yet
+#%%
 from typing_extensions import Concatenate
 import torch
 import torch.nn as nn
@@ -10,7 +11,7 @@ from torch.nn.modules.activation import ReLU
 from torch.nn.modules.batchnorm import BatchNorm2d
 from torch.nn.modules.channelshuffle import ChannelShuffle
 import torchvision.transforms.functional as TF
-
+import matplotlib.pyplot as plt
 from PIL import Image
 from torchvision import transforms
 # first conv, kernel_size = 7x7
@@ -132,6 +133,7 @@ class unetlight(nn.Module):
 
         x = self.bottleneck(x)
 
+
         skip_connections = skip_connections[::-1]
 
         for idx in range(0, len(self.ups), 2):
@@ -147,11 +149,12 @@ class unetlight(nn.Module):
 
         return self.final_conv(x)
 
-img_path = "/Users/qiao/dev/datas/wildfireeg001.jpg"
-img = Image.open(img_path)
+# img_path = "./wildfireeg001.jpg"
+img = Image.open("wildfireeg001.jpg")
+#%%
 img_tensor = transforms.ToTensor()(img).unsqueeze(0)
-print(img_tensor.shape)
-
+plt.imshow(transforms.ToPILImage()(img_tensor))
 model = unetlight()
+#%%
 preds = model(img_tensor)
 
