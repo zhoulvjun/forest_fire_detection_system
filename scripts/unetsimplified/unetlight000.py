@@ -3,7 +3,7 @@
 # so taht the U-net could work on M300
 # based on the strucutre https://ieeexplore.ieee.org/abstract/document/9319207
 # attention not applied yet
-#%%
+
 from typing_extensions import Concatenate
 import torch
 import torch.nn as nn
@@ -14,6 +14,7 @@ import torchvision.transforms.functional as TF
 import matplotlib.pyplot as plt
 from PIL import Image
 from torchvision import transforms
+
 # first conv, kernel_size = 7x7
 class Conv0(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -33,13 +34,13 @@ class Conv0(nn.Module):
 class DWconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(DWconv, self).__init__()
-        self.depth_conv = nn.Conv2d(in_channels, out_channels,
-                                    kernel_size=3, stride=1, padding=1, groups=1)
-        self.point_conv = nn.Conv2d(in_channels, out_channels,
-                                    kernel_size=1, stride=1, padding=0, groups=1)
+        self.dwconv = nn.Sequential(
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1, groups=1),
+        nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, groups=1),
+        )
 
-    def forward(x):
-        x = DWconv(x)
+    def forward(self, x):
+        return self.dwconv(x)
 
 class squeeze(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -50,29 +51,12 @@ class squeeze(nn.Module):
             nn.ReLU(inplace = True),
             # pip install torch-dwconv did not work well, could try again
             # dwconv
-            nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1, groups=1),
-            nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0, groups=1),
+            DWconv(out_channels, out_channels),
             nn.ChannelShuffle(5),
             nn.ReLU(inplace = True),
         )
     def forward(self, x):
         out = self.downSQ(x)
-
-class desqueeze(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(desqueeze, self).__init__()
-        self.upSQ = nn.Sequential(
-            # defire?
-            nn.Conv2d(in_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
-            nn.ReLU(inplace = True),
-            nn.Conv2d(in_channels, out_channels, kernel_size = 1, stride = 1, padding = 1, bias = False),
-            nn.ReLU(inplace= True),
-            # re-sampling?
-            # ...
-            nn.Conv2d(in_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
-        )
-    def forward(self, x):
-        return self.upSQ(x)
 
 class Conv1(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -85,6 +69,34 @@ class Conv1(nn.Module):
 
     def forward(self, x):
         return self.conv1(x)
+
+class desqueeze(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(desqueeze, self).__init__()
+        self.upSQ = nn.Sequential(
+            # defire?
+            nn.Conv2d(in_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
+            nn.ReLU(inplace = True),
+            nn.Conv2d(out_channels, out_channels, kernel_size = 1, stride = 1, padding = 1, bias = False),
+            nn.ReLU(inplace= True),
+            # re-sampling?
+            # ...
+            nn.Conv2d(out_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
+        )
+    def forward(self, x):
+        return self.upSQ(x)
+
+class finalconv(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(finalconv, self).__init__()
+        self.final = nn.Sequential(
+            Conv1(in_channels, out_channels),
+            nn.Conv2d(out_channels, out_channels, kernel_size=1)
+        )
+
+    def forward(self, x):
+        return self.final(x)
+
 
 # added squeeze to replace the convs in the middle stages.
 class unetlight(nn.Module):
@@ -116,9 +128,7 @@ class unetlight(nn.Module):
         self.bottleneck = Conv1(features[-1], features[-1]*2)
 
         # final layer
-        self.final_conv_1 = Conv1(features[0], begin_channels)
-        self.final_conv = nn.Conv2d(begin_channels, out_channels, kernel_size=1)
-
+        self.finaoconv = finalconv(features[0], in_channels)
     def forward(self, x):
         skip_connections = []
 
@@ -132,7 +142,6 @@ class unetlight(nn.Module):
             x = self.pools(x)
 
         x = self.bottleneck(x)
-
 
         skip_connections = skip_connections[::-1]
 
@@ -149,12 +158,15 @@ class unetlight(nn.Module):
 
         return self.final_conv(x)
 
-# img_path = "./wildfireeg001.jpg"
-img = Image.open("wildfireeg001.jpg")
-#%%
-img_tensor = transforms.ToTensor()(img).unsqueeze(0)
+
+# test whether net model works fine
+# load the image
+img_path = "datas/wildfireeg001.jpg"
+img = Image.open(img_path)
+# img_tensor = transforms.ToTensor()(img).unsqueeze(0)
+img_tensor = transforms.ToTensor()(img)
 plt.imshow(transforms.ToPILImage()(img_tensor))
 model = unetlight()
-#%%
+
 preds = model(img_tensor)
 
