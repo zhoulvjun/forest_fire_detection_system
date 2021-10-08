@@ -16,6 +16,7 @@ from PIL import Image
 from torchvision import transforms
 
 # first conv, kernel_size = 7x7
+# checked
 class Conv0(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(Conv0, self).__init__()
@@ -31,6 +32,7 @@ class Conv0(nn.Module):
 # depthwise Conv: use "SqueezeNet" to decrease the num of parameters
 # downsqueeze1, replaced the convs, channels (55, 55) (27, 27), (13, 13)
 
+# checked
 class DWconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(DWconv, self).__init__()
@@ -42,15 +44,18 @@ class DWconv(nn.Module):
     def forward(self, x):
         return self.dwconv(x)
 
+<<<<<<< HEAD
 class Fire(nn.Module):
+=======
+# checked
+class squeeze(nn.Module):
+>>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
     def __init__(self, in_channels, out_channels):
         super(Fire, self).__init__()
         self.downSQ = nn.Sequential(
             # fire?
             nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False),
             nn.ReLU(inplace = True),
-            # pip install torch-dwconv did not work well, could try again
-            # dwconv
             DWconv(out_channels, out_channels),
             nn.ChannelShuffle(5),
             nn.ReLU(inplace = True),
@@ -58,7 +63,12 @@ class Fire(nn.Module):
     def forward(self, x):
         return self.downSQ(x)
 
+<<<<<<< HEAD
 class Conv33(nn.Module):
+=======
+# checked
+class Conv1(nn.Module):
+>>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
     def __init__(self, in_channels, out_channels):
         super(Conv33, self).__init__()
         self.conv3 = nn.Sequential(
@@ -80,14 +90,19 @@ class Conv11(nn.Module):
     def forward(self, x):
         return self.conv11(x)
 
+<<<<<<< HEAD
 class deFire(nn.Module):
+=======
+# checked
+class desqueeze(nn.Module):
+>>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
     def __init__(self, in_channels, out_channels):
         super(deFire, self).__init__()
         self.upSQ = nn.Sequential(
             # defire?
             nn.Conv2d(in_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
             nn.ReLU(inplace = True),
-            nn.Conv2d(out_channels, out_channels, kernel_size = 1, stride = 1, padding = 1, bias = False),
+            nn.Conv2d(out_channels, out_channels, kernel_size = 1, stride = 1, padding = 0, bias = False),
             nn.ReLU(inplace= True),
             # re-sampling?
             # ...
@@ -110,7 +125,12 @@ class finalconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(finalconv, self).__init__()
         self.final = nn.Sequential(
+<<<<<<< HEAD
             Conv11(in_channels, out_channels),
+=======
+            Conv1(in_channels, out_channels),
+            nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False)
+>>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
         )
 
     def forward(self, x):
@@ -126,6 +146,7 @@ class unetlight(nn.Module):
                  features = [55, 27, 13]):
         super(unetlight, self).__init__()
         self.ups = nn.ModuleList()
+<<<<<<< HEAD
         self.pools = nn.MaxPool2d(kernel_size=3, stride=1)
 
         # down sampling part
@@ -152,6 +173,23 @@ class unetlight(nn.Module):
         self.down05.append(Fire(features[1], features[2]))
         self.down05.append(Conv11(features[2], features[2]))
         self.down05.append(Conv33(features[2], features[2]))
+=======
+        self.downs = nn.ModuleList()
+
+        # TODO:
+        self.pools = nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
+
+        # begin layer, conv0
+        self.begin = Conv0(in_channels, begin_channels)
+
+        # down sampling part
+        # self.downs.append(Conv0(in_channels, begin_channels))
+        # 1
+        self.downs.append(squeeze(begin_channels, features[0]))
+        for i in range(1):
+            self.downs.append(squeeze(features[0],features[0]))
+        self.downs.append(self.pools)
+>>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
 
         # up sampling part
         for feature in reversed(features):
@@ -199,6 +237,11 @@ class unetlight(nn.Module):
 
             concat_skip = torch.cat((skip_connections, x), dim = 1)
             x = self.ups[idx+1](concat_skip)
+<<<<<<< HEAD
+=======
+
+        return self.final_conv(x)
+>>>>>>> e1b54eabcdc4b4a3055ca328bc2e432585a2bcec
 
         return self.finalconv(x)
 
