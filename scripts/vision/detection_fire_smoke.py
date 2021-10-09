@@ -28,6 +28,7 @@ from cv_bridge import CvBridge
 
 import torch
 from torch2trt import torch2trt
+from torch2trt import TRTModule
 from UnetDetModel import UnetModel
 
 # The parameters to control the final imgae size
@@ -51,21 +52,14 @@ class FireSmokeDetector(object):
 
         # detection model
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.detector = UnetModel.pureunet(
-            in_channels=3, out_channels=1) .to(self.device)
+
         self.param_path = os.path.expanduser(
-            '~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final.pth')
-        self.detector.load_state_dict(torch.load(self.param_path))
-        # hint
-        rospy.loginfo("loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final.pth")
+            '~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth')
 
-        # optimize with tensorRT
-        self.detector.eval()
-        init_x = torch.ones((1, 3, 255, 255)).cuda()
-        self.detector_trt = torch2trt(self.detector, [init_x])
+        self.detector_trt = TRTModule().to(self.device)
+        self.detector_trt.load_state_dict(torch.load(self.param_path))
 
-        rospy.loginfo("Optimized model with TensorRT!")
-
+        rospy.loginfo("loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth")
 
     def image_cb(self, msg):
 

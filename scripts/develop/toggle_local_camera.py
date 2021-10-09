@@ -30,7 +30,7 @@ capture.set(15, -0.1)
 if __name__ == "__main__":
     capture.open(0)
     rospy.init_node('Camera', anonymous=True)  # 定义节点
-    image_pub = rospy.Publisher('/camera/rgb/image_raw',
+    image_pub = rospy.Publisher("dji_osdk_ros/main_camera_images",
                                 Image,
                                 queue_size=10)  # 定义话题
 
