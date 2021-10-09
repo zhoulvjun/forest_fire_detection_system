@@ -33,11 +33,6 @@ class GetImageNode(object):
         self.set_camera_cli = rospy.ServiceProxy("setup_camera_stream",
                                                  SetupCameraStream)
 
-        rospy.Subscriber("dji_osdk_ros/main_camera_images",
-                         Image, self.image_cb)
-
-        self.image_pub = rospy.Publisher(
-            '/camera/rgb/image_raw', Image, queue_size=10)
 
     def image_cb(self, msg):
         self.image_frame = msg
@@ -50,13 +45,10 @@ class GetImageNode(object):
             set_camera_handle._request_class.MAIN_CAM, 1)
         print("start the camera stream: ", result)
 
-        while not rospy.is_shutdown():
-            self.image_pub.publish(self.image_frame)
-            self.rate.sleep()
 
-        result = self.set_camera_cli(
-            set_camera_handle._request_class.MAIN_CAM, 0)
-        print("end the camera stream: ", result)
+        # result = self.set_camera_cli(
+        #     set_camera_handle._request_class.MAIN_CAM, 0)
+        # print("end the camera stream: ", result)
 
 
 if __name__ == '__main__':
