@@ -35,7 +35,7 @@ class LoadDataset(Dataset):
 
     def __getitem__(self, index):
         img_path = os.path.join(self.image_dir, self.images[index])
-        mask_path = os.path.join(self.mask_dir, 'label_'+self.images[index])
+        mask_path = os.path.join(self.mask_dir, self.images[index])
         image = np.array(Image.open(img_path).convert("RGB"))  # might RGBA
         # mask_path is going to be 4classes and separate by colors in RGB
         mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)

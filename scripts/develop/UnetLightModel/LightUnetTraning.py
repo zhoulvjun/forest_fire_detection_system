@@ -37,17 +37,17 @@ from LightUnetUtils import (
 LEARNING_RATE = 1e-6
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 BATCH_SIZE = 2  # 32
-NUM_EPOCHS = 5
+NUM_EPOCHS = 10
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 255  # original 1280
 IMAGE_WIDTH = 255  # original 1918
 PIN_MEMORY = True
 # LOAD_MODEL = False # original
 LOAD_MODEL = False
-TRAIN_IMG_DIR = '../datas/database'
-TRAIN_MASK_DIR = '../datas/databaselabel'
-VAL_IMG_DIR = '../datas/database'
-VAL_MASK_DIR = '../datas/databaselabel'
+TRAIN_IMG_DIR = '../datas/Smoke_segmentation/training/'
+TRAIN_MASK_DIR = '../datas/Smoke_segmentation/gt_training'
+VAL_IMG_DIR = '../datas/Smoke_segmentation/testing'
+VAL_MASK_DIR = '../datas/Smoke_segmentation/gt_testing'
 
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
