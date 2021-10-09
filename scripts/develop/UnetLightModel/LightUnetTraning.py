@@ -37,7 +37,7 @@ from LightUnetUtils import (
 LEARNING_RATE = 1e-6
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 BATCH_SIZE = 2  # 32
-NUM_EPOCHS = 10
+NUM_EPOCHS = 1
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 255  # original 1280
 IMAGE_WIDTH = 255  # original 1918
