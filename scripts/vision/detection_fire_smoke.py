@@ -27,9 +27,11 @@ import cv2
 from cv_bridge import CvBridge
 
 import torch
+from torch2trt import torch2trt
 from UnetDetModel import UnetModel
 
 # The parameters to control the final imgae size
+BATCH_SIZE = 1
 RESIZE_WIDTH = 255
 RESIZE_HEIGHT = 255
 
@@ -43,9 +45,9 @@ class FireSmokeDetector(object):
         self.cv_image = None
 
         # ros stuff
-        self.rate = rospy.Rate(1)
+        self.rate = rospy.Rate(5)
         self.image_sub = rospy.Subscriber(
-            "/camera/rgb/image_raw", Image, self.image_cb)
+            "dji_osdk_ros/main_camera_images", Image, self.image_cb)
 
         # detection model
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -54,9 +56,16 @@ class FireSmokeDetector(object):
         self.param_path = os.path.expanduser(
             '~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final.pth')
         self.detector.load_state_dict(torch.load(self.param_path))
-
         # hint
         rospy.loginfo("loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final.pth")
+
+        # optimize with tensorRT
+        self.detector.eval()
+        init_x = torch.ones((1, 3, 255, 255)).cuda()
+        self.detector_trt = torch2trt(self.detector, [init_x])
+
+        rospy.loginfo("Optimized model with TensorRT!")
+
 
     def image_cb(self, msg):
 
@@ -130,7 +139,7 @@ class FireSmokeDetector(object):
                 tensor_img = self.cv_to_tesnor(self.cv_image)
 
                 # Step 2: feed tensor to detector
-                tensor_mask = self.detector(tensor_img)
+                tensor_mask = self.detector_trt(tensor_img)
 
                 # Step 3: mask to cv image mask
                 cv_mask = self.tensor_to_cv(tensor_mask[0].cpu())
