@@ -18,8 +18,8 @@ transform_valid = transforms.Compose([
 ]
 )
 
-img = Image.open("../datas/Smoke_segmentation/testing/image_00001.jpg")
-img_cv = cv2.imread("../datas/Smoke_segmentation/testing/image_00001.jpg")
+img = Image.open("../datas/Smoke_segmentation/training/image_00001.jpg")
+img_cv = cv2.imread("../datas/Smoke_segmentation/training/image_00001.jpg")
 img_ = transform_valid(img).unsqueeze(0).to(DEVICE)
 
 model = pureunet(in_channels=3, out_channels=1).to(DEVICE)

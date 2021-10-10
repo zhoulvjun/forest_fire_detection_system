@@ -44,8 +44,8 @@ IMAGE_WIDTH = 255  # original 1918
 PIN_MEMORY = True
 # LOAD_MODEL = False # original
 LOAD_MODEL = False
-TRAIN_IMG_DIR = '../datas/Smoke_segmentation/training'
-TRAIN_MASK_DIR = '../datas/Smoke_segmentation/gt_training'
+TRAIN_IMG_DIR = '../datas/Smoke_segmentation/all_image'
+TRAIN_MASK_DIR = '../datas/Smoke_segmentation/all_mask'
 VAL_IMG_DIR = '../datas/Smoke_segmentation/testing'
 VAL_MASK_DIR = '../datas/Smoke_segmentation/gt_testing'
 
@@ -123,7 +123,9 @@ def main():
     )
 
     if LOAD_MODEL:
-        load_checkpoint(torch.load("final.pth"), model)
+        # load_checkpoint(torch.load("final.pth"), model)
+        model.load_state_dict(torch.load("final.pth"))
+
 
     scaler = torch.cuda.amp.GradScaler()
 
