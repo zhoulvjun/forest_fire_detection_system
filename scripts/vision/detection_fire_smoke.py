@@ -127,18 +127,18 @@ class FireSmokeDetector(object):
             if self.cv_image is None:
                 rospy.loginfo("Waiting for ros image!")
             else:
-                # Step 0: subscribe the image, covert to cv image.
+                # STEP: 0 subscribe the image, covert to cv image.
 
-                # Step 1: convert the cv image to tensor.
+                # STEP: 1 convert the cv image to tensor.
                 tensor_img = self.cv_to_tesnor(self.cv_image)
 
-                # Step 2: feed tensor to detector
+                # STEP: 2 feed tensor to detector
                 tensor_mask = self.detector_trt(tensor_img)
 
-                # Step 3: mask to cv image mask
+                # STEP: 3 mask to cv image mask
                 cv_mask = self.tensor_to_cv(tensor_mask[0].cpu())
 
-                # Step 4: merge the cv_mask and original cv_mask
+                # STEP: 4 merge the cv_mask and original cv_mask
                 cv_final_img = cv2.resize(
                     self.cv_image, (RESIZE_WIDTH, RESIZE_HEIGHT))
 
@@ -152,10 +152,10 @@ class FireSmokeDetector(object):
                 norm_channel = (cv_final_img[:, :, 0]/channel_max)*255
                 cv_final_img[:, :, 0] = np.uint8(norm_channel)
 
-                # Step 5: show the mask
+                # STEP: 5 show the mask
                 self.show_cv_image(cv_final_img, 'cv_mask')
 
-                # Step 6: save the video.
+                # STEP: 6 save the video.
                 output_masked_video.write(cv_final_img)
 
             self.rate.sleep()
