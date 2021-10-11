@@ -18,8 +18,8 @@ transform_valid = transforms.Compose([
 ]
 )
 
-img = Image.open("../datas/Smoke_segmentation/training/image_00001.jpg")
-img_cv = cv2.imread("../datas/Smoke_segmentation/training/image_00001.jpg")
+img = Image.open("../datas/database/000023.jpg")
+img_cv = cv2.imread("../datas/database/000023.jpg")
 img_ = transform_valid(img).unsqueeze(0).to(DEVICE)
 
 model = pureunet(in_channels=3, out_channels=1).to(DEVICE)
@@ -45,4 +45,4 @@ show_cv_image(cv_mask,"cv")
 masked_img = draw_mask(cv2.resize(img_cv, (255,255)), cv_mask)
 show_cv_image(masked_img,"cv")
 
-torch.save(detector_trt.state_dict(), 'final_trt.pth')
+# torch.save(detector_trt.state_dict(), 'final_trt.pth')
