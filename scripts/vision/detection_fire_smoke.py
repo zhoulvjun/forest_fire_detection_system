@@ -17,8 +17,8 @@
 #
 # ------------------------------------------------------------------------------
 
+from tools.Tensor_CV2 import cv_to_tesnor, tensor_to_cv, draw_mask
 import os
-import numpy as np
 
 import rospy
 from sensor_msgs.msg import Image
@@ -30,9 +30,8 @@ import torch
 from torch2trt import TRTModule
 
 import sys
-PKG_PATH = os.path.expanduser('~/catkin_ws/src/forest_fire_detection_system/') 
+PKG_PATH = os.path.expanduser('~/catkin_ws/src/forest_fire_detection_system/')
 sys.path.append(PKG_PATH+'scripts/')
-from  tools.Tensor_CV2 import cv_to_tesnor, tensor_to_cv, draw_mask
 
 
 # The parameters to control the final imgae size
@@ -63,7 +62,8 @@ class FireSmokeDetector(object):
         self.detector_trt = TRTModule().to(self.device)
         self.detector_trt.load_state_dict(torch.load(self.param_path))
 
-        rospy.loginfo("loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth")
+        rospy.loginfo(
+            "loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth")
 
     def image_cb(self, msg):
 
@@ -92,7 +92,8 @@ class FireSmokeDetector(object):
                 # STEP: 0 subscribe the image, covert to cv image.
 
                 # STEP: 1 convert the cv image to tensor.
-                tensor_img = cv_to_tesnor(self.cv_image, RESIZE_WIDTH, RESIZE_HEIGHT, self.device)
+                tensor_img = cv_to_tesnor(
+                    self.cv_image, RESIZE_WIDTH, RESIZE_HEIGHT, self.device)
 
                 # STEP: 2 feed tensor to detector
                 tensor_mask = self.detector_trt(tensor_img)
@@ -110,7 +111,7 @@ class FireSmokeDetector(object):
                 cv_final_img = draw_mask(cv_org_img, cv_mask)
 
                 # STEP: 5 show the mask
-                cv2.imshow('cv_mask',cv_final_img)
+                cv2.imshow('cv_mask', cv_final_img)
                 cv2.waitKey(3)
 
                 # STEP: 6 save the video.
