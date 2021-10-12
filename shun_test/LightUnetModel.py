@@ -50,9 +50,11 @@ class UnetLight(nn.Module):
 
         super(UnetLight, self).__init__()
         self.in_channels = 3
-        self.begin_channels = 112
+        # 112 --> 64
+        self.begin_channels = 64
         self.out_channels = 1
-        self.features = [55, 27, 13]
+        # [55, 27, 13] --> [64, 128, 256]
+        self.features = [64, 128, 256]
 
         # net
         # input

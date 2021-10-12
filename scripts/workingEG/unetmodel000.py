@@ -55,7 +55,7 @@ class UNET(nn.Module):
             self.ups.append(
                 nn.ConvTranspose2d(feature*2, feature, kernel_size = 2, stride = 2)
             )
-            self.ups.append(DoubleConv(feature*2, feature))
+            self.ups.append(DoubleConv(feature, feature))
 
         # bottle neck
         self.bottleneck = DoubleConv(features[-1], features[-1]*2)

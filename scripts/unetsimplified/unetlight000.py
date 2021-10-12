@@ -209,6 +209,6 @@ class unetlight(nn.Module):
 # # img_tensor = transforms.ToTensor()(img)
 # plt.imshow(transforms.ToPILImage()(img_tensor))
 model = unetlight()
-model.eval()
+
 # preds = model(img_tensor)
 
