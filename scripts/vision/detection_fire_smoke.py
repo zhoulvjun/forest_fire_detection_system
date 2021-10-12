@@ -27,9 +27,13 @@ import cv2
 from cv_bridge import CvBridge
 
 import torch
-from torch2trt import torch2trt
 from torch2trt import TRTModule
-from UnetDetModel import UnetModel
+
+import sys
+PKG_PATH = os.path.expanduser('~/catkin_ws/src/forest_fire_detection_system/') 
+sys.path.append(PKG_PATH+'scripts/')
+from  tools.Tensor_CV2 import cv_to_tesnor, tensor_to_cv, draw_mask
+
 
 # The parameters to control the final imgae size
 BATCH_SIZE = 1
@@ -71,48 +75,6 @@ class FireSmokeDetector(object):
             self.cv_image = self.convertor.imgmsg_to_cv2(
                 self.ros_image, 'bgr8')
 
-    def cv_to_tesnor(self, cv_img, re_width=RESIZE_WIDTH, re_height=RESIZE_HEIGHT):
-        """
-
-        Note: The input tensor could be (0.0~255.0), but should be float
-
-        """
-
-        # cv(BGR) --> tensor(RGB)
-        img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-
-        # resize the image for tensor
-        img = cv2.resize(img, (re_width, re_height))
-
-        # change the shape order and add bathsize
-        img_ = torch.from_numpy(img).float().permute(2, 0, 1).unsqueeze(0)
-
-        return img_.to(self.device)
-
-    def tensor_to_cv(self, ten):
-        """
-
-        Note: The tensor could be any value, but cv_image should in (0~255)
-        <uint8>
-
-        """
-        # tensor --> numpy
-        np_array = ten.detach().numpy()
-
-        # normalize
-        maxValue = np_array.max()
-        np_array = (np_array/maxValue)*255
-        mat = np.uint8(np_array)
-
-        # change thw dimension shape to fit cv image
-        mat = np.transpose(mat, (1, 2, 0))
-
-        return mat
-
-    def show_cv_image(self, mat, title: str):
-        cv2.imshow(title, mat)
-        cv2.waitKey(3)
-
     def run(self):
 
         # for save the masked video
@@ -130,30 +92,26 @@ class FireSmokeDetector(object):
                 # STEP: 0 subscribe the image, covert to cv image.
 
                 # STEP: 1 convert the cv image to tensor.
-                tensor_img = self.cv_to_tesnor(self.cv_image)
+                tensor_img = cv_to_tesnor(self.cv_image, RESIZE_WIDTH, RESIZE_HEIGHT, self.device)
 
                 # STEP: 2 feed tensor to detector
                 tensor_mask = self.detector_trt(tensor_img)
 
                 # STEP: 3 mask to cv image mask
-                cv_mask = self.tensor_to_cv(tensor_mask[0].cpu())
+                cv_mask = tensor_to_cv(tensor_mask[0].cpu())
 
                 # STEP: 4 merge the cv_mask and original cv_mask
-                cv_final_img = cv2.resize(
+                cv_org_img = cv2.resize(
                     self.cv_image, (RESIZE_WIDTH, RESIZE_HEIGHT))
 
                 # save before merge
-                output_org_video.write(cv_final_img)
+                output_org_video.write(cv_org_img)
 
-                cv_final_img[:, :, 0] = cv_mask[:, :, 0] * \
-                    0.5 + cv_final_img[:, :, 0]*0.7
-
-                channel_max = cv_final_img[:, :, 0].max()
-                norm_channel = (cv_final_img[:, :, 0]/channel_max)*255
-                cv_final_img[:, :, 0] = np.uint8(norm_channel)
+                cv_final_img = draw_mask(cv_org_img, cv_mask)
 
                 # STEP: 5 show the mask
-                self.show_cv_image(cv_final_img, 'cv_mask')
+                cv2.imshow('cv_mask',cv_final_img)
+                cv2.waitKey(3)
 
                 # STEP: 6 save the video.
                 output_masked_video.write(cv_final_img)

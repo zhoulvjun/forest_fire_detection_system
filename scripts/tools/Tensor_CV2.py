@@ -24,7 +24,7 @@ from cv_bridge import CvBridge
 import torch
 
 
-def cv_to_tesnor(cv_img, re_width, re_height):
+def cv_to_tesnor(cv_img, re_width, re_height, device):
     """
 
     Note: The input tensor could be (0.0~255.0), but should be float
@@ -40,7 +40,7 @@ def cv_to_tesnor(cv_img, re_width, re_height):
     # change the shape order and add bathsize
     img_ = torch.from_numpy(img).float().permute(2, 0, 1).unsqueeze(0)
 
-    return img_
+    return img_.to(device)
 
 def tensor_to_cv(ten):
     """
@@ -62,18 +62,13 @@ def tensor_to_cv(ten):
 
     return mat
 
-def show_cv_image(mat, title: str):
-    cv2.imshow(title, mat)
-    cv2.waitKey(0)
-
 def draw_mask(cv_org_img, cv_mask):
 
     cv_org_img[:, :, 1] = cv_mask[:, :, 0] * \
-        0.7 + cv_org_img[:, :, 1]*0.5
+        0.5 + cv_org_img[:, :, 1]*0.5
 
     channel_max = cv_org_img[:, :, 1].max()
     norm_channel = (cv_org_img[:, :, 1]/channel_max)*255
     cv_org_img[:, :, 1] = np.uint8(norm_channel)
-
 
     return cv_org_img

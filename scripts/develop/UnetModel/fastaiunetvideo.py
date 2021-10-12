@@ -34,7 +34,7 @@ capture = cv2.VideoCapture("../datas/videoplayback.mp4")
 
 while(1):
     ret, frame = capture.read()
-    img_ = cv_to_tesnor(frame, 255, 255).to(device)
+    img_ = cv_to_tesnor(frame, 255, 255, device)
 
     pre = detector_trt(img_)
     cv_mask = tensor_to_cv(pre[0].cpu())

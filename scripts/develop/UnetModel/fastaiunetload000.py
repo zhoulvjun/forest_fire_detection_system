@@ -1,7 +1,7 @@
 import cv2
 import sys
 sys.path.append('../../')
-from  tools.Tensor_CV2 import tensor_to_cv, show_cv_image, draw_mask
+from  tools.Tensor_CV2 import tensor_to_cv, draw_mask
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
@@ -29,10 +29,12 @@ model.eval()
 # original model
 pre = model(img_)
 cv_mask = tensor_to_cv(pre[0].cpu())
-show_cv_image(cv_mask,"cv")
+cv2.imshow("cv", cv_mask)
+cv2.waitKey(0)
 
 masked_img = draw_mask(cv2.resize(img_cv, (255,255)), cv_mask)
-show_cv_image(masked_img,"cv")
+cv2.imshow("cv", masked_img)
+cv2.waitKey(0)
 
 # optimied model with thesorrt
 init_x = torch.ones((1, 3, 255, 255)).cuda()
@@ -40,9 +42,11 @@ detector_trt = torch2trt(model, [init_x])
 
 pre = detector_trt(img_)
 cv_mask = tensor_to_cv(pre[0].cpu())
-show_cv_image(cv_mask,"cv")
+cv2.imshow("cv", cv_mask)
+cv2.waitKey(0)
 
 masked_img = draw_mask(cv2.resize(img_cv, (255,255)), cv_mask)
-show_cv_image(masked_img,"cv")
+cv2.imshow("cv", masked_img)
+cv2.waitKey(0)
 
 # torch.save(detector_trt.state_dict(), 'final_trt.pth')
