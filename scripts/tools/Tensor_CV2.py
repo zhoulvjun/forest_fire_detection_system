@@ -42,6 +42,7 @@ def cv_to_tesnor(cv_img, re_width, re_height, device):
 
     return img_.to(device)
 
+
 def tensor_to_cv(ten):
     """
 
@@ -61,6 +62,7 @@ def tensor_to_cv(ten):
     mat = np.transpose(mat, (1, 2, 0))
 
     return mat
+
 
 def draw_mask(cv_org_img, cv_mask):
 
