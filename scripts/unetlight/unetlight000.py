@@ -7,6 +7,7 @@
 from typing_extensions import Concatenate
 import torch
 import torch.nn as nn
+from torch.nn.modules import padding
 from torch.nn.modules.activation import ReLU
 from torch.nn.modules.batchnorm import BatchNorm2d
 from torch.nn.modules.channelshuffle import ChannelShuffle
@@ -48,16 +49,22 @@ class Fire(nn.Module):
 
     def __init__(self, in_channels, out_channels):
         super(Fire, self).__init__()
-        self.downSQ = nn.Sequential(
-            # fire?
+        self.downSQ_1 = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.ReLU(inplace = True),
+            nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0, bias = False),
+        )
+        self.downSQ_2 = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False),
             nn.ReLU(inplace = True),
             DWconv(out_channels, out_channels),
             nn.ChannelShuffle(5),
-            nn.ReLU(inplace = True),
         )
     def forward(self, x):
-        return self.downSQ(x)
+        x = torch.cat((self.downSQ_1(x), self.downSQ_2(x)), 1)
+        x = nn.ReLU(x)
+        return x
+        
 class Conv33(nn.Module):
 
     def __init__(self, in_channels, out_channels):
@@ -81,19 +88,33 @@ class Conv11(nn.Module):
     def forward(self, x):
         return self.conv11(x)
 
+class Squeezeconv(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.inconv = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0)
+        self.stream1conv = nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0)
+        self.stream2conv = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
+
+    def forward_1(self, x):
+        x_1 = self.inconv(x)
+        x_1 = self.stream1conv(x_1)
+        return x_1
+    def forward_2(self, x):
+        x_2 = self.inconv(x)
+        x_2 = self.stream2conv(x_2)
+        return x_2
+
+    def forward(self, x):
+        return torch.cat((self.forward_1(x), self.forward_2(x)), 1)
 
 class deFire(nn.Module):
 
     def __init__(self, in_channels, out_channels):
         super(deFire, self).__init__()
         self.upSQ = nn.Sequential(
-            # defire?
-            nn.Conv2d(in_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
-            nn.ReLU(inplace = True),
-            nn.Conv2d(out_channels, out_channels, kernel_size = 1, stride = 1, padding = 0, bias = False),
+            Squeezeconv(in_channels, out_channels),
             nn.ReLU(inplace= True),
             # re-sampling?
-            # ...
             nn.Conv2d(out_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
         )
     def forward(self, x):
@@ -116,35 +137,34 @@ class finalconv(nn.Module):
     def forward(self, x):
         return self.final(x)
 
-class Squeezeconv(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super().__init__()
-        self.inconv = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0)
-        self.stream1conv = nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0)
-        self.stream2conv = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
-
-    def forward_1(self, x):
-        x_1 = self.inconv(x)
-        x_1 = self.stream1conv(x_1)
-        return x_1
-    def forward_2(self, x):
-        x_2 = self.inconv(x)
-        x_2 = self.stream2conv(x_2)
-        return x_2
-
-    def forward(self, x):
-        return torch.cat((self.forward_1(x), self.forward_2(x)), 1)
-
-class attention_gate(nn.Module):
-    
+class agskip(nn.Module): # attetnion gate skip connection
+    def __init__(self, gate_in, gate_out, up_in, up_out, skip_in, skip_out):
+        super(agskip, self).__init__()
+        self.gateconv = nn.Conv2d(gate_in, gate_out, kernel_size=1, stride=1, padding=0)
+        self.inputconv = nn.Conv2d(up_in, up_out, kernel_size=1, stride=2, padding=0)
+        # add
+        #relu
+        self.psi = nn.Conv2d(skip_in, skip_out, kernel_size=1, stride=1, padding=1)
+        self.sigmoid = nn.Sigmoid()
+        # resample to x.size?
+        # matmul x, out
+    def forward(self, x_g, x_up):
+        x_gout = self.gateconv(x_g)
+        x_upout = self.inputconv(x_up)
+        skip_out = torch.add(x_gout, x_upout)
+        skip_out = nn.ReLU(skip_out)
+        skip_out = self.psi(skip_out)
+        skip_out = self.sigmoid(skip_out)
+        y = torch.matmul(skip_out, x_up)
+        return y
 
 # added squeeze to replace the convs in the middle stages.
 class unetlight(nn.Module):
     def __init__(self, 
                  in_channels = 3,
-                 begin_channels = 112,
+                 begin_channels = 64,
                  out_channels = 1,
-                 features = [55, 27, 13]):
+                 features = [64, 128, 256]):
         super(unetlight, self).__init__()
         self.ups = nn.ModuleList()
 
@@ -178,43 +198,44 @@ class unetlight(nn.Module):
         # up sampling part
         for feature in reversed(features):
             self.ups.append(upblock(feature*2, feature))
-        self.ups.append(upblock(features[0], begin_channels))
+            self.ups.append(upblock(features[0], begin_channels))
 
         # final layer
-        self.finalconv = finalconv(begin_channels, in_channels)
+        self.finalconv = finalconv(begin_channels, out_channels)
 
     def forward(self, x):
-        skip_connections = []
-        # 3-112
+        x_g = [] # gate signals
+        # 255-112, 3-64
         x = self.down00(x)
-        skip_connections.append(x)
+        x_g.append(x)
         x = self.pools(x)
-        # 112-55
+        # 112-55, 64-64
         x = self.down01(x)
-        skip_connections.append(x)
+        x_g.append(x)
 
         x = self.down02(x)
-        skip_connections.append(x)
+        x_g.append(x)
         x = self.pools(x)
-        # 55-27
+        # 55-27, 64-128
         x = self.down03(x)
         x = self.pools(x)
-        # 27-13
+        # 27-13, 128-256
         x = self.down04(x)
-        skip_connections.append(x)
+        x_g.append(x)
         x = self.pools(x)
         # 13-13
         x = self.down05(x)
 
-        skip_connections = skip_connections[::-1]
+        x_g = x_g[::-1]
 
-        for idx in range(0, len(self.ups), 1):
+        for idx in range(0, len(self.ups), 2):
             x = self.ups[idx](x)
-            skip_connections = skip_connections[idx]
+            # TODO
+            x_out = self.ups[idx](x) # input_signals, there might be problems
+            skip_connections = agskip(x_g, x_out)[idx]
 
             if x.shape != skip_connections.shape:
                 x = TF.resize(x, size = skip_connections.shape[2:])
-
 
             concat_skip = torch.cat((skip_connections, x), dim = 1)
             x = self.ups[idx+1](concat_skip)
@@ -225,9 +246,10 @@ class unetlight(nn.Module):
 
 def test():
     x = torch.randn(1, 3, 255, 255)
+    print(x.shape)
     model = unetlight()
     y = model(x)
-    print(y.shape)
+    print(y)
 
 test()
 
