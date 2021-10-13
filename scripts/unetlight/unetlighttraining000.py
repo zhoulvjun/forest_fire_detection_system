@@ -40,7 +40,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.to(device = DEVICE)
-        targets = targets.float().unsqueeze(1).to(device = DEVICE) 
+        targets = targets.float().unsqueeze(0).to(device = DEVICE) 
         # forward
         with torch.cuda.amp.autocast():
             predictions = model(data)
@@ -56,8 +56,9 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         loop.set_postfix(loss = loss.item()) # for 1 epoch
 
     model = unetlight(in_channels=3, out_channels=1).to(DEVICE)
-    loss_fn = nn.BCEWithLogitsLoss() # binary cross-entropy with logits
-    # loss_fn = nn.BCELoss()
+    # loss_fn = nn.BCEWithLogitsLoss() # binary cross-entropy with logits
+    loss_fn = nn.Sigmoid(nn.CrossEntropyLoss())
+    
     optimizer = optim.Adam(model.parameters(), lr = LEARNING_RATE)
 
     # data_loader

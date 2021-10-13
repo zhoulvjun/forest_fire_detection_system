@@ -116,6 +116,27 @@ class finalconv(nn.Module):
     def forward(self, x):
         return self.final(x)
 
+class Squeezeconv(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.inconv = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0)
+        self.stream1conv = nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0)
+        self.stream2conv = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
+
+    def forward_1(self, x):
+        x_1 = self.inconv(x)
+        x_1 = self.stream1conv(x_1)
+        return x_1
+    def forward_2(self, x):
+        x_2 = self.inconv(x)
+        x_2 = self.stream2conv(x_2)
+        return x_2
+
+    def forward(self, x):
+        return torch.cat((self.forward_1(x), self.forward_2(x)), 1)
+
+class attention_gate(nn.Module):
+    
 
 # added squeeze to replace the convs in the middle stages.
 class unetlight(nn.Module):
@@ -201,14 +222,14 @@ class unetlight(nn.Module):
         return self.finalconv(x)
 
 # test whether net model works fine
-# load the image
-# img_path = "datas/wildfireeg001.jpg"
-# img = Image.open(img_path)
-# img_tensor = transforms.ToTensor()(img).unsqueeze(0)
-# print(img_tensor)
-# # img_tensor = transforms.ToTensor()(img)
-# plt.imshow(transforms.ToPILImage()(img_tensor))
-model = unetlight()
+
+def test():
+    x = torch.randn(1, 3, 255, 255)
+    model = unetlight()
+    y = model(x)
+    print(y.shape)
+
+test()
 
 # preds = model(img_tensor)
 
