@@ -57,11 +57,7 @@ def main():
             A.Rotate(limit=35, p=1.0),
             A.HorizontalFlip(p=0.5),
             A.VerticalFlip(p=0.1),
-            A.Normalize(
-                mean=[0.0, 0.0, 0.0],
-                std=[1.0, 1.0, 1.0],
-                max_pixel_value=255.0,
-            ),
+            A.Normalize(),
             ToTensorV2(),
         ],
     )
@@ -69,11 +65,7 @@ def main():
     val_transforms = A.Compose(
         [
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Normalize(
-                mean=[0.0, 0.0, 0.0],
-                std=[1.0, 1.0, 1.0],
-                max_pixel_value=255.0,
-            ),
+            A.Normalize(),
             ToTensorV2(),
         ],
     )
@@ -120,6 +112,7 @@ def main():
         )
 
     torch.save(model.state_dict(), 'final.pth')
+    print("save the model as final.pth!\n")
 
 if __name__ == "__main__":
     main()

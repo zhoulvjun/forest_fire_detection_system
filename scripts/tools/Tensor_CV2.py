@@ -27,6 +27,8 @@ import torch
 def cv_to_tesnor(cv_img, re_width, re_height, device):
     """
 
+    Description: This function convert "BGR" image --> tensor(1, 3, H, W)
+
     Note: The input tensor could be (0.0~255.0), but should be float
 
     """
@@ -67,7 +69,7 @@ def tensor_to_cv(ten):
 def draw_mask(cv_org_img, cv_mask):
 
     cv_org_img[:, :, 1] = cv_mask[:, :, 0] * \
-        0.5 + cv_org_img[:, :, 1]*0.5
+        0.8 + cv_org_img[:, :, 1]*0.5
 
     channel_max = cv_org_img[:, :, 1].max()
     norm_channel = (cv_org_img[:, :, 1]/channel_max)*255

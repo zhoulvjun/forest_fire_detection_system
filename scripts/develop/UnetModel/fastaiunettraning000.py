@@ -36,16 +36,16 @@ from fastaiunetutils000 import (
 # hyper-parameters etc.
 LEARNING_RATE = 1e-6
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-BATCH_SIZE = 2  # 32
-NUM_EPOCHS = 5
+BATCH_SIZE = 4  # 32
+NUM_EPOCHS = 2
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 255  # original 1280
 IMAGE_WIDTH = 255  # original 1918
 PIN_MEMORY = True
 # LOAD_MODEL = False # original
 LOAD_MODEL = False
-TRAIN_IMG_DIR = '../datas/dataset/train/images'
-TRAIN_MASK_DIR = '../datas/dataset/train/masks'
+TRAIN_IMG_DIR = '../datas/Smoke_segmentation/all_image'
+TRAIN_MASK_DIR = '../datas/Smoke_segmentation/all_mask'
 VAL_IMG_DIR = '../datas/Smoke_segmentation/testing'
 VAL_MASK_DIR = '../datas/Smoke_segmentation/gt_testing'
 

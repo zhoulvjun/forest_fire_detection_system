@@ -25,6 +25,11 @@ import sys
 sys.path.append('../../')
 from  tools.Tensor_CV2 import tensor_to_cv, draw_mask, cv_to_tesnor
 
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+
+from sklearn.preprocessing import MinMaxScaler
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 detector_trt = TRTModule().to(device)
 detector_trt.load_state_dict(torch.load("./final_trt.pth"))
@@ -32,9 +37,25 @@ print("loading params from: final_trt.pth")
 
 capture = cv2.VideoCapture("../datas/videoplayback.mp4")
 
+val_transforms = A.Compose(
+    [
+        A.Resize(height=255, width=255),
+        A.Normalize(
+            mean=[0.0, 0.0, 0.0],
+            std=[1.0, 1.0, 1.0],
+            max_pixel_value=255.0,
+        ),
+        ToTensorV2(),
+    ],
+)
+
 while(1):
     ret, frame = capture.read()
-    img_ = cv_to_tesnor(frame, 255, 255, device)
+    img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    
+    augmentations = val_transforms(image=img_rgb)
+    img_ = augmentations['image']
+    img_ = img_.float().unsqueeze(0).to(device=device)
 
     pre = detector_trt(img_)
     cv_mask = tensor_to_cv(pre[0].cpu())

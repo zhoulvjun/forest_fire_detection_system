@@ -30,18 +30,18 @@ detector_trt = TRTModule().to(device)
 detector_trt.load_state_dict(torch.load("./final_trt.pth"))
 print("loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth")
 
-capture = cv2.VideoCapture("../datas/videoplayback.mp4")
+capture = cv2.VideoCapture("../datas/DJI_0261.MP4")
 
 while(1):
     ret, frame = capture.read()
     img_ = cv_to_tesnor(frame, 255, 255, device)
 
-    pre = detector_trt(img_)
+    pre = torch.sigmoid(detector_trt(img_))
     cv_mask = tensor_to_cv(pre[0].cpu())
     # show_cv_image(cv_mask,"cv")
 
     masked_img = draw_mask(cv2.resize(frame, (255,255)), cv_mask)
-    cv2.imshow("mask",masked_img)
+    cv2.imshow("mask",cv_mask)
 
     if cv2.waitKey(1)&0xFF==ord('q'):
         break
