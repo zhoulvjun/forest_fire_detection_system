@@ -5,7 +5,7 @@ from  tools.Tensor_CV2 import tensor_to_cv, draw_mask
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from fastaiunetmodel000 import pureunet  # seg 4 classes
+from model import UNET  # seg 4 classes
 import matplotlib.pyplot as plt
 
 from torch2trt import torch2trt
@@ -22,7 +22,7 @@ img = Image.open("../datas/database/000023.jpg")
 img_cv = cv2.imread("../datas/database/000023.jpg")
 img_ = transform_valid(img).unsqueeze(0).to(DEVICE)
 
-model = pureunet(in_channels=3, out_channels=1).to(DEVICE)
+model = UNET(in_channels=3, out_channels=1).to(DEVICE)
 model.load_state_dict(torch.load("final.pth"))
 model.eval()
 

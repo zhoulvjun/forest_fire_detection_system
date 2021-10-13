@@ -1,6 +1,8 @@
 __pycache__/
+develop/datas/
 *.pth
 *.jpg
+*.png
 *.pth.tar
 *.avi
 *.mp4

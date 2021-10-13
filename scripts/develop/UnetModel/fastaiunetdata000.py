@@ -40,8 +40,7 @@ class LoadDataset(Dataset):
         # mask_path is going to be 4classes and separate by colors in RGB
         mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)
         # to see the mask, where it equals to 255
-        # mask[mask == 255] = 1.0  # going to use sigmoid
-        mask = mask/255.0
+        mask[mask == 255] = 1.0  # going to use sigmoid
 
         if self.transform is not None:
             # data augmentation

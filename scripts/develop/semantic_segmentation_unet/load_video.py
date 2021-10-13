@@ -19,7 +19,7 @@
 
 import cv2
 import torch
-from torch2trt import TRTModule, torch2trt
+from torch2trt import TRTModule
 
 import sys
 sys.path.append('../../')
@@ -28,7 +28,7 @@ from  tools.Tensor_CV2 import tensor_to_cv, draw_mask, cv_to_tesnor
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 detector_trt = TRTModule().to(device)
 detector_trt.load_state_dict(torch.load("./final_trt.pth"))
-print("loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth")
+print("loading params from: final_trt.pth")
 
 capture = cv2.VideoCapture("../datas/videoplayback.mp4")
 
@@ -49,3 +49,4 @@ while(1):
 capture.release()
 cv2.destroyAllWindows()
 print("end")
+

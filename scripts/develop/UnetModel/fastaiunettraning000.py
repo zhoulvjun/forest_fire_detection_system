@@ -44,8 +44,8 @@ IMAGE_WIDTH = 255  # original 1918
 PIN_MEMORY = True
 # LOAD_MODEL = False # original
 LOAD_MODEL = False
-TRAIN_IMG_DIR = '../datas/Smoke_segmentation/all_image'
-TRAIN_MASK_DIR = '../datas/Smoke_segmentation/all_mask'
+TRAIN_IMG_DIR = '../datas/dataset/train/images'
+TRAIN_MASK_DIR = '../datas/dataset/train/masks'
 VAL_IMG_DIR = '../datas/Smoke_segmentation/testing'
 VAL_MASK_DIR = '../datas/Smoke_segmentation/gt_testing'
 
