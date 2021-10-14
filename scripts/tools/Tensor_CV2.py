@@ -68,11 +68,13 @@ def tensor_to_cv(ten):
 
 def draw_mask(cv_org_img, cv_mask):
 
-    cv_org_img[:, :, 1] = cv_mask[:, :, 0] * \
-        0.3 + cv_org_img[:, :, 1]*0.7
+    signle_mask = cv_mask[:, :, 0]
+    target_channel = cv_org_img[:, :, 2]
 
-    channel_max = cv_org_img[:, :, 1].max()
-    norm_channel = (cv_org_img[:, :, 1]/channel_max)*255.0
-    cv_org_img[:, :, 1] = np.uint8(norm_channel)
+    index = (signle_mask > 254)
+    target_channel[index] = (signle_mask[index]*0.7 +
+                             target_channel[index]*0.3) .astype(np.uint8)
+
+    cv_org_img[:, :, 2] = target_channel
 
     return cv_org_img

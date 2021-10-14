@@ -22,9 +22,9 @@ val_transforms = A.Compose(
     ],
 )
 
-img_rgb = np.array(Image.open("../datas/Smoke_segmentation/training/image_00022.jpg"))
+img_rgb = np.array(Image.open("../datas/Smoke_segmentation/training/image_00001.jpg"))
 
-img_cv = cv2.imread("../datas/Smoke_segmentation/training/image_00022.jpg")
+img_cv = cv2.imread("../datas/Smoke_segmentation/training/image_00001.jpg")
 
 augmentations = val_transforms(image=img_rgb)
 img_ = augmentations['image']
@@ -50,11 +50,11 @@ cv2.waitKey(0)
 
 # optimied model with thesorrt
 init_x = torch.ones((1, 3, 255, 255)).cuda()
-detector_trt = torch2trt(model, [init_x])
+detector_trt = torch2trt(model, [init_x], fp16_mode=True)
 
 with torch.no_grad():
     preds = torch.sigmoid(detector_trt(img_))
-    preds = (preds > 0.325)
+    preds = (preds > 0.4)
 
 cv_mask = tensor_to_cv(preds[0].cpu())
 cv2.imshow("cv", cv_mask)
