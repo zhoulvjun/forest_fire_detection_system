@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
     while not rospy.is_shutdown():
         ret, frame = capture.read()
-        c_b, c_g, c_r = cv2.split(frame)
-        frame = cv2.merge([c_r, c_g, c_b])
+        # c_b, c_g, c_r = cv2.split(frame)
+        # frame = cv2.merge([c_r, c_g, c_b])
         ros_frame = Image()
         header = Header(stamp=rospy.Time.now())
         header.frame_id = "Camera"
