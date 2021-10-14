@@ -4,7 +4,7 @@
 #
 #   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
-#   @Filename: fastaiunetvideo.py
+#   @Filename: load_video.py
 #
 #   @Author: Shun Li
 #
@@ -35,7 +35,7 @@ detector_trt = TRTModule().to(device)
 detector_trt.load_state_dict(torch.load("./final_trt.pth"))
 print("loading params from: final_trt.pth")
 
-capture = cv2.VideoCapture("../datas/videoplayback.mp4")
+capture = cv2.VideoCapture("../datas/VID_20211014_145418.mp4")
 
 val_transforms = A.Compose(
     [
@@ -60,7 +60,8 @@ while(1):
     cv_mask = tensor_to_cv(preds[0].cpu())
 
     masked_img = draw_mask(cv2.resize(frame, (255,255)), cv_mask)
-    cv2.imshow("mask",masked_img)
+    # cv2.imshow("mask",masked_img)
+    cv2.imshow("mask",cv_mask)
 
     if cv2.waitKey(1)&0xFF==ord('q'):
         break
