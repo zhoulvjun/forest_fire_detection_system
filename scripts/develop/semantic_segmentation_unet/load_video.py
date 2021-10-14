@@ -22,6 +22,8 @@ import torch
 from torch2trt import TRTModule
 
 import sys
+import time
+import os
 sys.path.append('../../')
 from  tools.Tensor_CV2 import tensor_to_cv, draw_mask, cv_to_tesnor
 
@@ -46,9 +48,11 @@ val_transforms = A.Compose(
 )
 
 while(1):
+    start_time = time.time()
+
     ret, frame = capture.read()
     img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    
+
     augmentations = val_transforms(image=img_rgb)
     img_ = augmentations['image']
     img_ = img_.float().unsqueeze(0).to(device=device)
@@ -62,6 +66,10 @@ while(1):
     masked_img = draw_mask(cv2.resize(frame, (255,255)), cv_mask)
     # cv2.imshow("mask",masked_img)
     cv2.imshow("mask",cv_mask)
+
+    end_time = time.time()
+    time_dura =end_time - start_time
+    print("FPS:%.2f" % (1/time_dura))
 
     if cv2.waitKey(1)&0xFF==ord('q'):
         break
