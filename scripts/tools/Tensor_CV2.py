@@ -60,7 +60,7 @@ def tensor_to_cv(ten):
     np_array = (np_array/maxValue)*255
     mat = np.uint8(np_array)
 
-    # change thw dimension shape to fit cv image
+    # change the dimension shape to fit cv image
     mat = np.transpose(mat, (1, 2, 0))
 
     return mat
@@ -69,10 +69,10 @@ def tensor_to_cv(ten):
 def draw_mask(cv_org_img, cv_mask):
 
     cv_org_img[:, :, 1] = cv_mask[:, :, 0] * \
-        0.8 + cv_org_img[:, :, 1]*0.5
+        0.3 + cv_org_img[:, :, 1]*0.7
 
     channel_max = cv_org_img[:, :, 1].max()
-    norm_channel = (cv_org_img[:, :, 1]/channel_max)*255
+    norm_channel = (cv_org_img[:, :, 1]/channel_max)*255.0
     cv_org_img[:, :, 1] = np.uint8(norm_channel)
 
     return cv_org_img

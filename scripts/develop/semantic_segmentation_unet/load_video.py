@@ -35,16 +35,12 @@ detector_trt = TRTModule().to(device)
 detector_trt.load_state_dict(torch.load("./final_trt.pth"))
 print("loading params from: final_trt.pth")
 
-capture = cv2.VideoCapture("../datas/videoplayback.mp4")
+capture = cv2.VideoCapture("../datas/DJI_0261.MP4")
 
 val_transforms = A.Compose(
     [
         A.Resize(height=255, width=255),
-        A.Normalize(
-            mean=[0.0, 0.0, 0.0],
-            std=[1.0, 1.0, 1.0],
-            max_pixel_value=255.0,
-        ),
+        A.Normalize(),
         ToTensorV2(),
     ],
 )
@@ -57,12 +53,14 @@ while(1):
     img_ = augmentations['image']
     img_ = img_.float().unsqueeze(0).to(device=device)
 
-    pre = detector_trt(img_)
-    cv_mask = tensor_to_cv(pre[0].cpu())
-    # show_cv_image(cv_mask,"cv")
+    with torch.no_grad():
+        preds = torch.sigmoid(detector_trt(img_))
+        preds = (preds > 0.375)
 
-    masked_img = draw_mask(cv2.resize(frame, (255,255)), cv_mask)
-    cv2.imshow("mask",masked_img)
+    cv_mask = tensor_to_cv(preds[0].cpu())
+
+    # masked_img = draw_mask(cv2.resize(frame, (255,255)), cv_mask)
+    cv2.imshow("mask",cv_mask)
 
     if cv2.waitKey(1)&0xFF==ord('q'):
         break
