@@ -17,7 +17,6 @@
 #
 # ------------------------------------------------------------------------------
 
-from tools.Tensor_CV2 import cv_to_tesnor, tensor_to_cv, draw_mask
 import os
 
 import rospy
@@ -28,10 +27,13 @@ from cv_bridge import CvBridge
 
 import torch
 from torch2trt import TRTModule
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 
 import sys
 PKG_PATH = os.path.expanduser('~/catkin_ws/src/forest_fire_detection_system/')
 sys.path.append(PKG_PATH+'scripts/')
+from tools.Tensor_CV2 import cv_to_tesnor, tensor_to_cv, draw_mask
 
 
 # The parameters to control the final imgae size
@@ -54,6 +56,11 @@ class FireSmokeDetector(object):
             "dji_osdk_ros/main_camera_images", Image, self.image_cb)
 
         # detection model
+        self.val_transforms = A.Compose(
+            [ A.Resize(height=255, width=255),
+                A.Normalize(),
+                ToTensorV2(),
+            ])
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         self.param_path = os.path.expanduser(
@@ -92,8 +99,9 @@ class FireSmokeDetector(object):
                 # STEP: 0 subscribe the image, covert to cv image.
 
                 # STEP: 1 convert the cv image to tensor.
-                tensor_img = cv_to_tesnor(
-                    self.cv_image, RESIZE_WIDTH, RESIZE_HEIGHT, self.device)
+                augmentations = self.val_transforms(image=self.cv_image)
+                img_ = augmentations['image']
+                tensor_img = img_.float().unsqueeze(0).to(self.device)
 
                 # STEP: 2 feed tensor to detector
                 with torch.no_grad():
