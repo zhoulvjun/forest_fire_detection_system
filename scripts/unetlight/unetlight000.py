@@ -237,7 +237,11 @@ class unetlight(nn.Module):
         x_31 = self.down31(x_30)
         x_32 = self.down32(x_31)
         x_33 = self.down33(x_32)
-        print("down3 shape:", x_25.shape)
+        print("down3 shape:", x_33.shape)
+
+        print("skip1 shape:", x_skip1.shape)
+        print("skip2 shape:", x_skip2.shape)
+        print("skip3 shape:", x_skip3.shape)
 
         x_up3 = x_33
         x_up10 = x_33
