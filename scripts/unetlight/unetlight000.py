@@ -58,11 +58,11 @@ class Fire(nn.Module):
             nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0, bias=False),
             nn.ReLU(inplace = True),
             DWconv(out_channels, out_channels),
-            nn.ChannelShuffle(5),
+            nn.ChannelShuffle(2),
         )
     def forward(self, x):
         x = torch.cat((self.downSQ_1(x), self.downSQ_2(x)), 1)
-        x = nn.ReLU(x)
+        x = nn.ReLU()(x)
         return x
         
 class Conv33(nn.Module):
@@ -86,7 +86,7 @@ class Conv11(nn.Module):
             nn.ReLU(inplace = True),
         )
     def forward(self, x):
-        return self.conv11(x)
+        return self.conv1(x)
 
 class Squeezeconv(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -120,15 +120,15 @@ class deFire(nn.Module):
     def forward(self, x):
         return self.upSQ(x)
 
-class upblock(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(upblock, self).__init__()
-        self.up = nn.Sequential(
-            deFire(in_channels, out_channels*2),
-            Conv33(out_channels*2, out_channels)
-        )
-    def forward(self, x):
-        return self.up(x)
+# class upblock(nn.Module):
+#     def __init__(self, in_channels, out_channels):
+#         super(upblock, self).__init__()
+#         self.up = nn.Sequential(
+#             deFire(in_channels, out_channels*2),
+#             Conv33(out_channels*2, out_channels)
+#         )
+#     def forward(self, x):
+#         return self.up(x)
 
 class finalconv(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -138,24 +138,24 @@ class finalconv(nn.Module):
         return self.final(x)
 
 class agskip(nn.Module): # attetnion gate skip connection
-    def __init__(self, gate_in, gate_out, up_in, up_out, skip_in, skip_out):
+    def __init__(self, g_in, up_in):
         super(agskip, self).__init__()
-        self.gateconv = nn.Conv2d(gate_in, gate_out, kernel_size=1, stride=1, padding=0)
-        self.inputconv = nn.Conv2d(up_in, up_out, kernel_size=1, stride=2, padding=0)
+        self.gateconv = nn.Conv2d(g_in, g_in, kernel_size=1, stride=1, padding=0)
+        self.inputconv = nn.Conv2d(up_in, g_in, kernel_size=1, stride=1, padding=0)
         # add
         #relu
-        self.psi = nn.Conv2d(skip_in, skip_out, kernel_size=1, stride=1, padding=1)
-        self.sigmoid = nn.Sigmoid()
+        self.psi = nn.Conv2d(g_in, g_in, kernel_size=1, stride=1, padding=0)
+        self.sig = nn.Sigmoid()
         # resample to x.size?
         # matmul x, out
-    def forward(self, x_g, x_up):
-        x_gout = self.gateconv(x_g)
-        x_upout = self.inputconv(x_up)
-        skip_out = torch.add(x_gout, x_upout)
-        skip_out = nn.ReLU(skip_out)
-        skip_out = self.psi(skip_out)
-        skip_out = self.sigmoid(skip_out)
-        y = torch.matmul(skip_out, x_up)
+    def forward(self, g_in, up_in):
+        g_out = self.gateconv(g_in)
+        up_out = self.inputconv(up_in)
+        a_out = torch.add(g_out, up_out)
+        x = nn.ReLU()(a_out)
+        x = self.psi(x)
+        x = self.sig(x)
+        y = torch.matmul(x, up_in)
         return y
 
 # added squeeze to replace the convs in the middle stages.
@@ -163,93 +163,115 @@ class unetlight(nn.Module):
     def __init__(self, 
                  in_channels = 3,
                  begin_channels = 64,
-                 out_channels = 1,
-                 features = [64, 128, 256]):
+                 out_channels = 1,):
         super(unetlight, self).__init__()
-        self.ups = nn.ModuleList()
+        
 
         self.pools = nn.MaxPool2d(kernel_size=3, stride=1)
 
         # down sampling part
-        # add pools, skip
         self.down00 = Conv0(in_channels, begin_channels)
-        self.down01 = nn.ModuleList()
-        # self.down02 = nn.ModuleList()
-        # self.down03 = nn.ModuleList()
-        self.down04 = nn.ModuleList()
-        self.down05 = nn.ModuleList()
+        # add pool
 
+        self.down11 = Fire(begin_channels, 64)
+        self.down12 = Fire(128, 64)
         # add skip
-        self.down01.append(Fire(begin_channels, features[0]))
-        self.down01.append(Fire(features[0], features[0]))
+        self.down13 = Fire(128, 64)
         # add pools
-        self.down02 = Fire(features[0], features[0])
+
+        self.down21 = Fire(128, 128)
         # add skip
-        self.down03 = Fire(features[0], features[1])
+        self.down22 = Fire(256, 128)
+        self.down23 = Fire(256, 128)
+        self.down24 = Fire(256, 256)
         # add pools
-        self.down04.append(Fire(features[1], features[1]))
-        self.down04.append(Fire(features[1], features[1]))
-        self.down04.append(Fire(features[1], features[1]))
+
         # final down sampling (bottle neck)
-        self.down05.append(Fire(features[1], features[2]))
-        self.down05.append(Conv11(features[2], features[2]))
-        self.down05.append(Conv33(features[2], features[2]))
+        self.down31 = Fire(512, 256)
+        self.down32 = Conv11(512, 512)
+        self.down33 = Conv33(512, 512)
+
+        # skip connections
 
         # up sampling part
-        for feature in reversed(features):
-            self.ups.append(upblock(feature*2, feature))
-            self.ups.append(upblock(features[0], begin_channels))
+        self.ups11 = deFire(512, 128)
+        self.ups12 = agskip(256, 512)
+        self.ups13 = Conv33(512, 256)
 
+        self.ups21 = deFire(256, 64)
+        self.ups22 = agskip(128, 256)
+        self.ups23 = Conv33(256, 128)
+
+        self.ups31 = deFire(128, 32)
+        self.ups32 = agskip(64, 128)
+        self.ups33 = Conv33(128, 64)
+        
         # final layer
-        self.finalconv = finalconv(begin_channels, out_channels)
+        self.finalconv = finalconv(64, 1)
 
     def forward(self, x):
-        x_g = [] # gate signals
-        # 255-112, 3-64
-        x = self.down00(x)
-        x_g.append(x)
-        x = self.pools(x)
-        # 112-55, 64-64
-        x = self.down01(x)
-        x_g.append(x)
+        x_00 = x
+        x_01 = self.down00(x_00)
+        x_skip1 = x_01
+        x_02 = self.pools(x_01)
+        print("down0 shape:", x_02.shape)
 
-        x = self.down02(x)
-        x_g.append(x)
-        x = self.pools(x)
-        # 55-27, 64-128
-        x = self.down03(x)
-        x = self.pools(x)
-        # 27-13, 128-256
-        x = self.down04(x)
-        x_g.append(x)
-        x = self.pools(x)
-        # 13-13
-        x = self.down05(x)
+        x_10 = x_02
+        x_11 = self.down11(x_10)
+        x_12 = self.down12(x_11)
+        x_skip2 = x_12
+        x_13 = self.down13(x_12)
+        x_14 = self.pools(x_13)
+        print("down1 shape:", x_14.shape)
 
-        x_g = x_g[::-1]
+        x_20 = x_14
+        x_21 = self.down21(x_20)
+        x_skip3 = x_21
+        x_22 = self.down22(x_21)
+        x_23 = self.down23(x_22)
+        x_24 = self.down24(x_23)
+        x_25 = self.pools(x_24)
+        print("down2 shape:", x_25.shape)
 
-        for idx in range(0, len(self.ups), 2):
-            x = self.ups[idx](x)
-            # TODO
-            x_out = self.ups[idx](x) # input_signals, there might be problems
-            skip_connections = agskip(x_g, x_out)[idx]
+        x_30 = x_25
+        x_31 = self.down31(x_30)
+        x_32 = self.down32(x_31)
+        x_33 = self.down33(x_32)
+        print("down3 shape:", x_25.shape)
 
-            if x.shape != skip_connections.shape:
-                x = TF.resize(x, size = skip_connections.shape[2:])
+        x_up3 = x_33
+        x_up10 = x_33
+        x_up111 = self.ups11(x_up10)
+        x_up112 = self.ups12(x_skip3, x_up3)
+        x_up12 = torch.cat((x_up111, x_up112), 1)
+        x_up13 = self.ups13(x_up12)
 
-            concat_skip = torch.cat((skip_connections, x), dim = 1)
-            x = self.ups[idx+1](concat_skip)
+        x_up20 = x_up13
+        x_up2 = x_up13
+        x_up211 = self.ups21(x_up20)
+        x_up212 = self.ups22(x_skip2, x_up2)
+        x_up22 = torch.cat((x_up211, x_up212), 1)
+        x_up23 = self.ups23(x_up22)
 
-        return self.finalconv(x)
+        x_up30 = x_up23
+        x_up1 = x_up23
+        x_up311 = self.ups31(x_up30)
+        x_up312 = self.ups(x_skip1, x_up1)
+        x_up32 = torch.cat((x_up311, x_up312), 1)
+        x_up33 = self.ups33(x_up32)
+
+        x_out = self.finalconv(x_up33)
+        y = x_out
+        return y
 
 # test whether net model works fine
 
 def test():
     x = torch.randn(1, 3, 255, 255)
-    print(x.shape)
+    print("input size", x.shape)
     model = unetlight()
     y = model(x)
-    print(y)
+    print(y.shape)
 
 test()
 
