@@ -1,0 +1,4 @@
+<launch>
+    <node name="detection_fire_smoke_node" pkg="forest_fire_detection_system" type="detection_fire_smoke.py" args="" respawn="true" output="screen"></node>
+    <node name="toggle_vechile_camera_node" pkg="forest_fire_detection_system" type="toggle_vechile_camera.py" args="" respawn="true" output="screen"></node>
+</launch>
