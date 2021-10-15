@@ -89,7 +89,7 @@ class FireSmokeDetector(object):
             *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
         # for save the masked video
         output_masked_video = cv2.VideoWriter('mask_video.avi', cv2.VideoWriter_fourcc(
-            *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
+            *'DIVX'), 5, (RESIZE_WIDTH*2, RESIZE_HEIGHT))
 
         while not rospy.is_shutdown():
 
@@ -122,11 +122,14 @@ class FireSmokeDetector(object):
                 cv_final_img = draw_mask(cv_org_img, cv_mask)
 
                 # STEP: 5 show the mask
-                cv2.imshow('cv_mask', cv_final_img)
+                cv_3_mask = cv2.merge((cv_mask,cv_mask,cv_mask))
+                show_img = cv2.hconcat([cv_final_img,cv_3_mask])
+                cv2.imshow('cv_mask', show_img)
                 cv2.waitKey(3)
 
                 # STEP: 6 save the video.
-                output_masked_video.write(cv_final_img)
+                # output_masked_video.write(cv_final_img)
+                output_masked_video.write(show_img)
 
             self.rate.sleep()
 
