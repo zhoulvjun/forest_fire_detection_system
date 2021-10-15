@@ -36,7 +36,7 @@ model.eval()
 
 with torch.no_grad():
     preds = torch.sigmoid(model(img_))
-    preds = (preds > 0.3)
+    preds = (preds > 0.5)
 
 # original model
 cv_mask = tensor_to_cv(preds[0].cpu())
@@ -54,7 +54,7 @@ detector_trt = torch2trt(model, [init_x], fp16_mode=True)
 
 with torch.no_grad():
     preds = torch.sigmoid(detector_trt(img_))
-    preds = (preds > 0.4)
+    preds = (preds > 0.5)
 
 cv_mask = tensor_to_cv(preds[0].cpu())
 cv2.imshow("cv", cv_mask)

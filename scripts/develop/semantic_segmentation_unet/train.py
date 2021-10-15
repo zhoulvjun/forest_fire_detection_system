@@ -17,14 +17,14 @@ from utils import (
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 8
-NUM_EPOCHS = 3
+NUM_EPOCHS = 6
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 255  # 1280 originally
 IMAGE_WIDTH = 255  # 1918 originally
 PIN_MEMORY = True
-LOAD_MODEL = True
-TRAIN_IMG_DIR = "../datas/NAVlab_smoke_database/images"
-TRAIN_MASK_DIR = "../datas/NAVlab_smoke_database/binary_label"
+LOAD_MODEL = False
+TRAIN_IMG_DIR = "../datas/Smoke_segmentation/all_mask"
+TRAIN_MASK_DIR = "../datas/Smoke_segmentation/binary_label"
 VAL_IMG_DIR = "../datas/Smoke_segmentation/testing"
 VAL_MASK_DIR = "../datas/Smoke_segmentation/gt_testing"
 

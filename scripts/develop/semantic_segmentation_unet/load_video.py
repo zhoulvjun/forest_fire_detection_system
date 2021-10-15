@@ -59,7 +59,7 @@ while(1):
 
     with torch.no_grad():
         preds = torch.sigmoid(detector_trt(img_))
-        preds = (preds > 0.4)
+        preds = (preds > 0.3)
 
     cv_mask = tensor_to_cv(preds[0].cpu())
 
