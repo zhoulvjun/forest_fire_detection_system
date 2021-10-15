@@ -88,74 +88,56 @@ class Conv11(nn.Module):
     def forward(self, x):
         return self.conv1(x)
 
-class Squeezeconv(nn.Module):
+class upSqueezeconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.inconv = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0)
-        self.stream1conv = nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0)
-        self.stream2conv = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1)
-
-    def forward_1(self, x):
-        x_1 = self.inconv(x)
-        x_1 = self.stream1conv(x_1)
-        return x_1
-    def forward_2(self, x):
-        x_2 = self.inconv(x)
-        x_2 = self.stream2conv(x_2)
-        return x_2
-
+        self.conv1 = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=1, stride=1, padding=0)
+        self.conv3 = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
     def forward(self, x):
-        return torch.cat((self.forward_1(x), self.forward_2(x)), 1)
+        x = torch.cat((self.conv1(x), self.conv3(x)), 1)
+        return x
 
 class deFire(nn.Module):
-
     def __init__(self, in_channels, out_channels):
         super(deFire, self).__init__()
-        self.upSQ = nn.Sequential(
-            Squeezeconv(in_channels, out_channels),
-            nn.ReLU(inplace= True),
-            # re-sampling?
-            nn.Conv2d(out_channels, out_channels, kernel_size = 3, stride = 1, padding = 1, bias = False),
-        )
+        self.upsqueeze = upSqueezeconv(in_channels, out_channels)
+        self.conv1 = nn.ConvTranspose2d(out_channels, out_channels, kernel_size=1, stride=1, padding=0)
+        self.relu = nn.ReLU()
+        self.conv3 = nn.ConvTranspose2d(out_channels, out_channels, kernel_size = 3, stride = 1, padding = 1)
     def forward(self, x):
-        return self.upSQ(x)
-
-# class upblock(nn.Module):
-#     def __init__(self, in_channels, out_channels):
-#         super(upblock, self).__init__()
-#         self.up = nn.Sequential(
-#             deFire(in_channels, out_channels*2),
-#             Conv33(out_channels*2, out_channels)
-#         )
-#     def forward(self, x):
-#         return self.up(x)
+        x = self.upsqueeze(x)
+        x = self.conv1(x)
+        x = self.relu(x)
+        x = self.conv3(x)
+        x = self.relu(x)
+        return x
 
 class finalconv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(finalconv, self).__init__()
-        self.final = nn.Conv2d(in_channels, out_channels, 3, 1, 1)
+        self.final = nn.ConvTranspose2d(in_channels, out_channels, 3, 1, 1)
     def forward(self, x):
         return self.final(x)
 
 class agskip(nn.Module): # attetnion gate skip connection
-    def __init__(self, g_in, up_in):
+    def __init__(self, up_in, up_out):
         super(agskip, self).__init__()
-        self.gateconv = nn.Conv2d(g_in, g_in, kernel_size=1, stride=1, padding=0)
-        self.inputconv = nn.Conv2d(up_in, g_in, kernel_size=1, stride=1, padding=0)
-        # add
+        self.upconv = nn.Conv2d(up_in, up_in/2, kernel_size=1, stride=1, padding=0)
+        self.gateconv = nn.Conv2d(up_in/2, up_in/2, kernel_size=1, stride=1, padding=0)
+        self.add = torch.add()
         #relu
-        self.psi = nn.Conv2d(g_in, g_in, kernel_size=1, stride=1, padding=0)
+        self.psi = nn.Conv2d(up_in/2, up_out, kernel_size=1, stride=1, padding=0)
         self.sig = nn.Sigmoid()
         # resample to x.size?
         # matmul x, out
-    def forward(self, g_in, up_in):
-        g_out = self.gateconv(g_in)
-        up_out = self.inputconv(up_in)
-        a_out = torch.add(g_out, up_out)
-        x = nn.ReLU()(a_out)
+    def forward(self, x_g, x_up):
+        x_up = self.upconv(x_up)
+        x_g = self.gateconv(x_g)
+        x_add = self.add()(x_up, x_g)
+        x = nn.ReLU()(x_add)
         x = self.psi(x)
         x = self.sig(x)
-        y = torch.matmul(x, up_in)
+        y = torch.matmul(x, x)
         return y
 
 # added squeeze to replace the convs in the middle stages.
@@ -194,16 +176,16 @@ class unetlight(nn.Module):
         # skip connections
 
         # up sampling part
-        self.ups11 = deFire(512, 128)
-        self.ups12 = agskip(256, 512)
+        self.ups11 = deFire(512, 256)
+        # self.ups12 = agskip(512, 512)
         self.ups13 = Conv33(512, 256)
 
-        self.ups21 = deFire(256, 64)
-        self.ups22 = agskip(128, 256)
+        self.ups21 = deFire(256, 128)
+        # self.ups22 = agskip(256, 256)
         self.ups23 = Conv33(256, 128)
 
-        self.ups31 = deFire(128, 32)
-        self.ups32 = agskip(64, 128)
+        self.ups31 = deFire(128, 64)
+        # self.ups32 = agskip(128, 128)
         self.ups33 = Conv33(128, 64)
         
         # final layer
@@ -244,23 +226,27 @@ class unetlight(nn.Module):
         print("skip3 shape:", x_skip3.shape)
 
         x_up3 = x_33
+        print("up3 shape:", x_up3.shape)
+
         x_up10 = x_33
+        print("up in shape:", x_up10.shape)
+
         x_up111 = self.ups11(x_up10)
-        x_up112 = self.ups12(x_skip3, x_up3)
+        x_up112 = agskip(x_skip3, x_up3)
         x_up12 = torch.cat((x_up111, x_up112), 1)
         x_up13 = self.ups13(x_up12)
 
         x_up20 = x_up13
         x_up2 = x_up13
         x_up211 = self.ups21(x_up20)
-        x_up212 = self.ups22(x_skip2, x_up2)
+        x_up212 = agskip(x_skip2, x_up2)
         x_up22 = torch.cat((x_up211, x_up212), 1)
         x_up23 = self.ups23(x_up22)
 
         x_up30 = x_up23
         x_up1 = x_up23
         x_up311 = self.ups31(x_up30)
-        x_up312 = self.ups(x_skip1, x_up1)
+        x_up312 = agskip(x_skip1, x_up1)
         x_up32 = torch.cat((x_up311, x_up312), 1)
         x_up33 = self.ups33(x_up32)
 
