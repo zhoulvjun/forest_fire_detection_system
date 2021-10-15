@@ -22,9 +22,9 @@ val_transforms = A.Compose(
     ],
 )
 
-img_rgb = np.array(Image.open("../datas/Smoke_segmentation/training/image_00001.jpg"))
+img_rgb = np.array(Image.open("../datas/NAVlab_smoke_database/images/img0.png"))
 
-img_cv = cv2.imread("../datas/Smoke_segmentation/training/image_00001.jpg")
+img_cv = cv2.imread("../datas/NAVlab_smoke_database/images/img0.png")
 
 augmentations = val_transforms(image=img_rgb)
 img_ = augmentations['image']

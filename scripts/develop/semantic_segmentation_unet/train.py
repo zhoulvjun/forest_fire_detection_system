@@ -23,8 +23,8 @@ IMAGE_HEIGHT = 255  # 1280 originally
 IMAGE_WIDTH = 255  # 1918 originally
 PIN_MEMORY = True
 LOAD_MODEL = True
-TRAIN_IMG_DIR = "../datas/dataset/train/images"
-TRAIN_MASK_DIR = "../datas/dataset/train/masks"
+TRAIN_IMG_DIR = "../datas/NAVlab_smoke_database/images"
+TRAIN_MASK_DIR = "../datas/NAVlab_smoke_database/binary_label"
 VAL_IMG_DIR = "../datas/Smoke_segmentation/testing"
 VAL_MASK_DIR = "../datas/Smoke_segmentation/gt_testing"
 

@@ -37,7 +37,7 @@ detector_trt = TRTModule().to(device)
 detector_trt.load_state_dict(torch.load("./final_trt.pth"))
 print("loading params from: final_trt.pth")
 
-capture = cv2.VideoCapture("../datas/VID_20211014_145418.mp4")
+capture = cv2.VideoCapture("../datas/somek_dataset/videoplayback.mp4")
 
 val_transforms = A.Compose(
     [
@@ -64,8 +64,11 @@ while(1):
     cv_mask = tensor_to_cv(preds[0].cpu())
 
     masked_img = draw_mask(cv2.resize(frame, (255,255)), cv_mask)
-    # cv2.imshow("mask",masked_img)
-    cv2.imshow("mask",cv_mask)
+
+    cv_3_mask = cv2.merge((cv_mask,cv_mask,cv_mask))
+
+    show_img = cv2.hconcat([masked_img,cv_3_mask])
+    cv2.imshow("mask",show_img)
 
     end_time = time.time()
     time_dura =end_time - start_time

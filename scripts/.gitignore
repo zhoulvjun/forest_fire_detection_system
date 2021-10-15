@@ -1,8 +1,12 @@
 __pycache__/
-develop/datas/
 *.pth
 *.jpg
 *.png
 *.pth.tar
 *.avi
 *.mp4
+*.MP4
+*.MOV
+*.txt
+*.json
+*.zip
