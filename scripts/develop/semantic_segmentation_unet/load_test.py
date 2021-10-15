@@ -22,9 +22,9 @@ val_transforms = A.Compose(
     ],
 )
 
-img_rgb = np.array(Image.open("../datas/NAVlab_smoke_database/images/img0.png"))
+img_rgb = np.array(Image.open("../datas/all_in_one_images/img0.png"))
 
-img_cv = cv2.imread("../datas/NAVlab_smoke_database/images/img0.png")
+img_cv = cv2.imread("../datas/all_in_one_images/img0.png")
 
 augmentations = val_transforms(image=img_rgb)
 img_ = augmentations['image']
@@ -36,7 +36,7 @@ model.eval()
 
 with torch.no_grad():
     preds = torch.sigmoid(model(img_))
-    preds = (preds > 0.5)
+    preds = (preds > 0.52)
 
 # original model
 cv_mask = tensor_to_cv(preds[0].cpu())
@@ -54,7 +54,7 @@ detector_trt = torch2trt(model, [init_x], fp16_mode=True)
 
 with torch.no_grad():
     preds = torch.sigmoid(detector_trt(img_))
-    preds = (preds > 0.5)
+    preds = (preds > 0.585)
 
 cv_mask = tensor_to_cv(preds[0].cpu())
 cv2.imshow("cv", cv_mask)

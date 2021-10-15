@@ -23,20 +23,18 @@ from torch2trt import TRTModule
 
 import sys
 import time
-import os
 sys.path.append('../../')
-from  tools.Tensor_CV2 import tensor_to_cv, draw_mask, cv_to_tesnor
+from  tools.Tensor_CV2 import tensor_to_cv, draw_mask
 
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-
-from sklearn.preprocessing import MinMaxScaler
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 detector_trt = TRTModule().to(device)
 detector_trt.load_state_dict(torch.load("./final_trt.pth"))
 print("loading params from: final_trt.pth")
 
+# capture = cv2.VideoCapture("../datas/NAVlab_smoke_database/DJI_0026.MOV")
 capture = cv2.VideoCapture("../datas/somek_dataset/videoplayback.mp4")
 
 val_transforms = A.Compose(
@@ -59,7 +57,7 @@ while(1):
 
     with torch.no_grad():
         preds = torch.sigmoid(detector_trt(img_))
-        preds = (preds > 0.3)
+        preds = (preds > 0.57)
 
     cv_mask = tensor_to_cv(preds[0].cpu())
 

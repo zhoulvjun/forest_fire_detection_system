@@ -106,7 +106,8 @@ class FireSmokeDetector(object):
                 # STEP: 2 feed tensor to detector
                 with torch.no_grad():
                     preds = torch.sigmoid(self.detector_trt(tensor_img))
-                    tensor_mask  = (preds > 0.325)
+                    # NOTE: this valuse is from test
+                    tensor_mask  = (preds > 0.57)
 
                 # STEP: 3 mask to cv image mask
                 cv_mask = tensor_to_cv(tensor_mask[0].cpu())
