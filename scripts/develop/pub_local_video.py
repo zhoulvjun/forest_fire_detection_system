@@ -12,14 +12,14 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description:
+#   @Description: Convert the local video to the to the topic that
+#   detection_firedetection_fire_smoke_node needs.
 #
 # ------------------------------------------------------------------------------
 
 
 import os
 import cv2
-import numpy as np
 from cv_bridge import CvBridge
 import rospy
 from sensor_msgs.msg import Image
@@ -30,12 +30,14 @@ if __name__ == "__main__":
     rospy.init_node('Camera', anonymous=True)
 
     # video_name = os.path.expanduser("~/DJI_0026.MOV")
-    video_name = os.path.expanduser("~/videoplayback.mp4")
+    # video_name = os.path.expanduser("~/videoplayback.mp4")
+    video_name = os.path.expanduser("./datas/somek_dataset/videoplayback.mp4")
     capture = cv2.VideoCapture(video_name)
     bridge = CvBridge()
 
     rospy.loginfo("video from: "+ video_name)
 
+    rate = rospy.Rate(10)
     image_pub = rospy.Publisher(
         "dji_osdk_ros/main_camera_images", Image, queue_size=10)
 
@@ -51,6 +53,7 @@ if __name__ == "__main__":
             cv2.destroyAllWindows()
             rospy.loginfo("None frame! end of video")
             break
-        rate = rospy.Rate(2)
+
+        rate.sleep()
 
     capture.release()

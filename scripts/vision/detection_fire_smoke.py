@@ -5,7 +5,7 @@
 #
 #   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
 #
-#   @Filename: detection.py
+#   @Filename: detection_fire_smoke.py
 #
 #   @Author: Shun Li
 #

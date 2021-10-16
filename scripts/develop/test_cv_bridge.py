@@ -12,21 +12,16 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description:
+#   @Description: A cv_bridge example from the ros website
 #
 # ------------------------------------------------------------------------------
 
 from __future__ import print_function
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
-from std_msgs.msg import String
 import cv2
-import numpy as np
 import rospy
 import sys
-
-import roslib
-
 
 class image_converter:
 

@@ -12,7 +12,7 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description: 
+#   @Description: convert the original binary to balck-white{0,255} binary
 #
 #------------------------------------------------------------------------------
 
