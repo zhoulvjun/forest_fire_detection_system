@@ -42,12 +42,12 @@ class GetImageNode(object):
         if toggle == "open":
             result = self.set_camera_cli(
                 set_camera_handle._request_class.MAIN_CAM, 1)
-            rospy.loginfo("start the camera stream: ", result)
+            rospy.loginfo("start the camera stream, "+ str(result))
 
         elif toggle == "close":
             result = self.set_camera_cli(
                 set_camera_handle._request_class.MAIN_CAM, 0)
-            rospy.loginfo("close the camera stream: ", result)
+            rospy.loginfo("close the camera stream, "+ str(result))
 
         else:
             rospy.logerr("Wrong cmd!")
