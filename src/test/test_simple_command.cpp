@@ -125,10 +125,10 @@ void TestSimpleCommand::print_control_command(
 
   for (int i = 0; i < ctrl_command_vec.size(); ++i) {
     auto em = ctrl_command_vec[i];
-    ROS_INFO_STREAM( "point:" << i << "-------");
-    ROS_INFO_STREAM( "x:" << em.x );
-    ROS_INFO_STREAM( "y:" << em.y );
-    ROS_INFO_STREAM( "yaw:" << em.yaw);
+    ROS_INFO_STREAM("point:" << i << "-------");
+    ROS_INFO_STREAM("x:" << em.x);
+    ROS_INFO_STREAM("y:" << em.y);
+    ROS_INFO_STREAM("yaw:" << em.yaw);
   }
 }
 
@@ -151,24 +151,30 @@ bool TestSimpleCommand::moveByPosOffset(
 }
 
 /* TODO: To test the control authority! */
-int TestSimpleCommand::run() {
+int TestSimpleCommand::run(float desired_height, float zigzag_len,
+                           float zigzag_wid, float zigzag_num) {
 
   ros::Rate rate(1);
   begin_time = ros::Time::now();
   char inputChar;
 
   /* gererate the zigzag path */
-  auto command_vec = generate_zigzag_path(10.0, 5.0, 5);
-  print_control_command(command_vec);
-  ROS_INFO_STREAM(
-      "command generating finished, if you are ready to take off? y/n");
-  std::cin >> inputChar;
+  ROS_INFO_STREAM("desired_height: " << desired_height << " m");
+  ROS_INFO_STREAM("zigzag_len: " << zigzag_len << " m");
+  ROS_INFO_STREAM("zigzag_wid: " << zigzag_wid << " m");
+  ROS_INFO_STREAM("zigzag_num: " << zigzag_num << " m");
+  auto command_vec = generate_zigzag_path(zigzag_len, zigzag_wid, zigzag_num);
+  /* print_control_command(command_vec); */
 
+  ROS_INFO_STREAM(
+      "Command generating finish, are you ready to take off? y/n");
+  std::cin >> inputChar;
   if (inputChar == 'n') {
     ROS_INFO_STREAM("exist!");
     return 0;
 
   } else {
+
     /* 0. Obtain the control authority */
     ROS_INFO_STREAM("Obtain the control authority ...");
     obtainCtrlAuthority.request.enable_obtain = true;
@@ -188,8 +194,9 @@ int TestSimpleCommand::run() {
       ros::Duration(2.0).sleep();
 
       /* 2. Move to a higher attitude */
-      ROS_INFO_STREAM("Moving to a higher attitude!");
-      moveByPosOffset(control_task, {0.0, 0.0, 2.0, 0.0}, 0.8, 1);
+      ROS_INFO_STREAM("Moving to a higher attitude! desired_height offset: "
+                      << desired_height << " m!");
+      moveByPosOffset(control_task, {0.0, 0.0, desired_height, 0.0}, 0.8, 1);
 
       /* 3. Move following the zigzag path */
       ROS_INFO_STREAM("Move by position offset request sending ...");
@@ -226,9 +233,20 @@ int TestSimpleCommand::run() {
   return 0;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
   ros::init(argc, argv, "test_simple_command_node");
-  TestSimpleCommand node;
-  node.run();
-  return 0;
+
+  if (argc != 5) {
+
+    ROS_ERROR_STREAM("usage: desired_height zigzag_len zigzag_wid zigzag_num");
+    return 1;
+
+  } else {
+
+    TestSimpleCommand node;
+    node.run(std::stof(argv[1]), std::stof(argv[2]), std::stof(argv[3]),
+             std::stof(argv[4]));
+
+    return 0;
+  }
 }
