@@ -3,9 +3,9 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
-#   @Filename: get_camera_rgb.py
+#   @Filename: toggle_vechile_camera.py
 #
 #   @Author: Shun Li
 #
@@ -13,15 +13,14 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description:
+#   @Description: open the DJI flight camera image.
 #
 # ------------------------------------------------------------------------------
 
+import sys
 import rospy
 from dji_osdk_ros.srv import SetupCameraStream
 from sensor_msgs.msg import Image
-
-# TODO: change the CAMera to MAIN camera
 
 
 class GetImageNode(object):
@@ -33,26 +32,34 @@ class GetImageNode(object):
         self.set_camera_cli = rospy.ServiceProxy("setup_camera_stream",
                                                  SetupCameraStream)
 
-
     def image_cb(self, msg):
         self.image_frame = msg
 
-    def run(self):
+    def run(self, toggle):
 
         set_camera_handle = SetupCameraStream()
 
-        result = self.set_camera_cli(
-            set_camera_handle._request_class.MAIN_CAM, 1)
-        print("start the camera stream: ", result)
+        if toggle == "open":
+            result = self.set_camera_cli(
+                set_camera_handle._request_class.MAIN_CAM, 1)
+            rospy.loginfo("start the camera stream, "+ str(result))
 
+        elif toggle == "close":
+            result = self.set_camera_cli(
+                set_camera_handle._request_class.MAIN_CAM, 0)
+            rospy.loginfo("close the camera stream, "+ str(result))
 
-        # result = self.set_camera_cli(
-        #     set_camera_handle._request_class.MAIN_CAM, 0)
-        # print("end the camera stream: ", result)
+        else:
+            rospy.logerr("Wrong cmd!")
 
 
 if __name__ == '__main__':
+
     rospy.init_node('toggle_vechile_camera_node', anonymous=True)
 
-    node = GetImageNode()
-    node.run()
+    if len(sys.argv) != 2:
+        rospy.logerr("Need 1 cmd!")
+    else:
+        node = GetImageNode()
+        node.run(sys.argv[1])
+

@@ -65,7 +65,7 @@ public:
   TestSimpleCommand();
   ~TestSimpleCommand();
 
-  int run();
+  int run(float desired_height, float zigzag_len, float zigzag_wid, float zigzag_num);
 
   std::vector<dji_osdk_ros::JoystickCommand>
   generate_zigzag_path(float len, float wid, float num);

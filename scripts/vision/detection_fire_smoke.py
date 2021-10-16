@@ -3,9 +3,9 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
-#   @Filename: detection.py
+#   @Filename: detection_fire_smoke.py
 #
 #   @Author: Shun Li
 #
@@ -63,14 +63,12 @@ class FireSmokeDetector(object):
             ])
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-        self.param_path = os.path.expanduser(
-            '~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth')
+        self.param_path = PKG_PATH+"scripts/vision/UnetDetModel/final_trt.pth"
 
         self.detector_trt = TRTModule().to(self.device)
         self.detector_trt.load_state_dict(torch.load(self.param_path))
 
-        rospy.loginfo(
-            "loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth")
+        rospy.loginfo("loading params from: "+self.param_path)
 
     def image_cb(self, msg):
 
@@ -89,7 +87,7 @@ class FireSmokeDetector(object):
             *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
         # for save the masked video
         output_masked_video = cv2.VideoWriter('mask_video.avi', cv2.VideoWriter_fourcc(
-            *'DIVX'), 5, (RESIZE_WIDTH, RESIZE_HEIGHT))
+            *'DIVX'), 5, (RESIZE_WIDTH*2, RESIZE_HEIGHT))
 
         while not rospy.is_shutdown():
 
@@ -106,7 +104,8 @@ class FireSmokeDetector(object):
                 # STEP: 2 feed tensor to detector
                 with torch.no_grad():
                     preds = torch.sigmoid(self.detector_trt(tensor_img))
-                    tensor_mask  = (preds > 0.325)
+                    # NOTE: this valuse is from test
+                    tensor_mask  = (preds > 0.57)
 
                 # STEP: 3 mask to cv image mask
                 cv_mask = tensor_to_cv(tensor_mask[0].cpu())
@@ -121,11 +120,14 @@ class FireSmokeDetector(object):
                 cv_final_img = draw_mask(cv_org_img, cv_mask)
 
                 # STEP: 5 show the mask
-                cv2.imshow('cv_mask', cv_final_img)
+                cv_3_mask = cv2.merge((cv_mask,cv_mask,cv_mask))
+                show_img = cv2.hconcat([cv_final_img,cv_3_mask])
+                cv2.imshow('cv_mask', show_img)
                 cv2.waitKey(3)
 
                 # STEP: 6 save the video.
-                output_masked_video.write(cv_final_img)
+                # output_masked_video.write(cv_final_img)
+                output_masked_video.write(show_img)
 
             self.rate.sleep()
 

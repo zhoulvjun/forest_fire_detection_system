@@ -27,9 +27,12 @@ import torch
 def cv_to_tesnor(cv_img, re_width, re_height, device):
     """
 
-    Description: This function convert "BGR" image --> tensor(1, 3, H, W)
+    Description: This function convert "BGR" cv image[H, W, C] --> tensor(1, C, H, W)
+                and "C" usually should be 3
 
-    Note: The input tensor could be (0.0~255.0), but should be float
+    Note: Usually, we don not need this function, cause the albumentations can
+            convert the numpy to tensor with ToTensorV2().
+            Or, the torchvision can also do that too~
 
     """
 
@@ -45,15 +48,16 @@ def cv_to_tesnor(cv_img, re_width, re_height, device):
     return img_.to(device)
 
 
-def tensor_to_cv(ten):
+def tensor_to_cv(ten_img_cpu):
     """
 
-    Note: The tensor could be any value, but cv_image should in (0~255)
+    Note: The tensor[B, C, H, W] could be any value, but cv_image[H, W, C] should be in (0~255)
     <uint8>
 
     """
+
     # tensor --> numpy
-    np_array = ten.detach().numpy()
+    np_array = ten_img_cpu.detach().numpy()
 
     # normalize
     maxValue = np_array.max()

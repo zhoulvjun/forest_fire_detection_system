@@ -17,14 +17,14 @@ from utils import (
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 8
-NUM_EPOCHS = 3
+NUM_EPOCHS = 1
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 255  # 1280 originally
 IMAGE_WIDTH = 255  # 1918 originally
 PIN_MEMORY = True
 LOAD_MODEL = True
-TRAIN_IMG_DIR = "../datas/dataset/train/images"
-TRAIN_MASK_DIR = "../datas/dataset/train/masks"
+TRAIN_IMG_DIR = "../datas/NAVlab_smoke_database/images"
+TRAIN_MASK_DIR = "../datas/NAVlab_smoke_database/binary_label"
 VAL_IMG_DIR = "../datas/Smoke_segmentation/testing"
 VAL_MASK_DIR = "../datas/Smoke_segmentation/gt_testing"
 
@@ -57,6 +57,7 @@ def main():
             A.Rotate(limit=35, p=1.0),
             A.HorizontalFlip(p=0.5),
             A.VerticalFlip(p=0.1),
+            A.RandomBrightnessContrast(),
             A.Normalize(),
             ToTensorV2(),
         ],

@@ -3,9 +3,9 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
-#   @Filename: pub_camera.py
+#   @Filename: toggle_loacl_camera.py
 #
 #   @Author: Shun Li
 #
@@ -13,7 +13,7 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description:
+#   @Description: read the local camera with opencv and the convert to ros img and pub
 #
 # ------------------------------------------------------------------------------
 
@@ -21,35 +21,51 @@ import cv2
 import numpy as np
 from std_msgs.msg import Header
 from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
 import rospy
 
-# TODO: should rearrange this file!
+def cv_bridge_converter(cv_img):
 
-capture = cv2.VideoCapture(0)
-capture.set(15, -0.1)
+    bridge = CvBridge()
+    ros_frame  = bridge.cv2_to_imgmsg(cv_img, encoding="bgr8")
+    return ros_frame
+
+def hand_converter(cv_img):
+
+    ros_frame = Image()
+    header = Header(stamp=rospy.Time.now())
+    header.frame_id = "Camera"
+    ros_frame.header = header
+    ros_frame.height = cv_img.shape[0]
+    ros_frame.width = cv_img.shape[1]
+    ros_frame.encoding = "bgr8"
+    # ros_frame.step = 1920
+    ros_frame.data = np.array(cv_img).tobytes()
+
+    return ros_frame
+
+
 if __name__ == "__main__":
-    capture.open(0)
-    rospy.init_node('Camera', anonymous=True)  # 定义节点
-    image_pub = rospy.Publisher("dji_osdk_ros/main_camera_images",
-                                Image,
-                                queue_size=10)  # 定义话题
+
+    capture = cv2.VideoCapture(0)
+
+    rospy.init_node('Camera', anonymous=True)
+    rate = rospy.Rate(10)
+    image_pub = rospy.Publisher("dji_osdk_ros/main_camera_images", Image, queue_size=10)
 
     while not rospy.is_shutdown():
         ret, frame = capture.read()
-        c_b, c_g, c_r = cv2.split(frame)
-        frame = cv2.merge([c_r, c_g, c_b])
-        ros_frame = Image()
-        header = Header(stamp=rospy.Time.now())
-        header.frame_id = "Camera"
-        ros_frame.header = header
-        ros_frame.width = 640
-        ros_frame.height = 480
-        ros_frame.encoding = "rgb8"
-        ros_frame.step = 1920
-        ros_frame.data = np.array(frame).tobytes()  # 图片格式转换
-        image_pub.publish(ros_frame)  # 发布消息
 
-        rate = rospy.Rate(10)  # 10hz
+        if frame is not None:
+            ros_frame = hand_converter(frame)
+            image_pub.publish(ros_frame)
+            rospy.loginfo("publishing camera!")
+        else:
+            rospy.loginfo("None frame! waiting for the frame!")
+            continue
+
+        rate.sleep()
 
     capture.release()
     cv2.destroyAllWindows()
+    print("Done!")

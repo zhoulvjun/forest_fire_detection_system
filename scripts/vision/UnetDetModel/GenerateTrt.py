@@ -1,5 +1,24 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- #
+
+# ------------------------------------------------------------------------------
+#
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
+#
+#   @Filename: GenerateTrt.py
+#
+#   @Author: Shun Li
+#
+#   @Date: 2021-09-29
+#
+#   @Email: 2015097272@qq.com
+#
+#   @Description:
+#
+# ------------------------------------------------------------------------------
+
 import torch
-from UnetModel import pureunet  # seg 4 classes
+from UnetModel import pureunet
 from torch2trt import torch2trt
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'

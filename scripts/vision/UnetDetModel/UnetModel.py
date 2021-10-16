@@ -3,9 +3,9 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Lee Ltd. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
-#   @Filename: detection.py
+#   @Filename: UnetModel.py
 #
 #   @Author: Qiao Linhan
 #
