@@ -3,7 +3,7 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
 #   @Filename: toggle_vechile_camera.py
 #

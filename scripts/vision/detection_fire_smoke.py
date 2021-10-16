@@ -3,7 +3,7 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
 #   @Filename: detection_fire_smoke.py
 #
@@ -63,14 +63,12 @@ class FireSmokeDetector(object):
             ])
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-        self.param_path = os.path.expanduser(
-            '~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth')
+        self.param_path = PKG_PATH+"scripts/vision/UnetDetModel/final_trt.pth"
 
         self.detector_trt = TRTModule().to(self.device)
         self.detector_trt.load_state_dict(torch.load(self.param_path))
 
-        rospy.loginfo(
-            "loading params from: ~/catkin_ws/src/forest_fire_detection_system/scripts/vision/UnetDetModel/final_trt.pth")
+        rospy.loginfo("loading params from: "+self.param_path)
 
     def image_cb(self, msg):
 

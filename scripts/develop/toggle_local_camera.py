@@ -3,9 +3,9 @@
 
 # ------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
-#   @Filename: pub_camera.py
+#   @Filename: toggle_loacl_camera.py
 #
 #   @Author: Shun Li
 #
