@@ -35,7 +35,7 @@ detector_trt.load_state_dict(torch.load("./final_trt.pth"))
 print("loading params from: final_trt.pth")
 
 # capture = cv2.VideoCapture("../datas/NAVlab_smoke_database/DJI_0026.MOV")
-capture = cv2.VideoCapture("../datas/somek_dataset/videoplayback.mp4")
+capture = cv2.VideoCapture("/media/ls/WORK/FLIGHT_TEST/M300/DJI_202110171037_002/DJI_20211017104441_0001_Z.MP4")
 
 val_transforms = A.Compose(
     [
@@ -57,7 +57,7 @@ while(1):
 
     with torch.no_grad():
         preds = torch.sigmoid(detector_trt(img_))
-        preds = (preds > 0.57)
+        preds = (preds > 0.580)
 
     cv_mask = tensor_to_cv(preds[0].cpu())
 
