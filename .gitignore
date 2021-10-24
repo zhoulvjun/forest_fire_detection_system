@@ -2,5 +2,6 @@
 .ccls-cache/
 .vscode/
 .idea/
+build/
 compile_commands.json
 *.pth
