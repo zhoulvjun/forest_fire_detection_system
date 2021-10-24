@@ -1,11 +1,11 @@
 <mxfile host="65bd71144e">
     <diagram id="Jxidr3ApS-HIUd0IqQsU" name="第 1 页">
-        <mxGraphModel dx="3703" dy="1137" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="3079" dy="916" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="Dc3XethNihEzIgwHtPZ2-13" value="ROS NODE" style="swimlane;glass=0;strokeWidth=2;gradientColor=#97d077;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=24;swimlaneFillColor=none;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry x="-1794" y="-204" width="1683" height="1336" as="geometry"/>
+                    <mxGeometry x="-1784" y="-250" width="1683" height="1336" as="geometry"/>
                 </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-2" value="SingleFirePointTaskManager(node - cpp)" style="swimlane;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#000000;" parent="Dc3XethNihEzIgwHtPZ2-13" vertex="1">
                     <mxGeometry x="39" y="72" width="860" height="1220" as="geometry"/>
@@ -13,7 +13,7 @@
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-29" value="start" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.start_1;whiteSpace=wrap;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
                     <mxGeometry x="267.5" y="80.5" width="80" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="V2wQXWlP-ilBj3laSn5z-2" source="V2wQXWlP-ilBj3laSn5z-32" target="2">
+                <mxCell id="3" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="V2wQXWlP-ilBj3laSn5z-2" source="V2wQXWlP-ilBj3laSn5z-32" target="2" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-32" value="ros_ok &amp;amp;&amp;amp; init_misson_state != end" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
@@ -125,7 +125,7 @@
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-113" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="V2wQXWlP-ilBj3laSn5z-2" source="V2wQXWlP-ilBj3laSn5z-109" target="V2wQXWlP-ilBj3laSn5z-112" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="end" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;" vertex="1" parent="V2wQXWlP-ilBj3laSn5z-2">
+                <mxCell id="2" value="end" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
                     <mxGeometry x="26" y="390.27" width="53" height="30.54" as="geometry"/>
                 </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-3" value="FlightMissionController(node - cpp)" style="swimlane;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#000000;" parent="Dc3XethNihEzIgwHtPZ2-13" vertex="1">
@@ -139,17 +139,14 @@
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-5" value="flight_mission_start" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
                     <mxGeometry x="22" y="30" width="120" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-6" value="flight_mission_restart" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
-                    <mxGeometry x="22" y="80" width="120" height="30" as="geometry"/>
-                </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-7" value="flight_mission_end" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
-                    <mxGeometry x="22" y="130" width="120" height="30" as="geometry"/>
+                    <mxGeometry x="22" y="85" width="120" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-8" value="flight_mission_hangon" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
-                    <mxGeometry x="22" y="180" width="120" height="30" as="geometry"/>
+                <mxCell id="V2wQXWlP-ilBj3laSn5z-8" value="flight_mission_stop" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
+                    <mxGeometry x="22" y="143" width="120" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-9" value="flight_mission_continue" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
-                    <mxGeometry x="22" y="230" width="120" height="30" as="geometry"/>
+                <mxCell id="V2wQXWlP-ilBj3laSn5z-9" value="flight_mission_resume" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
+                    <mxGeometry x="22" y="196" width="120" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-11" value="ros topic" style="swimlane;" parent="V2wQXWlP-ilBj3laSn5z-3" vertex="1">
                     <mxGeometry x="206" y="45" width="164" height="85" as="geometry">
