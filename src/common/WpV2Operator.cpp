@@ -38,7 +38,7 @@ void WpV2Operator::setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2) {
 }
 
 bool WpV2Operator::uploadWaypointV2Mission(
-    dji_osdk_ros::UploadWaypointV2Mission uploadWaypointV2Mission_) {
+    dji_osdk_ros::UploadWaypointV2Mission &uploadWaypointV2Mission_) {
 
   waypointV2_upload_mission_client =
       nh.serviceClient<dji_osdk_ros::UploadWaypointV2Mission>(
@@ -56,7 +56,7 @@ bool WpV2Operator::uploadWaypointV2Mission(
 }
 
 bool WpV2Operator::uploadWaypointV2Action(
-    dji_osdk_ros::UploadWaypointV2Action uploadWaypointV2Action_) {
+    dji_osdk_ros::UploadWaypointV2Action &uploadWaypointV2Action_) {
 
   waypointV2_upload_action_client =
       nh.serviceClient<dji_osdk_ros::UploadWaypointV2Action>(
@@ -74,7 +74,7 @@ bool WpV2Operator::uploadWaypointV2Action(
 }
 
 bool WpV2Operator::downloadWaypointV2Mission(
-    dji_osdk_ros::DownloadWaypointV2Mission downloadWaypointV2Mission_,
+    dji_osdk_ros::DownloadWaypointV2Mission &downloadWaypointV2Mission_,
     std::vector<dji_osdk_ros::WaypointV2> &mission) {
 
   waypointV2_download_mission_client =
@@ -95,7 +95,7 @@ bool WpV2Operator::downloadWaypointV2Mission(
 }
 
 bool WpV2Operator::startWaypointV2Mission(
-    dji_osdk_ros::StartWaypointV2Mission startWaypointV2Mission_) {
+    dji_osdk_ros::StartWaypointV2Mission &startWaypointV2Mission_) {
 
   waypointV2_start_mission_client =
       nh.serviceClient<dji_osdk_ros::StartWaypointV2Mission>(
@@ -113,7 +113,7 @@ bool WpV2Operator::startWaypointV2Mission(
 }
 
 bool WpV2Operator::stopWaypointV2Mission(
-    dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_) {
+    dji_osdk_ros::StopWaypointV2Mission &stopWaypointV2Mission_) {
 
   waypointV2_stop_mission_client =
       nh.serviceClient<dji_osdk_ros::StopWaypointV2Mission>(
@@ -131,7 +131,7 @@ bool WpV2Operator::stopWaypointV2Mission(
 }
 
 bool WpV2Operator::pauseWaypointV2Mission(
-    dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_) {
+    dji_osdk_ros::PauseWaypointV2Mission &pauseWaypointV2Mission_) {
 
   waypointV2_pause_mission_client =
       nh.serviceClient<dji_osdk_ros::PauseWaypointV2Mission>(
@@ -149,7 +149,7 @@ bool WpV2Operator::pauseWaypointV2Mission(
 }
 
 bool WpV2Operator::resumeWaypointV2Mission(
-    dji_osdk_ros::ResumeWaypointV2Mission resumeWaypointV2Mission_) {
+    dji_osdk_ros::ResumeWaypointV2Mission &resumeWaypointV2Mission_) {
 
   waypointV2_resume_mission_client =
       nh.serviceClient<dji_osdk_ros::ResumeWaypointV2Mission>(
@@ -167,7 +167,7 @@ bool WpV2Operator::resumeWaypointV2Mission(
 }
 
 bool WpV2Operator::setGlobalCruiseSpeed(
-    dji_osdk_ros::SetGlobalCruisespeed setGlobalCruisespeed_) {
+    dji_osdk_ros::SetGlobalCruisespeed &setGlobalCruisespeed_) {
 
   waypointV2_set_global_cruisespeed_client =
       nh.serviceClient<dji_osdk_ros::SetGlobalCruisespeed>(
@@ -186,7 +186,7 @@ bool WpV2Operator::setGlobalCruiseSpeed(
 }
 
 DJI::OSDK::float32_t WpV2Operator::getGlobalCruiseSpeed(
-    dji_osdk_ros::GetGlobalCruisespeed getGlobalCruisespeed_) {
+    dji_osdk_ros::GetGlobalCruisespeed &getGlobalCruisespeed_) {
 
   waypointV2_get_global_cruisespeed_client =
       nh.serviceClient<dji_osdk_ros::GetGlobalCruisespeed>(

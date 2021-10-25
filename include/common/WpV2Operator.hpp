@@ -45,32 +45,32 @@ public:
   void setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2);
 
   bool uploadWaypointV2Mission(
-      dji_osdk_ros::UploadWaypointV2Mission uploadWaypointV2Mission_);
+      dji_osdk_ros::UploadWaypointV2Mission &uploadWaypointV2Mission_);
 
   bool uploadWaypointV2Action(
-      dji_osdk_ros::UploadWaypointV2Action uploadWaypointV2Action_);
+      dji_osdk_ros::UploadWaypointV2Action &uploadWaypointV2Action_);
 
   bool downloadWaypointV2Mission(
-      dji_osdk_ros::DownloadWaypointV2Mission downloadWaypointV2Mission_,
+      dji_osdk_ros::DownloadWaypointV2Mission &downloadWaypointV2Mission_,
       std::vector<dji_osdk_ros::WaypointV2> &mission);
 
   bool startWaypointV2Mission(
-      dji_osdk_ros::StartWaypointV2Mission startWaypointV2Mission_);
+      dji_osdk_ros::StartWaypointV2Mission &startWaypointV2Mission_);
 
   bool stopWaypointV2Mission(
-      dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_);
+      dji_osdk_ros::StopWaypointV2Mission &stopWaypointV2Mission_);
 
   bool pauseWaypointV2Mission(
-      dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_);
+      dji_osdk_ros::PauseWaypointV2Mission &pauseWaypointV2Mission_);
 
   bool resumeWaypointV2Mission(
-      dji_osdk_ros::ResumeWaypointV2Mission resumeWaypointV2Mission_);
+      dji_osdk_ros::ResumeWaypointV2Mission &resumeWaypointV2Mission_);
 
   bool setGlobalCruiseSpeed(
-      dji_osdk_ros::SetGlobalCruisespeed setGlobalCruisespeed_);
+      dji_osdk_ros::SetGlobalCruisespeed &setGlobalCruisespeed_);
 
   DJI::OSDK::float32_t getGlobalCruiseSpeed(
-      dji_osdk_ros::GetGlobalCruisespeed getGlobalCruisespeed_);
+      dji_osdk_ros::GetGlobalCruisespeed &getGlobalCruisespeed_);
 
 private:
   ros::NodeHandle &nh;

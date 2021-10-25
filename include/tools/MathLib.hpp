@@ -25,8 +25,7 @@ namespace TOOLS {
 
 using namespace std;
 
-#define PI 3.1415926535
-#define CONSTANTS_RADIUS_OF_EARTH 6371000
+#define CONSTANTS_RADIUS_OF_EARTH 6378137.0
 #define EARTH_R 6378137
 #define CONSTANTS_ONE_G 9.80665
 
@@ -123,13 +122,13 @@ void Quat2Rotmax(float q[4], float R[3][3]) {
 
 float Rad2Deg(float rad) {
   float deg;
-  deg = rad * 180 / PI;
+  deg = rad * 180 / M_PI;
   return deg;
 }
 
 float Deg2Rad(float deg) {
   float rad;
-  rad = deg * PI / 180;
+  rad = deg * M_PI / 180;
   return rad;
 }
 

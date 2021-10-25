@@ -59,15 +59,6 @@ dji_osdk_ros::SubscribeWaypointV2Event subscribeWaypointV2Event_;
 dji_osdk_ros::SubscribeWaypointV2State subscribeWaypointV2State_;
 
 ros::ServiceClient waypointV2_init_setting_client;
-ros::ServiceClient waypointV2_upload_mission_client;
-ros::ServiceClient waypointV2_upload_action_client;
-ros::ServiceClient waypointV2_download_mission_client;
-ros::ServiceClient waypointV2_start_mission_client;
-ros::ServiceClient waypointV2_stop_mission_client;
-ros::ServiceClient waypointV2_pause_mission_client;
-ros::ServiceClient waypointV2_resume_mission_client;
-ros::ServiceClient waypointV2_set_global_cruisespeed_client;
-ros::ServiceClient waypointV2_get_global_cruisespeed_client;
 ros::ServiceClient waypointV2_generate_actions_client;
 ros::ServiceClient waypointV2_mission_event_push_client;
 ros::ServiceClient waypointV2_mission_state_push_client;
@@ -87,16 +78,7 @@ void waypointV2MissionEventSubCallback(const dji_osdk_ros::WaypointV2MissionEven
 void setWaypointV2Defaults(dji_osdk_ros::WaypointV2& waypointV2);
 std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(const ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum);
 bool initWaypointV2Setting(ros::NodeHandle &nh);
-bool uploadWaypointV2Mission(ros::NodeHandle &nh);
-bool uploadWaypointV2Action(ros::NodeHandle &nh);
-bool downloadWaypointV2Mission(ros::NodeHandle &nh, std::vector<dji_osdk_ros::WaypointV2> &mission);
-bool startWaypointV2Mission(ros::NodeHandle &nh);
-bool stopWaypointV2Mission(ros::NodeHandle &nh);
-bool pauseWaypointV2Mission(ros::NodeHandle &nh);
-bool resumeWaypointV2Mission(ros::NodeHandle &nh);
 bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum);
-bool setGlobalCruiseSpeed(ros::NodeHandle &nh, DJI::OSDK::float32_t cruiseSpeed);
-DJI::OSDK::float32_t getGlobalCruiseSpeed(ros::NodeHandle &nh);
 
 bool runWaypointV2Mission(ros::NodeHandle &nh);
 
