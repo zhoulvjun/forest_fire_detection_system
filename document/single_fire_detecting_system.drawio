@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Jxidr3ApS-HIUd0IqQsU" name="第 1 页">
-        <mxGraphModel dx="3079" dy="916" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="2933" dy="916" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -19,17 +19,14 @@
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-32" value="ros_ok &amp;amp;&amp;amp; init_misson_state != end" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
                     <mxGeometry x="165" y="380.5400000000001" width="285" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-39" value="&lt;span&gt;init_mission generation&lt;/span&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
-                    <mxGeometry x="227.5" y="140.5" width="160" height="30" as="geometry"/>
+                <mxCell id="V2wQXWlP-ilBj3laSn5z-39" value="&lt;span&gt;init mission&lt;/span&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
+                    <mxGeometry x="227.5" y="129" width="160" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-40" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="V2wQXWlP-ilBj3laSn5z-2" source="V2wQXWlP-ilBj3laSn5z-29" target="V2wQXWlP-ilBj3laSn5z-39" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-41" value="&lt;span&gt;init_mission start&lt;/span&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
-                    <mxGeometry x="227.5" y="220.5" width="160" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-42" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="V2wQXWlP-ilBj3laSn5z-2" source="V2wQXWlP-ilBj3laSn5z-39" target="V2wQXWlP-ilBj3laSn5z-41" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="V2wQXWlP-ilBj3laSn5z-41" value="start&amp;nbsp;&lt;span&gt;mission&amp;nbsp;&lt;/span&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
+                    <mxGeometry x="227.5" y="234" width="160" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-111" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="V2wQXWlP-ilBj3laSn5z-2" source="V2wQXWlP-ilBj3laSn5z-109" target="V2wQXWlP-ilBj3laSn5z-32" edge="1">
                     <mxGeometry x="-0.707" relative="1" as="geometry">
@@ -128,6 +125,15 @@
                 <mxCell id="2" value="end" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;" parent="V2wQXWlP-ilBj3laSn5z-2" vertex="1">
                     <mxGeometry x="26" y="390.27" width="53" height="30.54" as="geometry"/>
                 </mxCell>
+                <mxCell id="4" value="&lt;span&gt;upload mission&lt;/span&gt;" style="whiteSpace=wrap;html=1;strokeWidth=2;" vertex="1" parent="V2wQXWlP-ilBj3laSn5z-2">
+                    <mxGeometry x="227.5" y="182" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="V2wQXWlP-ilBj3laSn5z-42" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="V2wQXWlP-ilBj3laSn5z-2" source="V2wQXWlP-ilBj3laSn5z-39" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="V2wQXWlP-ilBj3laSn5z-2" source="4" target="V2wQXWlP-ilBj3laSn5z-41">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-3" value="FlightMissionController(node - cpp)" style="swimlane;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#000000;" parent="Dc3XethNihEzIgwHtPZ2-13" vertex="1">
                     <mxGeometry x="937" y="70" width="390" height="370" as="geometry"/>
                 </mxCell>
@@ -139,10 +145,10 @@
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-5" value="flight_mission_start" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
                     <mxGeometry x="22" y="30" width="120" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-7" value="flight_mission_end" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
+                <mxCell id="V2wQXWlP-ilBj3laSn5z-7" value="flight_mission_stop" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
                     <mxGeometry x="22" y="85" width="120" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="V2wQXWlP-ilBj3laSn5z-8" value="flight_mission_stop" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
+                <mxCell id="V2wQXWlP-ilBj3laSn5z-8" value="flight_mission_pause" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
                     <mxGeometry x="22" y="143" width="120" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="V2wQXWlP-ilBj3laSn5z-9" value="flight_mission_resume" style="rounded=0;whiteSpace=wrap;html=1;" parent="V2wQXWlP-ilBj3laSn5z-10" vertex="1">
