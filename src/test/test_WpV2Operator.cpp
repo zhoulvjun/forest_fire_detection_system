@@ -21,9 +21,9 @@ void gpsPositionSubCallback(
 
   gps_position_ = *gpsPosition;
 
-  dbg(gps_position_.latitude);
-  dbg(gps_position_.longitude);
-  dbg(gps_position_.altitude);
+  /* dbg(gps_position_.latitude); */
+  /* dbg(gps_position_.longitude); */
+  /* dbg(gps_position_.altitude); */
 }
 
 void waypointV2MissionEventSubCallback(
@@ -183,8 +183,9 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   int timeout = 1;
   bool result = false;
 
-  FFDS::COMMOM::WpV2Operator wpv2operator{nh};
+  FFDS::COMMOM::WpV2Operator wpv2operator(nh);
 
+  get_drone_type_client = nh.serviceClient<dji_osdk_ros::GetDroneType>("get_drone_type");
   waypointV2_mission_state_push_client =
       nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
           "dji_osdk_ros/waypointV2_subscribeMissionState");
@@ -205,7 +206,8 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   get_drone_type_client.call(drone_type);
   if (drone_type.response.drone_type !=
       static_cast<uint8_t>(dji_osdk_ros::Dronetype::M300)) {
-    ROS_DEBUG("This sample only supports M300!\n");
+    ROS_ERROR("This sample only supports M300!\n");
+    dbg(drone_type.response.drone_type);
     return false;
   }
 
@@ -296,10 +298,7 @@ int main(int argc, char **argv) {
   obtainCtrlAuthority.request.enable_obtain = true;
   obtain_ctrl_authority_client.call(obtainCtrlAuthority);
 
-  ros::Duration(1).sleep();
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-  runWaypointV2Mission(nh);
+  bool is_run = runWaypointV2Mission(nh);
+  dbg(is_run);
 
-  ros::waitForShutdown();
 }
