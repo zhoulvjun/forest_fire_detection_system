@@ -16,7 +16,7 @@
 
 #include <common/WpV2Operator.hpp>
 
-using namespace ffds_commom;
+using namespace FFDS::COMMOM;
 
 void WpV2Operator::setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2) {
 

@@ -34,7 +34,8 @@
 #include <dji_osdk_ros/UploadWaypointV2Action.h>
 #include <dji_osdk_ros/UploadWaypointV2Mission.h>
 
-namespace ffds_commom {
+namespace FFDS {
+namespace COMMOM {
 
 class WpV2Operator {
 
@@ -90,6 +91,8 @@ private:
   ros::ServiceClient waypointV2_get_global_cruisespeed_client;
 };
 
-} // namespace ffds_commom
+} /* namespace COMMOM */
+
+} /* namespace FFDS */
 
 #endif /* WPV2OPERATOR_HPP */

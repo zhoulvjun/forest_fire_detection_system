@@ -13,11 +13,19 @@
 *   @Description: rewirte the dji_osdk_ros/sample/waypointV2_node.cpp
 *
 ******************************************************************************/
-#include<dbg-macro/dbg.h>
-#include<common/WpV2Operator.hpp>
-#include<sensor_msgs/NavSatFix.h>
-#include <dji_osdk_ros/ObtainControlAuthority.h>
 
+/* debug */
+#include<dbg-macro/dbg.h>
+
+/* ros */
+#include <ros/ros.h>
+
+/* mesages */
+#include <dji_osdk_ros/ObtainControlAuthority.h>
+#include<sensor_msgs/NavSatFix.h>
+
+#include <tools/MathLib.hpp>
+#include<common/WpV2Operator.hpp>
 /**
  * global variable
  * */
@@ -50,6 +58,7 @@ int main(int argc, char** argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
   /* runWaypointV2Mission(nh); */
+  dbg(FFDS::TOOLS::Deg2Rad(180));
 
   ros::waitForShutdown();
 }
