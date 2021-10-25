@@ -1,1 +1,2 @@
 add_library(WpV2Operator WpV2Operator.cpp)
+add_dependencies(WpV2Operator dji_osdk_ros_generate_messages_cpp)

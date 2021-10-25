@@ -13,7 +13,10 @@
 *   @Description: rewirte the dji_osdk_ros/sample/waypointV2_node.cpp
 *
 ******************************************************************************/
+#include<dbg-macro/dbg.h>
 #include<common/WpV2Operator.hpp>
+#include<sensor_msgs/NavSatFix.h>
+#include <dji_osdk_ros/ObtainControlAuthority.h>
 
 /**
  * global variable
@@ -23,6 +26,10 @@ sensor_msgs::NavSatFix gps_position_;
 void gpsPositionSubCallback(const sensor_msgs::NavSatFix::ConstPtr& gpsPosition)
 {
   gps_position_ = *gpsPosition;
+
+  dbg(gps_position_.latitude);
+  dbg(gps_position_.longitude);
+  dbg(gps_position_.altitude);
 }
 
 int main(int argc, char** argv)

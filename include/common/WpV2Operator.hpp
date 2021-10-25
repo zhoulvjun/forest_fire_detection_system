@@ -17,10 +17,26 @@
 #ifndef __WPV2OPERATOR_HPP__
 #define __WPV2OPERATOR_HPP__
 
-#include <dji_osdk_ros/dji_vehicle_node.h>
+/* dji_osdk */
+#include <dji_type.hpp>
+#include <dji_mission_type.hpp>
+
 #include <ros/ros.h>
 
+/* dji_osdk_ros */
+#include <dji_osdk_ros/DownloadWaypointV2Mission.h>
+#include <dji_osdk_ros/GetGlobalCruisespeed.h>
+#include <dji_osdk_ros/PauseWaypointV2Mission.h>
+#include <dji_osdk_ros/ResumeWaypointV2Mission.h>
+#include <dji_osdk_ros/SetGlobalCruisespeed.h>
+#include <dji_osdk_ros/StartWaypointV2Mission.h>
+#include <dji_osdk_ros/StopWaypointV2Mission.h>
+#include <dji_osdk_ros/UploadWaypointV2Action.h>
+#include <dji_osdk_ros/UploadWaypointV2Mission.h>
+
 namespace ffds_commom {
+
+  using namespace DJI::OSDK;
 
 class WpV2Operator {
 public:

@@ -20,14 +20,14 @@ using namespace ffds_commom;
 
 void WpV2Operator::setWaypointV2Defaults(dji_osdk_ros::WaypointV2& waypointV2)
 {
-  waypointV2.waypointType = dji_osdk_ros::DJIWaypointV2FlightPathModeGoToPointInAStraightLineAndStop;
-  waypointV2.headingMode = dji_osdk_ros::DJIWaypointV2HeadingModeAuto;
+  waypointV2.waypointType = DJIWaypointV2FlightPathModeGoToPointInAStraightLineAndStop;
+  waypointV2.headingMode = DJIWaypointV2HeadingModeAuto;
   waypointV2.config.useLocalCruiseVel = 0;
   waypointV2.config.useLocalMaxVel = 0;
 
   waypointV2.dampingDistance = 40;
   waypointV2.heading = 0;
-  waypointV2.turnMode = dji_osdk_ros::DJIWaypointV2TurnModeClockwise;
+  waypointV2.turnMode = DJIWaypointV2TurnModeClockwise;
 
   waypointV2.positionX = 0;
   waypointV2.positionY = 0;
