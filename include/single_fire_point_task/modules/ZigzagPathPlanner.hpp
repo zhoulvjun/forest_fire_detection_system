@@ -62,8 +62,6 @@ private:
   void calLocalPos();
 
   void HEarth2Earth(float heading);
-
-  sensor_msgs::NavSatFix local2Global(COMMON::LocalPosition local);
 };
 } // namespace FFDS
 

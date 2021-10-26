@@ -111,7 +111,7 @@ ZigzagPathPlanner::getGPos(bool useInitHeadDirection, float headingRad) {
     ref[2] = homePosition.altitude;
 
     TOOLS::Meter2LatLongAlt(ref, LocalPosVec[i], result);
-    
+
     wpV2.latitude = result[0];
     wpV2.longitude = result[1];
     wpV2.relativeHeight = LocalPosVec[i].z;
