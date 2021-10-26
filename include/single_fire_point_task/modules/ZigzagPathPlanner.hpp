@@ -18,34 +18,37 @@
 #define __ZIGZAGPATHPLANNER_HPP__
 
 #include <common/PathPlannerBase.hpp>
+#include <dji_osdk_ros/WaypointV2.h>
+#include <ros/ros.h>
+#include <sensor_msgs/NavSatFix.h>
+
+#include <tools/MathLib.hpp>
+#include <common/CommonTypes.hpp>
 
 namespace FFDS {
 
-class ZigzagPathPlanner : public COMMOM::PathPlannerBase {
+class ZigzagPathPlanner : public COMMON::PathPlannerBase {
 
 public:
-
-  ZigzagPathPlanner(sensor_msgs::NavSatFix home, int num, float len, float wid)
-      : homePosition(home), zigzagNum(num), zigzagLen(len), zigzagWid(wid){};
+  ZigzagPathPlanner(sensor_msgs::NavSatFix home, int num, float len, float wid,
+                    float height)
+      : homePosition(home), zigzagNum(num), zigzagLen(len), zigzagWid(wid),
+        zigzagHeight(height){};
 
   ~ZigzagPathPlanner();
 
-  /* Local earth-fixed coordinates */
-  struct LocalPosition {
-    float x{0.0};
-    float y{0.0};
-    float z{0.0};
-  };
+  std::vector<dji_osdk_ros::WaypointV2> &getGPos(bool useInitHeadDirection,
+                                                 float heading);
 
 private:
   int zigzagNum{0};
   float zigzagLen{0.0};
   float zigzagWid{0.0};
+  float zigzagHeight{0.0};
   sensor_msgs::NavSatFix homePosition;
 
-  std::vector<dji_osdk_ros::WaypointV2> wpVec;
-  std::vector<LocalPosition> LocalPosVec;
-
+  std::vector<dji_osdk_ros::WaypointV2> wpV2Vec;
+  std::vector<COMMON::LocalPosition> LocalPosVec;
 
   /**
    * NOTE: we want the M300 initial heading as the positive direction.
@@ -54,17 +57,13 @@ private:
    * NOTE: init-heading angle.
    **/
 
-  /* generate the local as the same, treat it in HEarth or Earth local position. */
+  /* generate the local as the same, treat it in HEarth or Earth local position.
+   */
   void calLocalPos();
 
-  void HEarth2Earth();
+  void HEarth2Earth(float heading);
 
-  void local2Global();
-
-  std::vector<dji_osdk_ros::WaypointV2> getGPos_Earth();
-
-  std::vector<dji_osdk_ros::WaypointV2> getGPos_HEarth();
-
+  sensor_msgs::NavSatFix local2Global(COMMON::LocalPosition local);
 };
 } // namespace FFDS
 

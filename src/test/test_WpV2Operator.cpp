@@ -97,7 +97,7 @@ bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
 
 std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum)
 {
-    FFDS::COMMOM::WpV2Operator wpv2operator(nh);
+    FFDS::COMMON::WpV2Operator wpv2operator(nh);
   // Let's create a vector to store our waypoints in.
   std::vector<dji_osdk_ros::WaypointV2> waypointList;
   dji_osdk_ros::WaypointV2 startPoint;
@@ -115,8 +115,8 @@ std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &
     wpv2operator.setWaypointV2Defaults(waypointV2);
     DJI::OSDK::float32_t X = radius * cos(angle);
     DJI::OSDK::float32_t Y = radius * sin(angle);
-    waypointV2.latitude = Y/EARTH_R + startPoint.latitude;
-    waypointV2.longitude = X/(EARTH_R  * cos(startPoint.latitude)) + startPoint.longitude;
+    waypointV2.latitude = Y/FFDS::TOOLS::EARTH_R + startPoint.latitude;
+    waypointV2.longitude = X/(FFDS::TOOLS::EARTH_R  * cos(startPoint.latitude)) + startPoint.longitude;
     waypointV2.relativeHeight = startPoint.relativeHeight ;
     waypointList.push_back(waypointV2);
   }
@@ -162,7 +162,7 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   int timeout = 1;
   bool result = false;
 
-  FFDS::COMMOM::WpV2Operator wpv2operator(nh);
+  FFDS::COMMON::WpV2Operator wpv2operator(nh);
 
   get_drone_type_client = nh.serviceClient<dji_osdk_ros::GetDroneType>("get_drone_type");
   waypointV2_mission_state_push_client =

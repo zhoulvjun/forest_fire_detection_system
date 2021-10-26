@@ -25,9 +25,9 @@ namespace TOOLS {
 
 using namespace std;
 
-#define CONSTANTS_RADIUS_OF_EARTH (double)6378137.0
-#define EARTH_R (double)6378137.0
-#define CONSTANTS_ONE_G (double)9.80665
+const double CONSTANTS_RADIUS_OF_EARTH = 6378137.0;
+const double EARTH_R =  6378137.0;
+const double CONSTANTS_ONE_G = 9.80665;
 
 float AbsNum(float a) {
   float result;
@@ -132,7 +132,7 @@ float Deg2Rad(float deg) {
   return rad;
 }
 
-// ref,result---lat,long,alt
+/* ref,result---lat,long,alt */
 void Meter2LatLongAlt(double ref[3], float x, float y, float z,
                           double result[3]) {
 

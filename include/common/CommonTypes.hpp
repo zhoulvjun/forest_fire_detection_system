@@ -2,7 +2,7 @@
  *
  *   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
  *
- *   @Filename: PathPlannerBase.hpp
+ *   @Filename: CommonTypes.hpp
  *
  *   @Author: Shun Li
  *
@@ -10,23 +10,26 @@
  *
  *   @Date: 2021-10-26
  *
- *   @Description: The based class of the all kinds of path planner
+ *   @Description:
  *
  ******************************************************************************/
 
-#ifndef __PATHPLANNERBASE_HPP__
-#define __PATHPLANNERBASE_HPP__
+#ifndef __COMMONTYPES_HPP__
+#define __COMMONTYPES_HPP__
 
 #include <iostream>
 
 namespace FFDS {
 namespace COMMON {
 
-class PathPlannerBase {
-public:
+/* Local earth-fixed coordinates */
+struct LocalPosition {
+  float x{0.0};
+  float y{0.0};
+  float z{0.0};
 };
 
 } // namespace COMMON
 } // namespace FFDS
 
-#endif /* PATHPLANNERBASE_HPP */
+#endif /* COMMONTYPES_HPP */
