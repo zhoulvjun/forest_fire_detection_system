@@ -38,6 +38,36 @@ void WpV2Operator::setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2) {
   ROS_INFO("Set waypointV2 default done!");
 }
 
+bool WpV2Operator::initWaypointV2Setting(
+    dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_) {
+
+  waypointV2_init_setting_client =
+      nh.serviceClient<dji_osdk_ros::InitWaypointV2Setting>(
+          "dji_osdk_ros/waypointV2_initSetting");
+  waypointV2_init_setting_client.call(initWaypointV2Setting_);
+
+  if (initWaypointV2Setting_.response.result) {
+    ROS_INFO("Init mission setting successfully!\n");
+  } else {
+    ROS_ERROR("Init mission setting failed!\n");
+  }
+
+  return initWaypointV2Setting_.response.result;
+}
+
+bool WpV2Operator::generateWaypointV2Actions(
+    dji_osdk_ros::GenerateWaypointV2Action &generateWaypointV2Action_,
+    uint16_t actionNum) {
+
+  waypointV2_generate_actions_client =
+      nh.serviceClient<dji_osdk_ros::GenerateWaypointV2Action>(
+          "dji_osdk_ros/waypointV2_generateActions");
+
+  waypointV2_generate_actions_client.call(generateWaypointV2Action_);
+
+  return generateWaypointV2Action_.response.result;
+}
+
 bool WpV2Operator::uploadWaypointV2Mission(
     dji_osdk_ros::UploadWaypointV2Mission &uploadWaypointV2Mission_) {
 

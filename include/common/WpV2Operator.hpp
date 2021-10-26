@@ -25,7 +25,9 @@
 
 /* dji_osdk_ros */
 #include <dji_osdk_ros/DownloadWaypointV2Mission.h>
+#include <dji_osdk_ros/GenerateWaypointV2Action.h>
 #include <dji_osdk_ros/GetGlobalCruisespeed.h>
+#include <dji_osdk_ros/InitWaypointV2Setting.h>
 #include <dji_osdk_ros/PauseWaypointV2Mission.h>
 #include <dji_osdk_ros/ResumeWaypointV2Mission.h>
 #include <dji_osdk_ros/SetGlobalCruisespeed.h>
@@ -39,10 +41,22 @@ namespace COMMOM {
 
 class WpV2Operator {
 
+  /**
+   * NOTE: when calling the operators, prepare the "content" you want to pass
+   * NOTE: first.
+   **/
+
 public:
   WpV2Operator(ros::NodeHandle &handle) : nh{handle} {};
 
   void setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2);
+
+  bool initWaypointV2Setting(
+      dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_);
+
+  bool generateWaypointV2Actions(
+      dji_osdk_ros::GenerateWaypointV2Action &generateWaypointV2Action_,
+      uint16_t actionNum);
 
   bool uploadWaypointV2Mission(
       dji_osdk_ros::UploadWaypointV2Mission &uploadWaypointV2Mission_);
@@ -75,6 +89,8 @@ public:
 private:
   ros::NodeHandle &nh;
 
+  ros::ServiceClient waypointV2_init_setting_client;
+  ros::ServiceClient waypointV2_generate_actions_client;
   ros::ServiceClient waypointV2_upload_mission_client;
   ros::ServiceClient waypointV2_upload_action_client;
   ros::ServiceClient waypointV2_download_mission_client;
