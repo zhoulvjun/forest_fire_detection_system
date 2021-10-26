@@ -18,7 +18,7 @@
 #define __TEST_WPV2OPERATOR_HPP__
 
 /* debug */
-#include <dbg-macro/dbg.h>
+/* #include <dbg-macro/dbg.h> */
 
 /* ros */
 #include <ros/ros.h>

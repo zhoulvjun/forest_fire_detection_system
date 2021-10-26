@@ -20,10 +20,6 @@ void gpsPositionSubCallback(
     const sensor_msgs::NavSatFix::ConstPtr &gpsPosition) {
 
   gps_position_ = *gpsPosition;
-
-  /* dbg(gps_position_.latitude); */
-  /* dbg(gps_position_.longitude); */
-  /* dbg(gps_position_.altitude); */
 }
 
 void waypointV2MissionEventSubCallback(
@@ -65,35 +61,17 @@ void waypointV2MissionStateSubCallback(
 
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
 
-  ROS_INFO("waypointV2MissionStateSubCallback");
-  ROS_INFO("missionStatePushAck->commonDataVersion:%d\n",
-           waypoint_V2_mission_state_push_.commonDataVersion);
-  ROS_INFO("missionStatePushAck->commonDataLen:%d\n",
-           waypoint_V2_mission_state_push_.commonDataLen);
-  ROS_INFO("missionStatePushAck->data.state:0x%x\n",
-           waypoint_V2_mission_state_push_.state);
-  ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n",
-           waypoint_V2_mission_state_push_.curWaypointIndex);
-  ROS_INFO("missionStatePushAck->data.velocity:%d\n",
-           waypoint_V2_mission_state_push_.velocity);
-}
-
-void setWaypointV2Defaults(dji_osdk_ros::WaypointV2& waypointV2)
-{
-  waypointV2.waypointType = DJI::OSDK::DJIWaypointV2FlightPathModeGoToPointInAStraightLineAndStop;
-  waypointV2.headingMode = DJI::OSDK::DJIWaypointV2HeadingModeAuto;
-  waypointV2.config.useLocalCruiseVel = 0;
-  waypointV2.config.useLocalMaxVel = 0;
-
-  waypointV2.dampingDistance = 40;
-  waypointV2.heading = 0;
-  waypointV2.turnMode = DJI::OSDK::DJIWaypointV2TurnModeClockwise;
-
-  waypointV2.positionX = 0;
-  waypointV2.positionY = 0;
-  waypointV2.positionZ = 0;
-  waypointV2.maxFlightSpeed= 9;
-  waypointV2.autoFlightSpeed = 2;
+  /* ROS_INFO("waypointV2MissionStateSubCallback"); */
+  /* ROS_INFO("missionStatePushAck->commonDataVersion:%d\n", */
+  /*          waypoint_V2_mission_state_push_.commonDataVersion); */
+  /* ROS_INFO("missionStatePushAck->commonDataLen:%d\n", */
+  /*          waypoint_V2_mission_state_push_.commonDataLen); */
+  /* ROS_INFO("missionStatePushAck->data.state:0x%x\n", */
+  /*          waypoint_V2_mission_state_push_.state); */
+  /* ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n", */
+  /*          waypoint_V2_mission_state_push_.curWaypointIndex); */
+  /* ROS_INFO("missionStatePushAck->data.velocity:%d\n", */
+  /*          waypoint_V2_mission_state_push_.velocity); */
 }
 
 bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
@@ -119,6 +97,7 @@ bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
 
 std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum)
 {
+    FFDS::COMMOM::WpV2Operator wpv2operator(nh);
   // Let's create a vector to store our waypoints in.
   std::vector<dji_osdk_ros::WaypointV2> waypointList;
   dji_osdk_ros::WaypointV2 startPoint;
@@ -127,13 +106,13 @@ std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &
   startPoint.latitude  = gps_position_.latitude * M_PI  / 180.0;
   startPoint.longitude = gps_position_.longitude * M_PI / 180.0;
   startPoint.relativeHeight = 15;
-  setWaypointV2Defaults(startPoint);
+  wpv2operator.setWaypointV2Defaults(startPoint);
   waypointList.push_back(startPoint);
 
   // Iterative algorithm
   for (int i = 0; i < polygonNum; i++) {
     DJI::OSDK::float32_t angle = i * 2 * M_PI / polygonNum;
-    setWaypointV2Defaults(waypointV2);
+    wpv2operator.setWaypointV2Defaults(waypointV2);
     DJI::OSDK::float32_t X = radius * cos(angle);
     DJI::OSDK::float32_t Y = radius * sin(angle);
     waypointV2.latitude = Y/EARTH_R + startPoint.latitude;
@@ -207,7 +186,6 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   if (drone_type.response.drone_type !=
       static_cast<uint8_t>(dji_osdk_ros::Dronetype::M300)) {
     ROS_ERROR("This sample only supports M300!\n");
-    dbg(drone_type.response.drone_type);
     return false;
   }
 
@@ -298,7 +276,11 @@ int main(int argc, char **argv) {
   obtainCtrlAuthority.request.enable_obtain = true;
   obtain_ctrl_authority_client.call(obtainCtrlAuthority);
 
-  bool is_run = runWaypointV2Mission(nh);
-  dbg(is_run);
+  ros::Duration(1).sleep();
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+  runWaypointV2Mission(nh);
+
+  ros::waitForShutdown();
 
 }
