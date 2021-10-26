@@ -75,7 +75,6 @@ void gpsPositionSubCallback(const sensor_msgs::NavSatFix::ConstPtr& gpsPosition)
 void waypointV2MissionStateSubCallback(const dji_osdk_ros::WaypointV2MissionStatePush::ConstPtr& waypointV2MissionStatePush);
 void waypointV2MissionEventSubCallback(const dji_osdk_ros::WaypointV2MissionEventPush::ConstPtr& waypointV2MissionEventPush);
 
-void setWaypointV2Defaults(dji_osdk_ros::WaypointV2& waypointV2);
 std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(const ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum);
 bool initWaypointV2Setting(ros::NodeHandle &nh);
 bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum);
