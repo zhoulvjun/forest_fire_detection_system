@@ -106,10 +106,14 @@ ZigzagPathPlanner::getGPos(bool useInitHeadDirection, float headingRad) {
   for (int i = 0; i < LocalPosVec.size(); ++i) {
 
     double ref[3], result[3];
+    ref[0] = homePosition.latitude;
+    ref[1] = homePosition.longitude;
+    ref[2] = homePosition.altitude;
 
-    global_pos = local2Global(LocalPosVec[i]);
-    wpV2.latitude = global_pos.latitude;
-    wpV2.longitude = global_pos.longitude;
+    TOOLS::Meter2LatLongAlt(ref, LocalPosVec[i], result);
+    
+    wpV2.latitude = result[0];
+    wpV2.longitude = result[1];
     wpV2.relativeHeight = LocalPosVec[i].z;
 
     wpV2Vec.push_back(wpV2);

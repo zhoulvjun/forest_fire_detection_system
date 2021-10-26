@@ -20,13 +20,15 @@
 #include <iostream>
 #include <math.h>
 
+#include <common/CommonTypes.hpp>
+
 namespace FFDS {
 namespace TOOLS {
 
 using namespace std;
 
 const double CONSTANTS_RADIUS_OF_EARTH = 6378137.0;
-const double EARTH_R =  6378137.0;
+const double EARTH_R = 6378137.0;
 const double CONSTANTS_ONE_G = 9.80665;
 
 float AbsNum(float a) {
@@ -90,7 +92,7 @@ void Euler2Quaternion(float angle[3], float quat[4]) {
 }
 
 void MatrixPlusVector3(float vector_a[3], float rotmax[3][3],
-                          float vector_b[3]) {
+                       float vector_b[3]) {
   vector_a[0] = rotmax[0][0] * vector_b[0] + rotmax[0][1] * vector_b[1] +
                 rotmax[0][2] * vector_b[2];
 
@@ -133,44 +135,48 @@ float Deg2Rad(float deg) {
 }
 
 /* ref,result---lat,long,alt */
-void Meter2LatLongAlt(double ref[3], float x, float y, float z,
-                          double result[3]) {
+void Meter2LatLongAlt(double ref[3], COMMON::LocalPosition local_pos,
+                      double result[3]) {
 
-  if (x == 0 && y == 0) {
+  if (local_pos.x == 0 && local_pos.y == 0) {
+
     result[0] = ref[0];
     result[1] = ref[1];
+
   } else {
     double local_radius = cos(Deg2Rad(ref[0])) * EARTH_R; // lat是
 
-    result[0] =
-        ref[0] +
-        Rad2Deg(x / EARTH_R); //得到的是lat，x是北向位置，所以在大圆上
+    /*得到的是lat，x是北向位置，所以在大圆上 */
+    result[0] = ref[0] + Rad2Deg(local_pos.x / EARTH_R);
 
-    result[1] = ref[1] + Rad2Deg(y / local_radius); //得到的是long，在维度圆上
+    //得到的是long，在维度圆上
+    result[1] = ref[1] + Rad2Deg(local_pos.y / local_radius);
   }
 
-  result[2] = ref[2] + z; //高度
+  //高度
+  result[2] = ref[2] + local_pos.z;
 }
 
 void LatLong2Meter(double a_pos[2], double b_pos[2],
-                      double m[2]) { //参考点是a点，lat，long，alt
+                   double m[2]) { //参考点是a点，lat，long，alt
   double lat1 = a_pos[0];
   double lon1 = a_pos[1];
 
   double lat2 = b_pos[0];
   double lon2 = b_pos[1];
 
-  double n_distance = Deg2Rad(lat2 - lat1) *
-                      EARTH_R; //涉及到ned是向北增加，且纬度向北也增加
+  double n_distance =
+      Deg2Rad(lat2 - lat1) * EARTH_R; //涉及到ned是向北增加，且纬度向北也增加
 
   double r_at_ref1 = cos(Deg2Rad(lat1)) * EARTH_R;
 
-  double e_distance = Deg2Rad(lon2 - lon1) *
-                      r_at_ref1; //涉及到ned是向东增加，但是经度向东减少
+  double e_distance =
+      Deg2Rad(lon2 - lon1) * r_at_ref1; //涉及到ned是向东增加，但是经度向东减少
 
   m[0] = n_distance;
   m[1] = e_distance;
 }
+
 } // namespace TOOLS
 } // namespace FFDS
 
