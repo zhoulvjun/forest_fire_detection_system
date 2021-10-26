@@ -25,9 +25,9 @@ namespace TOOLS {
 
 using namespace std;
 
-#define CONSTANTS_RADIUS_OF_EARTH 6378137.0
-#define EARTH_R 6378137
-#define CONSTANTS_ONE_G 9.80665
+#define CONSTANTS_RADIUS_OF_EARTH (double)6378137.0
+#define EARTH_R (double)6378137.0
+#define CONSTANTS_ONE_G (double)9.80665
 
 float AbsNum(float a) {
   float result;
