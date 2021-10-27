@@ -27,7 +27,6 @@ namespace TOOLS {
 
 using namespace std;
 
-const double CONSTANTS_RADIUS_OF_EARTH = 6378137.0;
 const double EARTH_R = 6378137.0;
 const double CONSTANTS_ONE_G = 9.80665;
 

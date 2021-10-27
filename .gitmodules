@@ -7,3 +7,7 @@
 	path = 3dparty/dbg-macro
 	url = https://github.com/sharkdp/dbg-macro.git
 	branch = master
+[submodule "3dparty/PX4-Matrix"]
+	path = 3dparty/PX4-Matrix
+	url = https://github.com/PX4/PX4-Matrix.git
+	branch = master
