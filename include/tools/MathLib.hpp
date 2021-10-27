@@ -122,16 +122,12 @@ void Quat2Rotmax(float q[4], float R[3][3]) {
   R[2][2] = aSq - bSq - cSq + dSq;
 }
 
-float Rad2Deg(float rad) {
-  float deg;
-  deg = rad * 180 / M_PI;
-  return deg;
+double Rad2Deg(double rad) {
+  return rad * 180 / M_PI;
 }
 
-float Deg2Rad(float deg) {
-  float rad;
-  rad = deg * M_PI / 180;
-  return rad;
+double Deg2Rad(double deg) {
+  return deg * M_PI / 180;
 }
 
 /* ref,result---lat,long,alt */
@@ -139,21 +135,16 @@ void Meter2LatLongAlt(double ref[3], COMMON::LocalPosition local_pos,
                       double result[3]) {
 
   if (local_pos.x == 0 && local_pos.y == 0) {
-
     result[0] = ref[0];
     result[1] = ref[1];
-
   } else {
     double local_radius = cos(Deg2Rad(ref[0])) * EARTH_R; // lat是
-
-    /*得到的是lat，x是北向位置，所以在大圆上 */
+    /* 得到的是lat，x是北向位置，所以在大圆上 */
     result[0] = ref[0] + Rad2Deg(local_pos.x / EARTH_R);
-
-    //得到的是long，在维度圆上
+    /* 得到的是long，在维度圆上 */
     result[1] = ref[1] + Rad2Deg(local_pos.y / local_radius);
   }
-
-  //高度
+  /* 高度 */
   result[2] = ref[2] + local_pos.z;
 }
 
