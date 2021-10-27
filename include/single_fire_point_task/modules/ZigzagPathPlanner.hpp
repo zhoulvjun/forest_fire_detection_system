@@ -35,7 +35,7 @@ public:
       : homePosition(home), zigzagNum(num), zigzagLen(len), zigzagWid(wid),
         zigzagHeight(height){};
 
-  ~ZigzagPathPlanner();
+  ~ZigzagPathPlanner(){};
 
   std::vector<dji_osdk_ros::WaypointV2> &getGPos(bool useInitHeadDirection,
                                                  float heading);

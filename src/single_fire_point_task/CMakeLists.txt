@@ -16,6 +16,9 @@
 
 # Path Planner
 add_library(ZigzagPathPlanner modules/ZigzagPathPlanner.cpp)
+target_link_libraries(ZigzagPathPlanner
+  ${catkin_LIBRARIES}
+)
 
 # Main node
 add_executable(single_fire_point_task_manager single_fire_point_task_manager.cpp)

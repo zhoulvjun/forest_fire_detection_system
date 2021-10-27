@@ -10,3 +10,12 @@ target_link_libraries(test_WpV2Operator
 target_link_libraries(test_WpV2Operator
   WpV2Operator
 )
+
+# test zigzagPlanner
+add_executable(test_zigzag_planner test_zigzag_planner.cpp)
+target_link_libraries(test_zigzag_planner
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(test_zigzag_planner
+  ZigzagPathPlanner
+)

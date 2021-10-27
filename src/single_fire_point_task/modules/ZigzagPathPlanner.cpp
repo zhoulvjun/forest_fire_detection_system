@@ -76,14 +76,16 @@ void ZigzagPathPlanner::calLocalPos() {
 
 void ZigzagPathPlanner::HEarth2Earth(float heading) {
 
+  float rot_x;
+  float rot_y;
+
   for (int i = 0; i < LocalPosVec.size(); ++i) {
 
-    LocalPosVec[i].x =
-        LocalPosVec[i].x * cos(heading) - LocalPosVec[i].y * sin(heading);
+    rot_x = LocalPosVec[i].x * cos(heading) - LocalPosVec[i].y * sin(heading);
+    rot_y = LocalPosVec[i].x * sin(heading) + LocalPosVec[i].y * cos(heading);
 
-    LocalPosVec[i].y =
-        LocalPosVec[i].x * sin(heading) + LocalPosVec[i].y * cos(heading);
-
+    LocalPosVec[i].x = rot_x;
+    LocalPosVec[i].y = rot_y;
     LocalPosVec[i].z = LocalPosVec[i].z;
   }
 }
