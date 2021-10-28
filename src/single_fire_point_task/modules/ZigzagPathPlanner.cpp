@@ -19,6 +19,7 @@
 using namespace FFDS;
 
 void ZigzagPathPlanner::calLocalPos() {
+
   float each_len = zigzagLen / zigzagNum;
   int point_num = 2 * (zigzagNum + 1);
   COMMON::LocalPosition pos;
@@ -27,6 +28,12 @@ void ZigzagPathPlanner::calLocalPos() {
   bool is_upper_left = false;
   bool is_lower_right = false;
   bool is_upper_right = false;
+
+  /* add the first point above the home position */
+  pos.x = 0.0;
+  pos.y = 0.0;
+  pos.z = zigzagHeight;
+  LocalPosVec.push_back(pos);
 
   for (int i = 0; i < point_num - 1; ++i) {
 

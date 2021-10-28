@@ -14,8 +14,13 @@
  *
  ******************************************************************************/
 
+#define DBG_MACRO_NO_WARNING
+
+#include <dbg-macro/dbg.h>
 #include <single_fire_point_task/modules/ZigzagPathPlanner.hpp>
 #include <tools/GoogleEarthPath.hpp>
+
+
 int main(int argc, char **argv) {
   sensor_msgs::NavSatFix home;
   home.latitude = 45.459074;
@@ -24,18 +29,19 @@ int main(int argc, char **argv) {
   FFDS::ZigzagPathPlanner zigzagPlanner(home, 10, 100.0, 40, 15);
   std::vector<dji_osdk_ros::WaypointV2> waypointVec;
 
-  float heading = FFDS::TOOLS::Deg2Rad(0);
+  float heading = FFDS::TOOLS::Deg2Rad(60);
 
   waypointVec = zigzagPlanner.getGPos(true, heading);
 
   GoogleEarthPath path("/home/ls/path1.kml", "path1");
   double longitude, latitude;
 
-  for (int i = 0; i<waypointVec.size(); ++i){
+  for (int i = 0; i < waypointVec.size(); ++i) {
     latitude = waypointVec[i].latitude;
     longitude = waypointVec[i].longitude;
+    dbg(waypointVec[i].relativeHeight);
     path.addPoint(longitude, latitude);
-  } 
+  }
 
   return 0;
 }
