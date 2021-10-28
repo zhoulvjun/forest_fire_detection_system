@@ -2,7 +2,7 @@
 *
 *   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 *
-*   @Filename: single_fire_point_task_manager.hpp
+*   @Filename: single_fire_point_task_manager.cpp
 *
 *   @Author: Shun Li
 *
@@ -14,15 +14,8 @@
 *
 ******************************************************************************/
 
-#ifndef __SINGLE_FIRE_POINT_TASK_MANAGER_HPP__
-#define __SINGLE_FIRE_POINT_TASK_MANAGER_HPP__
-
-
-#include<iostream>
-class SingleFirePointTaskManager{};
-
-
-
-
-#endif /* SINGLE_FIRE_POINT_TASK_MANAGER_HPP */
+#include <single_fire_point_task/SingleFirePointTaskManager.hpp>
+int main(int argc, char** argv){
+return 0;
+}
 
