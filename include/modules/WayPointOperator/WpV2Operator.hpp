@@ -87,7 +87,7 @@ public:
       dji_osdk_ros::GetGlobalCruisespeed &getGlobalCruisespeed_);
 
 private:
-  ros::NodeHandle &nh;
+  ros::NodeHandle nh;
 
   ros::ServiceClient waypointV2_init_setting_client;
   ros::ServiceClient waypointV2_generate_actions_client;

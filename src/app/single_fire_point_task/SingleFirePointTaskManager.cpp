@@ -15,7 +15,14 @@
 ******************************************************************************/
 
 #include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
-int main(int argc, char** argv){
-return 0;
-}
+using namespace FFDS::APP;
 
+int main(int argc, char *argv[]) {
+
+  ros::init(argc, argv, "single_fire_point_task_manager_node");
+  ros::NodeHandle nh;
+
+  SingleFirePointTaskManager taskManager(nh);
+  /* taskManager.run(); */
+    return 0;
+  }
