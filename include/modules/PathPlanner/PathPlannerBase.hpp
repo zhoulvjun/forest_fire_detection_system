@@ -20,13 +20,13 @@
 #include <iostream>
 
 namespace FFDS {
-namespace COMMON {
+namespace MODULES {
 
 class PathPlannerBase {
 public:
 };
 
-} // namespace COMMON
+} // namespace MODULES
 } // namespace FFDS
 
 #endif /* PATHPLANNERBASE_HPP */

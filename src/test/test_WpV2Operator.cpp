@@ -14,7 +14,7 @@
  *
  ******************************************************************************/
 
-#include <test/test_WpV2Operator.hpp>
+#include <test/test_WpV2Operator.h>
 
 void gpsPositionSubCallback(
     const sensor_msgs::NavSatFix::ConstPtr &gpsPosition) {
@@ -97,7 +97,7 @@ bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
 
 std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum)
 {
-    FFDS::COMMON::WpV2Operator wpv2operator(nh);
+    FFDS::MODULES::WpV2Operator wpv2operator(nh);
   // Let's create a vector to store our waypoints in.
   std::vector<dji_osdk_ros::WaypointV2> waypointList;
   dji_osdk_ros::WaypointV2 startPoint;
@@ -162,7 +162,7 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   int timeout = 1;
   bool result = false;
 
-  FFDS::COMMON::WpV2Operator wpv2operator(nh);
+  FFDS::MODULES::WpV2Operator wpv2operator(nh);
 
   get_drone_type_client = nh.serviceClient<dji_osdk_ros::GetDroneType>("get_drone_type");
   waypointV2_mission_state_push_client =

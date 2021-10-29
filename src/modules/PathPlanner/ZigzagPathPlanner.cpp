@@ -16,7 +16,7 @@
 
 #include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 
-using namespace FFDS;
+using namespace FFDS::MODULES;
 
 void ZigzagPathPlanner::setParams(sensor_msgs::NavSatFix home, int num,
                                   float len, float wid, float height) {

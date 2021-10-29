@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __TEST_WPV2OPERATOR_HPP__
-#define __TEST_WPV2OPERATOR_HPP__
+#ifndef __TEST_WPV2OPERATOR_H__
+#define __TEST_WPV2OPERATOR_H__
 
 /* debug */
 /* #include <dbg-macro/dbg.h> */

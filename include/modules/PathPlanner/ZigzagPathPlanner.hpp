@@ -17,17 +17,18 @@
 #ifndef __ZIGZAGPATHPLANNER_HPP__
 #define __ZIGZAGPATHPLANNER_HPP__
 
-#include <modules/PathPlanner/PathPlannerBase.hpp>
 #include <dji_osdk_ros/WaypointV2.h>
+#include <modules/PathPlanner/PathPlannerBase.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
 
-#include <tools/MathLib.hpp>
 #include <common/CommonTypes.hpp>
+#include <tools/MathLib.hpp>
 
 namespace FFDS {
+namespace MODULES {
 
-class ZigzagPathPlanner : public COMMON::PathPlannerBase {
+class ZigzagPathPlanner : public MODULES::PathPlannerBase {
 
 public:
   ZigzagPathPlanner(){};
@@ -39,10 +40,10 @@ public:
   ~ZigzagPathPlanner(){};
 
   void setParams(sensor_msgs::NavSatFix home, int num, float len, float wid,
-                    float height);
+                 float height);
 
-  std::vector<dji_osdk_ros::WaypointV2> &getWpV2Vec(bool isGlobal, bool useInitHeadDirection,
-                                                 float homeHeadRad);
+  std::vector<dji_osdk_ros::WaypointV2> &
+  getWpV2Vec(bool isGlobal, bool useInitHeadDirection, float homeHeadRad);
 
 private:
   int zigzagNum{0};
@@ -69,6 +70,8 @@ private:
 
   void feedWp2Vec(bool isGlobal);
 };
+
+} // namespace MODULES
 } // namespace FFDS
 
 #endif /* ZIGZAGPATHPLANNER_HPP */

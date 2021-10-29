@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   home.latitude = 45.459074;
   home.longitude = -73.919047;
   home.altitude = 27.0;
-  FFDS::ZigzagPathPlanner zigzagPlanner(home, 10, 100.0, 40, 15);
+  FFDS::MODULES::ZigzagPathPlanner zigzagPlanner(home, 10, 100.0, 40, 15);
   std::vector<dji_osdk_ros::WaypointV2> waypointVec;
 
   float heading = FFDS::TOOLS::Deg2Rad(60);
