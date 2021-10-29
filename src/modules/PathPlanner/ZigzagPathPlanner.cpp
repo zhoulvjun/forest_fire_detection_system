@@ -14,7 +14,7 @@
  *
  ******************************************************************************/
 
-#include <single_fire_point_task/modules/ZigzagPathPlanner.hpp>
+#include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 
 using namespace FFDS;
 

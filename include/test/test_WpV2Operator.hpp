@@ -27,7 +27,7 @@
 #include <dji_osdk_ros/ObtainControlAuthority.h>
 #include <sensor_msgs/NavSatFix.h>
 
-#include <common/WpV2Operator.hpp>
+#include <modules/WayPointOperator/WpV2Operator.hpp>
 #include <tools/MathLib.hpp>
 
 /* dji_osdk_ros */

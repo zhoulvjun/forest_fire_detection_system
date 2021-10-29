@@ -14,15 +14,17 @@
 #
 #------------------------------------------------------------------------------
 
-# common library
-add_subdirectory(common)
+file(GLOB_RECURSE APP_PATH_LIST *.cpp)
 
-# modules library
-add_subdirectory(modules)
+foreach(APP_PATH ${APP_PATH_LIST})
 
-# executable test
-add_subdirectory(test)
+    # get the name without "*.cpp" or "path.."
+    STRING(REGEX REPLACE ".+/(.+)\\..*" "\\1" APP_NAME ${APP_PATH})
 
-# executable application
-add_subdirectory(app)
+    # generate the library
+    add_library(${APP_NAME} ${APP_PATH})
+    target_link_libraries(${APP_NAME}
+        ${catkin_LIBRARIES}
+        )
 
+endforeach()

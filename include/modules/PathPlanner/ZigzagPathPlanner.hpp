@@ -17,7 +17,7 @@
 #ifndef __ZIGZAGPATHPLANNER_HPP__
 #define __ZIGZAGPATHPLANNER_HPP__
 
-#include <common/PathPlannerBase.hpp>
+#include <modules/PathPlanner/PathPlannerBase.hpp>
 #include <dji_osdk_ros/WaypointV2.h>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>

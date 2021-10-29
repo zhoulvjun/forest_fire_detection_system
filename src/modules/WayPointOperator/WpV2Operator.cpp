@@ -14,7 +14,7 @@
  *
  ******************************************************************************/
 
-#include <common/WpV2Operator.hpp>
+#include <modules/WayPointOperator/WpV2Operator.hpp>
 
 using namespace FFDS::COMMON;
 

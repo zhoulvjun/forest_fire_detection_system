@@ -14,7 +14,7 @@
 *
 ******************************************************************************/
 
-#include <single_fire_point_task/SingleFirePointTaskManager.hpp>
+#include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
 int main(int argc, char** argv){
 return 0;
 }
