@@ -18,7 +18,6 @@
 
 void gpsPositionSubCallback(
     const sensor_msgs::NavSatFix::ConstPtr &gpsPosition) {
-
   gps_position_ = *gpsPosition;
 }
 
