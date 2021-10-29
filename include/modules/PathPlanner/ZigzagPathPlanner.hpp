@@ -30,25 +30,29 @@ namespace FFDS {
 class ZigzagPathPlanner : public COMMON::PathPlannerBase {
 
 public:
+  ZigzagPathPlanner(){};
   ZigzagPathPlanner(sensor_msgs::NavSatFix home, int num, float len, float wid,
                     float height)
-      : homePosition(home), zigzagNum(num), zigzagLen(len), zigzagWid(wid),
+      : homeGPos(home), zigzagNum(num), zigzagLen(len), zigzagWid(wid),
         zigzagHeight(height){};
 
   ~ZigzagPathPlanner(){};
 
-  std::vector<dji_osdk_ros::WaypointV2> &getGPos(bool useInitHeadDirection,
-                                                 float heading);
+  void setParams(sensor_msgs::NavSatFix home, int num, float len, float wid,
+                    float height);
+
+  std::vector<dji_osdk_ros::WaypointV2> &getWpV2Vec(bool isGlobal, bool useInitHeadDirection,
+                                                 float homeHeadRad);
 
 private:
   int zigzagNum{0};
   float zigzagLen{0.0};
   float zigzagWid{0.0};
   float zigzagHeight{0.0};
-  sensor_msgs::NavSatFix homePosition;
+  sensor_msgs::NavSatFix homeGPos;
 
-  std::vector<dji_osdk_ros::WaypointV2> wpV2Vec;
   std::vector<COMMON::LocalPosition> LocalPosVec;
+  std::vector<dji_osdk_ros::WaypointV2> wpV2Vec;
 
   /**
    * NOTE: we want the M300 initial heading as the positive direction.
@@ -61,7 +65,9 @@ private:
    */
   void calLocalPos();
 
-  void HEarth2Earth(float heading);
+  void HEarth2Earth(float homeHeadRad);
+
+  void feedWp2Vec(bool isGlobal);
 };
 } // namespace FFDS
 

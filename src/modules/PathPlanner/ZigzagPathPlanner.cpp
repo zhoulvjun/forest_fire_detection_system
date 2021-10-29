@@ -18,6 +18,16 @@
 
 using namespace FFDS;
 
+void ZigzagPathPlanner::setParams(sensor_msgs::NavSatFix home, int num,
+                                  float len, float wid, float height) {
+
+  homeGPos = home;
+  zigzagNum = num;
+  zigzagLen = len;
+  zigzagWid = wid;
+  zigzagHeight = height;
+}
+
 void ZigzagPathPlanner::calLocalPos() {
 
   float each_len = zigzagLen / zigzagNum;
@@ -81,15 +91,18 @@ void ZigzagPathPlanner::calLocalPos() {
   }
 }
 
-void ZigzagPathPlanner::HEarth2Earth(float heading) {
+void ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
 
   float rot_x;
   float rot_y;
 
   for (int i = 0; i < LocalPosVec.size(); ++i) {
 
-    rot_x = LocalPosVec[i].x * cos(heading) - LocalPosVec[i].y * sin(heading);
-    rot_y = LocalPosVec[i].x * sin(heading) + LocalPosVec[i].y * cos(heading);
+    rot_x = LocalPosVec[i].x * cos(homeHeadRad) -
+            LocalPosVec[i].y * sin(homeHeadRad);
+
+    rot_y = LocalPosVec[i].x * sin(homeHeadRad) +
+            LocalPosVec[i].y * cos(homeHeadRad);
 
     LocalPosVec[i].x = rot_x;
     LocalPosVec[i].y = rot_y;
@@ -97,36 +110,49 @@ void ZigzagPathPlanner::HEarth2Earth(float heading) {
   }
 }
 
-std::vector<dji_osdk_ros::WaypointV2> &
-ZigzagPathPlanner::getGPos(bool useInitHeadDirection, float headingRad) {
+void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
 
-  /* Step: 1 generate the local zigzag pos */
+  dji_osdk_ros::WaypointV2 wpV2;
+
+  double ref[3], result[3];
+  ref[0] = homeGPos.latitude;
+  ref[1] = homeGPos.longitude;
+  ref[2] = homeGPos.altitude;
+
+  for (int i = 0; i < LocalPosVec.size(); ++i) {
+
+    if (isGlobal) {
+
+      TOOLS::Meter2LatLongAlt(ref, LocalPosVec[i], result);
+      wpV2.latitude = result[0];
+      wpV2.longitude = result[1];
+      wpV2.relativeHeight = LocalPosVec[i].z;
+
+    } else {
+
+      wpV2.positionX = LocalPosVec[i].x;
+      wpV2.positionY = LocalPosVec[i].y;
+      wpV2.positionZ = LocalPosVec[i].z;
+    }
+
+    wpV2Vec.push_back(wpV2);
+  }
+}
+
+std::vector<dji_osdk_ros::WaypointV2> &
+ZigzagPathPlanner::getWpV2Vec(bool isGlobal, bool useInitHeadDirection,
+                              float homeHeadRad) {
+
+  /* Step: 1 generate the local zigzag LocalPosVec */
   calLocalPos();
 
   /* Step: 2 if HeadEarth to Earth? */
   if (useInitHeadDirection) {
-    HEarth2Earth(headingRad);
+    HEarth2Earth(homeHeadRad);
   }
 
   /* Step: 3 to global gps position*/
-  sensor_msgs::NavSatFix global_pos;
-  dji_osdk_ros::WaypointV2 wpV2;
-
-  for (int i = 0; i < LocalPosVec.size(); ++i) {
-
-    double ref[3], result[3];
-    ref[0] = homePosition.latitude;
-    ref[1] = homePosition.longitude;
-    ref[2] = homePosition.altitude;
-
-    TOOLS::Meter2LatLongAlt(ref, LocalPosVec[i], result);
-
-    wpV2.latitude = result[0];
-    wpV2.longitude = result[1];
-    wpV2.relativeHeight = LocalPosVec[i].z;
-
-    wpV2Vec.push_back(wpV2);
-  }
+  feedWp2Vec(isGlobal);
 
   return wpV2Vec;
 }

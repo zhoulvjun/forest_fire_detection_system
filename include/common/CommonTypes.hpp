@@ -22,7 +22,7 @@
 namespace FFDS {
 namespace COMMON {
 
-/* Local earth-fixed coordinates */
+/* Local earth-fixed coordinates position */
 struct LocalPosition {
   float x{0.0};
   float y{0.0};
