@@ -73,16 +73,6 @@ void SingleFirePointTaskManager::gpsPositionSubCallback(
 
 void SingleFirePointTaskManager::run() {
 
-    gpsPositionSub =
-        nh.subscribe("dji_osdk_ros/gps_position", 10,
-                     &SingleFirePointTaskManager::gpsPositionSubCallback, this);
-
-    attitudeSub =
-        nh.subscribe("dji_osdk_ros/attitude", 10,
-                     &SingleFirePointTaskManager::attitudeSubCallback, this);
-
-    ROS_INFO_STREAM("initializing Done");
-
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   matrix::Eulerf initAtt = getInitAttAverage(100);
 
