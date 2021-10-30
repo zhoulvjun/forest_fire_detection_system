@@ -15,6 +15,8 @@
  ******************************************************************************/
 
 #include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
+#include <dbg-macro/dbg.h>
+
 using namespace FFDS::APP;
 
 sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(int times) {
@@ -76,6 +78,9 @@ void SingleFirePointTaskManager::run() {
 
   MODULES::ZigzagPathPlanner pathPlanner(homeGPos, 10, 100.0, 40, 15);
   MODULES::WpV2Operator wpV2Operator(nh);
+
+  dbg(initAtt.psi());
+  dbg(TOOLS::Deg2Rad(initAtt.psi()));
 
   /* Step: 1 init the mission */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
