@@ -17,7 +17,7 @@
 #include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
 using namespace FFDS::APP;
 
-sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPos(int times) {
+sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(int times) {
 
   sensor_msgs::NavSatFix homeGPos;
 
@@ -34,8 +34,28 @@ sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPos(int times) {
   return homeGPos;
 }
 
-void SingleFirePointTaskManager::attitudeSubCallback(const geometry_msgs::QuaternionStampedConstPtr& attitudeData)
-{
+matrix::Eulerf SingleFirePointTaskManager::getHomeHeadingAverage(int times) {
+
+  geometry_msgs::QuaternionStamped quat;
+
+  for (int i = 0; i < times; i++) {
+    ros::spinOnce();
+    quat.quaternion.w += attitude_data_.quaternion.w;
+    quat.quaternion.x += attitude_data_.quaternion.x;
+    quat.quaternion.y += attitude_data_.quaternion.y;
+    quat.quaternion.z += attitude_data_.quaternion.z;
+  }
+  quat.quaternion.w = quat.quaternion.w / times;
+  quat.quaternion.x = quat.quaternion.x / times;
+  quat.quaternion.y = quat.quaternion.y / times;
+  quat.quaternion.z = quat.quaternion.z / times;
+  matrix::Quaternionf average_quat(quat.quaternion.w, quat.quaternion.x, quat.quaternion.y, quat.quaternion.z);
+
+  return matrix::Eulerf(average_quat);
+}
+
+void SingleFirePointTaskManager::attitudeSubCallback(
+    const geometry_msgs::QuaternionStampedConstPtr &attitudeData) {
   attitude_data_ = *attitudeData;
 }
 
@@ -47,13 +67,10 @@ void SingleFirePointTaskManager::gpsPositionSubCallback(
 
 void SingleFirePointTaskManager::run() {
 
-  MODULES::ZigzagPathPlanner pathPlanner(getHomeGPos(100), 10, 100.0, 40, 15);
+  MODULES::ZigzagPathPlanner pathPlanner(getHomeGPosAverage(100), 10, 100.0, 40, 15);
   MODULES::WpV2Operator wpV2Operator(nh);
 
   /* 1. generate path */
-
-
-
 }
 
 int main(int argc, char *argv[]) {

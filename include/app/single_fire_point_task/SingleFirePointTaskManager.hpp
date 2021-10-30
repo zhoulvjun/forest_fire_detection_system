@@ -22,6 +22,7 @@
 #include <modules/WayPointOperator/WpV2Operator.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <PX4-Matrix/matrix/Euler.hpp>
 
 namespace FFDS {
 namespace APP {
@@ -39,7 +40,8 @@ private:
 
   void readPathParams();
 
-  sensor_msgs::NavSatFix getHomeGPos(int times);
+  sensor_msgs::NavSatFix getHomeGPosAverage(int times);
+  matrix::Eulerf getHomeHeadingAverage(int times);
 
   void
   gpsPositionSubCallback(const sensor_msgs::NavSatFix::ConstPtr &gpsPosition);
