@@ -22,7 +22,6 @@ sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(int times)
   sensor_msgs::NavSatFix homeGPos;
 
   for (int i = 0; (i < times)&&ros::ok(); i++) {
-    ros::Duration(0.01).sleep();
     ros::spinOnce();
     homeGPos.latitude += gps_position_.latitude;
     homeGPos.longitude += gps_position_.longitude;
@@ -41,7 +40,6 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
   geometry_msgs::QuaternionStamped quat;
 
   for (int i = 0; (i < times)&&ros::ok(); i++) {
-    ros::Duration(0.01).sleep();
     ros::spinOnce();
     quat.quaternion.w += attitude_data_.quaternion.w;
     quat.quaternion.x += attitude_data_.quaternion.x;
