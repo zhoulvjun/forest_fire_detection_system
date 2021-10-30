@@ -58,6 +58,7 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
 
 void SingleFirePointTaskManager::attitudeSubCallback(
     const geometry_msgs::QuaternionStampedConstPtr &attitudeData) {
+  ROS_INFO_STREAM("att callback");
   attitude_data_ = *attitudeData;
 }
 
