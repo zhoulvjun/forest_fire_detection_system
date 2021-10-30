@@ -41,7 +41,7 @@ private:
   void readPathParams();
 
   sensor_msgs::NavSatFix getHomeGPosAverage(int times);
-  matrix::Eulerf getHomeHeadingAverage(int times);
+  matrix::Eulerf getInitAttAverage(int times);
 
   void
   gpsPositionSubCallback(const sensor_msgs::NavSatFix::ConstPtr &gpsPosition);

@@ -34,7 +34,7 @@ sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(int times)
   return homeGPos;
 }
 
-matrix::Eulerf SingleFirePointTaskManager::getHomeHeadingAverage(int times) {
+matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
 
   geometry_msgs::QuaternionStamped quat;
 
@@ -67,10 +67,25 @@ void SingleFirePointTaskManager::gpsPositionSubCallback(
 
 void SingleFirePointTaskManager::run() {
 
-  MODULES::ZigzagPathPlanner pathPlanner(getHomeGPosAverage(100), 10, 100.0, 40, 15);
+  sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
+  matrix::Eulerf initAtt = getInitAttAverage(100);
+
+  ROS_INFO_STREAM(initAtt.psi());
+
+  MODULES::ZigzagPathPlanner pathPlanner(homeGPos, 10, 100.0, 40, 15);
   MODULES::WpV2Operator wpV2Operator(nh);
 
-  /* 1. generate path */
+  /* Step: 1 init the mission */
+  dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
+  initWaypointV2Setting_.request.waypointV2InitSettings.repeatTimes = 1;
+  initWaypointV2Setting_.request.waypointV2InitSettings.finishedAction = initWaypointV2Setting_.request.waypointV2InitSettings.DJIWaypointV2MissionFinishedGoHome;
+  initWaypointV2Setting_.request.waypointV2InitSettings.maxFlightSpeed = 10;
+  initWaypointV2Setting_.request.waypointV2InitSettings.autoFlightSpeed = 2;
+  initWaypointV2Setting_.request.waypointV2InitSettings.exitMissionOnRCSignalLost = 1;
+  initWaypointV2Setting_.request.waypointV2InitSettings.gotoFirstWaypointMode = initWaypointV2Setting_.request.waypointV2InitSettings.DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
+  initWaypointV2Setting_.request.waypointV2InitSettings.mission = pathPlanner.getWpV2Vec(true, true, initAtt.psi());
+  initWaypointV2Setting_.request.waypointV2InitSettings.missTotalLen = initWaypointV2Setting_.request.waypointV2InitSettings.mission.size();
+
 }
 
 int main(int argc, char *argv[]) {
