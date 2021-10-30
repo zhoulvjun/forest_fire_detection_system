@@ -49,6 +49,8 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
   quat.quaternion.x = quat.quaternion.x / times;
   quat.quaternion.y = quat.quaternion.y / times;
   quat.quaternion.z = quat.quaternion.z / times;
+
+  ROS_INFO_STREAM(quat.quaternion.w);
   matrix::Quaternionf average_quat(quat.quaternion.w, quat.quaternion.x, quat.quaternion.y, quat.quaternion.z);
 
   return matrix::Eulerf(average_quat);
