@@ -26,7 +26,6 @@ sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(int times)
     homeGPos.latitude += gps_position_.latitude;
     homeGPos.longitude += gps_position_.longitude;
     homeGPos.altitude += gps_position_.altitude;
-    ROS_INFO_STREAM(homeGPos.altitude);
   }
   homeGPos.latitude = homeGPos.latitude / times;
   homeGPos.longitude = homeGPos.longitude / times;
@@ -74,8 +73,6 @@ void SingleFirePointTaskManager::run() {
 
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   matrix::Eulerf initAtt = getInitAttAverage(100);
-
-  /* ROS_INFO_STREAM(initAtt.psi()); */
 
   MODULES::ZigzagPathPlanner pathPlanner(homeGPos, 10, 100.0, 40, 15);
   MODULES::WpV2Operator wpV2Operator(nh);
