@@ -51,6 +51,7 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
   quat.quaternion.z = quat.quaternion.z / times;
 
   ROS_INFO_STREAM(quat.quaternion.w);
+
   matrix::Quaternionf average_quat(quat.quaternion.w, quat.quaternion.x, quat.quaternion.y, quat.quaternion.z);
 
   return matrix::Eulerf(average_quat);
@@ -58,8 +59,10 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
 
 void SingleFirePointTaskManager::attitudeSubCallback(
     const geometry_msgs::QuaternionStampedConstPtr &attitudeData) {
+
   ROS_INFO_STREAM("att callback");
   attitude_data_ = *attitudeData;
+
 }
 
 void SingleFirePointTaskManager::gpsPositionSubCallback(
@@ -69,6 +72,16 @@ void SingleFirePointTaskManager::gpsPositionSubCallback(
 }
 
 void SingleFirePointTaskManager::run() {
+
+    gpsPositionSub =
+        nh.subscribe("dji_osdk_ros/gps_position", 10,
+                     &SingleFirePointTaskManager::gpsPositionSubCallback, this);
+
+    attitudeSub =
+        nh.subscribe("dji_osdk_ros/attitude", 10,
+                     &SingleFirePointTaskManager::attitudeSubCallback, this);
+
+    ROS_INFO_STREAM("initializing Done");
 
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   matrix::Eulerf initAtt = getInitAttAverage(100);
