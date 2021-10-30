@@ -38,7 +38,6 @@ void WpV2Operator::setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2) {
   waypointV2.positionZ = 0;
   waypointV2.maxFlightSpeed = 9;
   waypointV2.autoFlightSpeed = 2;
-  ROS_INFO("Set waypointV2 default done!");
 }
 
 bool WpV2Operator::initWaypointV2Setting(
