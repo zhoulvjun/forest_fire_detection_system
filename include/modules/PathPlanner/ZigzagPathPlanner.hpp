@@ -19,6 +19,7 @@
 
 #include <dji_osdk_ros/WaypointV2.h>
 #include <modules/PathPlanner/PathPlannerBase.hpp>
+#include <modules/WayPointOperator/WpV2Operator.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
 

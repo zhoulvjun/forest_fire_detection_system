@@ -30,6 +30,9 @@ void WpV2Operator::setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2) {
   waypointV2.heading = 0;
   waypointV2.turnMode = DJI::OSDK::DJIWaypointV2TurnModeClockwise;
 
+  waypointV2.latitude = 0;
+  waypointV2.longitude = 0;
+  waypointV2.relativeHeight = 0;
   waypointV2.positionX = 0;
   waypointV2.positionY = 0;
   waypointV2.positionZ = 0;

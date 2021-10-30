@@ -113,6 +113,7 @@ void ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
 void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
 
   dji_osdk_ros::WaypointV2 wpV2;
+  MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
 
   double ref[3], result[3];
   ref[0] = homeGPos.latitude;
@@ -120,6 +121,8 @@ void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   ref[2] = homeGPos.altitude;
 
   for (int i = 0; i < LocalPosVec.size(); ++i) {
+
+    MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
 
     if (isGlobal) {
 
@@ -142,7 +145,6 @@ void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
 std::vector<dji_osdk_ros::WaypointV2> &
 ZigzagPathPlanner::getWpV2Vec(bool isGlobal, bool useInitHeadDirection,
                               float homeHeadRad) {
-
   /* Step: 1 generate the local zigzag LocalPosVec */
   calLocalPos();
 
