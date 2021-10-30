@@ -39,11 +39,11 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
   geometry_msgs::QuaternionStamped quat;
 
   for (int i = 0; i < times; i++) {
-    ros::spinOnce();
     quat.quaternion.w += attitude_data_.quaternion.w;
     quat.quaternion.x += attitude_data_.quaternion.x;
     quat.quaternion.y += attitude_data_.quaternion.y;
     quat.quaternion.z += attitude_data_.quaternion.z;
+    ros::spinOnce();
   }
   quat.quaternion.w = quat.quaternion.w / times;
   quat.quaternion.x = quat.quaternion.x / times;

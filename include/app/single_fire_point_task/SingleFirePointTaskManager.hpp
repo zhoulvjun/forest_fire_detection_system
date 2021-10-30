@@ -59,6 +59,8 @@ public:
     attitudeSub =
         nh.subscribe("dji_osdk_ros/attitude", 10,
                      &SingleFirePointTaskManager::attitudeSubCallback, this);
+
+    ROS_INFO_STREAM("initializing Done");
   };
 
   void run();
