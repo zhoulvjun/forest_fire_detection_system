@@ -21,12 +21,13 @@ sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(int times)
 
   sensor_msgs::NavSatFix homeGPos;
 
-  for (int i = 0; i < times; i++) {
-    ros::Duration(20.0).sleep();
+  for (int i = 0; (i < times)&&ros::ok(); i++) {
+    ros::Duration(0.01).sleep();
     ros::spinOnce();
     homeGPos.latitude += gps_position_.latitude;
     homeGPos.longitude += gps_position_.longitude;
     homeGPos.altitude += gps_position_.altitude;
+    ROS_INFO_STREAM(homeGPos.altitude);
   }
   homeGPos.latitude = homeGPos.latitude / times;
   homeGPos.longitude = homeGPos.longitude / times;
@@ -39,20 +40,19 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
 
   geometry_msgs::QuaternionStamped quat;
 
-  for (int i = 0; i < times; i++) {
+  for (int i = 0; (i < times)&&ros::ok(); i++) {
+    ros::Duration(0.01).sleep();
+    ros::spinOnce();
     quat.quaternion.w += attitude_data_.quaternion.w;
     quat.quaternion.x += attitude_data_.quaternion.x;
     quat.quaternion.y += attitude_data_.quaternion.y;
     quat.quaternion.z += attitude_data_.quaternion.z;
-    ros::Duration(20.0).sleep();
-    ros::spinOnce();
   }
   quat.quaternion.w = quat.quaternion.w / times;
   quat.quaternion.x = quat.quaternion.x / times;
   quat.quaternion.y = quat.quaternion.y / times;
   quat.quaternion.z = quat.quaternion.z / times;
 
-  ROS_INFO_STREAM(quat.quaternion.w);
 
   matrix::Quaternionf average_quat(quat.quaternion.w, quat.quaternion.x, quat.quaternion.y, quat.quaternion.z);
 
@@ -62,7 +62,6 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
 void SingleFirePointTaskManager::attitudeSubCallback(
     const geometry_msgs::QuaternionStampedConstPtr &attitudeData) {
 
-  ROS_INFO_STREAM("att callback");
   attitude_data_ = *attitudeData;
 
 }
@@ -78,7 +77,7 @@ void SingleFirePointTaskManager::run() {
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   matrix::Eulerf initAtt = getInitAttAverage(100);
 
-  ROS_INFO_STREAM(initAtt.psi());
+  /* ROS_INFO_STREAM(initAtt.psi()); */
 
   MODULES::ZigzagPathPlanner pathPlanner(homeGPos, 10, 100.0, 40, 15);
   MODULES::WpV2Operator wpV2Operator(nh);
