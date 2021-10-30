@@ -42,18 +42,18 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
 
   for (int i = 0; (i < times)&&ros::ok(); i++) {
     ros::spinOnce();
+    quat.quaternion.w += attitude_data_.quaternion.w;
     quat.quaternion.x += attitude_data_.quaternion.x;
     quat.quaternion.y += attitude_data_.quaternion.y;
     quat.quaternion.z += attitude_data_.quaternion.z;
-    quat.quaternion.w += attitude_data_.quaternion.w;
   }
+  quat.quaternion.w = quat.quaternion.w / times;
   quat.quaternion.x = quat.quaternion.x / times;
   quat.quaternion.y = quat.quaternion.y / times;
   quat.quaternion.z = quat.quaternion.z / times;
-  quat.quaternion.w = quat.quaternion.w / times;
 
 
-  matrix::Quaternionf average_quat( quat.quaternion.x, quat.quaternion.y, quat.quaternion.z, quat.quaternion.w);
+  matrix::Quaternionf average_quat(quat.quaternion.w, quat.quaternion.x, quat.quaternion.y, quat.quaternion.z);
 
   return matrix::Eulerf(average_quat);
 }
