@@ -22,6 +22,7 @@
 #include <modules/WayPointOperator/WpV2Operator.hpp>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <dji_osdk_ros/ObtainControlAuthority.h>
 #include <PX4-Matrix/matrix/Euler.hpp>
 
 namespace FFDS {
@@ -34,6 +35,8 @@ private:
 
   ros::Subscriber gpsPositionSub;
   ros::Subscriber attitudeSub;
+
+  ros::ServiceClient obtain_ctrl_authority_client;
 
   sensor_msgs::NavSatFix gps_position_;
   geometry_msgs::QuaternionStamped attitude_data_;

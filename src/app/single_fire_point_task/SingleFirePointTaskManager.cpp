@@ -83,12 +83,20 @@ void SingleFirePointTaskManager::run() {
 
   matrix::Eulerf initAtt = getInitAttAverage(100);
   ROS_INFO_STREAM("The initial attitude in ENU frame is:");
-  ROS_INFO_STREAM("roll angle phi in ENU frame is:" << initAtt.phi());
-  ROS_INFO_STREAM("pitch angle theta in ENU frame is:" << initAtt.theta());
-  ROS_INFO_STREAM("yaw angle psi in ENU frame is:" << initAtt.psi());
+  ROS_INFO_STREAM(
+      "roll angle phi in ENU frame is:" << TOOLS::Rad2Deg(initAtt.phi()));
+  ROS_INFO_STREAM(
+      "pitch angle theta in ENU frame is:" << TOOLS::Rad2Deg(initAtt.theta()));
+  ROS_INFO_STREAM(
+      "yaw angle psi in ENU frame is:" << TOOLS::Rad2Deg(initAtt.psi()));
 
   MODULES::ZigzagPathPlanner pathPlanner(homeGPos, 10, 100.0, 40, 15);
   MODULES::WpV2Operator wpV2Operator(nh);
+
+  /* if you want to fly without rc ,you need to obtain ctrl authority.Or it will enter rc lost. */
+  dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
+  obtainCtrlAuthority.request.enable_obtain = true;
+  obtain_ctrl_authority_client.call(obtainCtrlAuthority);
 
   /* Step: 1 init the mission */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
