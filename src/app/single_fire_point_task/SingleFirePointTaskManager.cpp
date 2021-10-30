@@ -80,7 +80,9 @@ void SingleFirePointTaskManager::run() {
   MODULES::WpV2Operator wpV2Operator(nh);
 
   dbg(initAtt.psi());
-  dbg(TOOLS::Deg2Rad(initAtt.psi()));
+  dbg(TOOLS::Rad2Deg(initAtt.psi()));
+  dbg(TOOLS::Rad2Deg(initAtt.theta()));
+  dbg(TOOLS::Rad2Deg(initAtt.phi()));
 
   /* Step: 1 init the mission */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
