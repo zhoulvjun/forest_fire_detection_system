@@ -50,9 +50,9 @@ bool WpV2Operator::initWaypointV2Setting(
   waypointV2_init_setting_client.call(initWaypointV2Setting_);
 
   if (initWaypointV2Setting_.response.result) {
-    ROS_INFO("Init mission setting successfully!\n");
+    PRINT_INFO("Init mission setting successfully!\n");
   } else {
-    ROS_ERROR("Init mission setting failed!\n");
+    PRINT_ERROR("Init mission setting failed!\n");
   }
 
   return initWaypointV2Setting_.response.result;
@@ -81,9 +81,9 @@ bool WpV2Operator::uploadWaypointV2Mission(
   waypointV2_upload_mission_client.call(uploadWaypointV2Mission_);
 
   if (uploadWaypointV2Mission_.response.result) {
-    ROS_INFO("Upload waypoint v2 mission successfully!\n");
+    PRINT_INFO("Upload waypoint v2 mission successfully!\n");
   } else {
-    ROS_ERROR("Upload waypoint v2 mission failed!\n");
+    PRINT_ERROR("Upload waypoint v2 mission failed!\n");
   }
 
   return uploadWaypointV2Mission_.response.result;
@@ -99,9 +99,9 @@ bool WpV2Operator::uploadWaypointV2Action(
   waypointV2_upload_action_client.call(uploadWaypointV2Action_);
 
   if (uploadWaypointV2Action_.response.result) {
-    ROS_INFO("Upload waypoint v2 actions successfully!\n");
+    PRINT_INFO("Upload waypoint v2 actions successfully!\n");
   } else {
-    ROS_ERROR("Upload waypoint v2 actions failed!\n");
+    PRINT_ERROR("Upload waypoint v2 actions failed!\n");
   }
 
   return uploadWaypointV2Action_.response.result;
@@ -120,9 +120,9 @@ bool WpV2Operator::downloadWaypointV2Mission(
   mission = downloadWaypointV2Mission_.response.mission;
 
   if (downloadWaypointV2Mission_.response.result) {
-    ROS_INFO("Download waypoint v2 mission successfully!\n");
+    PRINT_INFO("Download waypoint v2 mission successfully!\n");
   } else {
-    ROS_ERROR("Download waypoint v2 mission failed!\n");
+    PRINT_ERROR("Download waypoint v2 mission failed!\n");
   }
 
   return downloadWaypointV2Mission_.response.result;
@@ -138,9 +138,9 @@ bool WpV2Operator::startWaypointV2Mission(
   waypointV2_start_mission_client.call(startWaypointV2Mission_);
 
   if (startWaypointV2Mission_.response.result) {
-    ROS_INFO("Start waypoint v2 mission successfully!\n");
+    PRINT_INFO("Start waypoint v2 mission successfully!\n");
   } else {
-    ROS_ERROR("Start waypoint v2 mission failed!\n");
+    PRINT_ERROR("Start waypoint v2 mission failed!\n");
   }
 
   return startWaypointV2Mission_.response.result;
@@ -156,9 +156,9 @@ bool WpV2Operator::stopWaypointV2Mission(
   waypointV2_stop_mission_client.call(stopWaypointV2Mission_);
 
   if (stopWaypointV2Mission_.response.result) {
-    ROS_INFO("Stop waypoint v2 mission successfully!\n");
+    PRINT_INFO("Stop waypoint v2 mission successfully!\n");
   } else {
-    ROS_ERROR("Stop waypoint v2 mission failed!\n");
+    PRINT_ERROR("Stop waypoint v2 mission failed!\n");
   }
 
   return stopWaypointV2Mission_.response.result;
@@ -174,9 +174,9 @@ bool WpV2Operator::pauseWaypointV2Mission(
   waypointV2_pause_mission_client.call(pauseWaypointV2Mission_);
 
   if (pauseWaypointV2Mission_.response.result) {
-    ROS_INFO("Pause waypoint v2 mission successfully!\n");
+    PRINT_INFO("Pause waypoint v2 mission successfully!\n");
   } else {
-    ROS_ERROR("Pause waypoint v2 mission failed!\n");
+    PRINT_ERROR("Pause waypoint v2 mission failed!\n");
   }
 
   return pauseWaypointV2Mission_.response.result;
@@ -192,9 +192,9 @@ bool WpV2Operator::resumeWaypointV2Mission(
   waypointV2_resume_mission_client.call(resumeWaypointV2Mission_);
 
   if (resumeWaypointV2Mission_.response.result) {
-    ROS_INFO("Resume Waypoint v2 mission successfully!\n");
+    PRINT_INFO("Resume Waypoint v2 mission successfully!\n");
   } else {
-    ROS_ERROR("Resume Waypoint v2 mission failed!\n");
+    PRINT_ERROR("Resume Waypoint v2 mission failed!\n");
   }
 
   return resumeWaypointV2Mission_.response.result;
@@ -210,10 +210,10 @@ bool WpV2Operator::setGlobalCruiseSpeed(
   waypointV2_set_global_cruisespeed_client.call(setGlobalCruisespeed_);
 
   if (setGlobalCruisespeed_.response.result) {
-    ROS_INFO("Current cruise speed is: %f m/s\n",
+    PRINT_INFO("Current cruise speed is: %f m/s\n",
              setGlobalCruisespeed_.request.global_cruisespeed);
   } else {
-    ROS_ERROR("Set glogal cruise speed failed\n");
+    PRINT_ERROR("Set glogal cruise speed failed\n");
   }
 
   return setGlobalCruisespeed_.response.result;
@@ -228,7 +228,7 @@ DJI::OSDK::float32_t WpV2Operator::getGlobalCruiseSpeed(
 
   waypointV2_get_global_cruisespeed_client.call(getGlobalCruisespeed_);
 
-  ROS_INFO("Current cruise speed is: %f m/s\n",
+  PRINT_INFO("Current cruise speed is: %f m/s\n",
            getGlobalCruisespeed_.response.global_cruisespeed);
 
   return getGlobalCruisespeed_.response.global_cruisespeed;

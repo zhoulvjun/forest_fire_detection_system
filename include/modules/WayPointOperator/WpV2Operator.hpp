@@ -17,6 +17,8 @@
 #ifndef __WPV2OPERATOR_HPP__
 #define __WPV2OPERATOR_HPP__
 
+#include <tools/PrintControl/PrintCtrlImp.h>
+
 /* dji_osdk */
 #include <dji_mission_type.hpp>
 #include <dji_type.hpp>
@@ -47,7 +49,7 @@ class WpV2Operator {
    **/
 
 public:
-  WpV2Operator(ros::NodeHandle &handle) : nh(handle) {};
+  WpV2Operator(ros::NodeHandle &handle) : nh(handle){};
 
   static void setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2);
 
