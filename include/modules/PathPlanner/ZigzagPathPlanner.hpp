@@ -53,7 +53,8 @@ private:
   float zigzagHeight{0.0};
   sensor_msgs::NavSatFix homeGPos;
 
-  std::vector<COMMON::LocalPosition> LocalPosVec;
+  /* the NavSatFix is float64==double */
+  std::vector<COMMON::LocalPosition<double>> LocalPosVec;
   std::vector<dji_osdk_ros::WaypointV2> wpV2Vec;
 
   /**

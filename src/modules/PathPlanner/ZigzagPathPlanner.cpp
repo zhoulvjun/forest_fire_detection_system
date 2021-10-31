@@ -32,7 +32,7 @@ void ZigzagPathPlanner::calLocalPos() {
 
   float each_len = zigzagLen / zigzagNum;
   int point_num = 2 * (zigzagNum + 1);
-  COMMON::LocalPosition pos;
+  COMMON::LocalPosition<double> pos;
 
   bool is_lower_left = true;
   bool is_upper_left = false;
@@ -125,8 +125,8 @@ void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
     MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
 
     if (isGlobal) {
-        /* NOTE: gps is represented by rad in DJI. */
-      TOOLS::Meter2LatLongAlt(ref, LocalPosVec[i], result);
+      /* NOTE: gps is represented by rad in DJI. */
+      TOOLS::Meter2LatLongAlt<double>(ref, LocalPosVec[i], result);
       wpV2.latitude = TOOLS::Deg2Rad(result[0]);
       wpV2.longitude = TOOLS::Deg2Rad(result[1]);
       wpV2.relativeHeight = LocalPosVec[i].z;

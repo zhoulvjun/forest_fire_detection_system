@@ -30,11 +30,11 @@ SingleFirePointTaskManager::getHomeGPosAverage(int times) {
     homeGPos.longitude += gps_position_.longitude;
     homeGPos.altitude += gps_position_.altitude;
 
-    if (homeGPos.altitude  0 || homeGPos.longitude == 0 ||
-        homeGPos.latitude == 0) {
+    if (TOOLS::isEquald(0.0, homeGPos.latitude) ||
+        TOOLS::isEquald(0.0, homeGPos.longitude) ||
+        TOOLS::isEquald(0.0, homeGPos.altitude)) {
       PRINT_WARN("zero in homeGPos");
     }
-
   }
   homeGPos.latitude = homeGPos.latitude / times;
   homeGPos.longitude = homeGPos.longitude / times;
@@ -56,10 +56,6 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
     quat.quaternion.x += attitude_data_.quaternion.x;
     quat.quaternion.y += attitude_data_.quaternion.y;
     quat.quaternion.z += attitude_data_.quaternion.z;
-    if (homeGPos.altitude == 0 || homeGPos.longitude == 0 ||
-        homeGPos.latitude == 0) {
-      PRINT_WARN("zero in homeGPos");
-    }
   }
   quat.quaternion.w = quat.quaternion.w / times;
   quat.quaternion.x = quat.quaternion.x / times;
