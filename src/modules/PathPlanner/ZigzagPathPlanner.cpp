@@ -125,10 +125,10 @@ void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
     MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
 
     if (isGlobal) {
-
+        /* NOTE: gps is represented by rad in DJI. */
       TOOLS::Meter2LatLongAlt(ref, LocalPosVec[i], result);
-      wpV2.latitude = result[0];
-      wpV2.longitude = result[1];
+      wpV2.latitude = TOOLS::Deg2Rad(result[0]);
+      wpV2.longitude = TOOLS::Deg2Rad(result[1]);
       wpV2.relativeHeight = LocalPosVec[i].z;
 
     } else {
