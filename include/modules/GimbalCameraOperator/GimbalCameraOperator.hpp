@@ -2,7 +2,7 @@
  *
  *   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
  *
- *   @Filename: GimbalCameraController.hpp
+ *   @Filename: GimbalCameraOperator.hpp
  *
  *   @Author: Shun Li
  *
@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __GIMBALCAMERACONTROLLER_HPP__
-#define __GIMBALCAMERACONTROLLER_HPP__
+#ifndef __GIMBALCAMERAOPERATOR_HPP__
+#define __GIMBALCAMERAOPERATOR_HPP__
 
 #include <PX4-Matrix/matrix/Vector2.hpp>
 
@@ -23,7 +23,7 @@ namespace FFDS {
 
 namespace MODULES {
 
-class GimbalCameraController {
+class GimbalCameraOperator {
   public:
     void rotatePayload();
     void zoomCamera();
@@ -36,4 +36,4 @@ class GimbalCameraController {
 } // namespace MODULES
 } // namespace FFDS
 
-#endif /* GIMBALCAMERACONTROLLER_HPP */
+#endif /* GIMBALCAMERAOPERATOR_HPP */
