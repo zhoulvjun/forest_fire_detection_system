@@ -100,6 +100,13 @@ void SingleFirePointTaskManager::run() {
 
   /* Step: 1 init the mission */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
+
+  initWaypointV2Setting_.request.polygonNum = 0;
+
+  initWaypointV2Setting_.request.radius = 3;
+
+  initWaypointV2Setting_.request.actionNum = 0;
+
   initWaypointV2Setting_.request.waypointV2InitSettings.repeatTimes = 1;
 
   initWaypointV2Setting_.request.waypointV2InitSettings.finishedAction =
