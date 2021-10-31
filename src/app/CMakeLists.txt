@@ -10,14 +10,17 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description: 
+#   @Description:
 #
 #------------------------------------------------------------------------------
 
-
-add_executable(single_fire_point_task_manager single_fire_point_task_manager.cpp)
-
-target_link_libraries(single_fire_point_task_manager
-  ${catkin_LIBRARIES}
+add_executable(
+  SingleFirePointTaskManager
+  single_fire_point_task/SingleFirePointTaskManager.cpp
 )
-
+target_link_libraries(
+  SingleFirePointTaskManager
+  ${catkin_LIBRARIES}
+  WpV2Operator
+  ZigzagPathPlanner
+)

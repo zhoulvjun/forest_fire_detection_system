@@ -1,3 +1,4 @@
 - [ ] Class waypointV2Operation.cpp in commom
+- [ ] the beginning coordinates?
 - [ ] use the position instead of the gps position first.
 - [ ] pay attention to the heading.

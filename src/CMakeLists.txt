@@ -1,7 +1,28 @@
-# these are the library, should generate first.
+#------------------------------------------------------------------------------
+#
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
+#
+#   @Filename: CMakeLists.txt
+#
+#   @Author: Shun Li
+#
+#   @Date: 2021-10-22
+#
+#   @Email: 2015097272@qq.com
+#
+#   @Description: 
+#
+#------------------------------------------------------------------------------
+
+# common library
 add_subdirectory(common)
 
+# modules library
+add_subdirectory(modules)
 
-# these are the executable app.
+# executable test
 add_subdirectory(test)
-add_subdirectory(single_fire_point_task)
+
+# executable application
+add_subdirectory(app)
+

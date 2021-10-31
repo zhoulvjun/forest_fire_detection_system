@@ -14,11 +14,10 @@
  *
  ******************************************************************************/
 
-#include <test/test_WpV2Operator.hpp>
+#include <test/test_WpV2Operator.h>
 
 void gpsPositionSubCallback(
     const sensor_msgs::NavSatFix::ConstPtr &gpsPosition) {
-
   gps_position_ = *gpsPosition;
 }
 
@@ -61,17 +60,17 @@ void waypointV2MissionStateSubCallback(
 
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
 
-  /* ROS_INFO("waypointV2MissionStateSubCallback"); */
-  /* ROS_INFO("missionStatePushAck->commonDataVersion:%d\n", */
-  /*          waypoint_V2_mission_state_push_.commonDataVersion); */
-  /* ROS_INFO("missionStatePushAck->commonDataLen:%d\n", */
-  /*          waypoint_V2_mission_state_push_.commonDataLen); */
-  /* ROS_INFO("missionStatePushAck->data.state:0x%x\n", */
-  /*          waypoint_V2_mission_state_push_.state); */
-  /* ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n", */
-  /*          waypoint_V2_mission_state_push_.curWaypointIndex); */
-  /* ROS_INFO("missionStatePushAck->data.velocity:%d\n", */
-  /*          waypoint_V2_mission_state_push_.velocity); */
+  ROS_INFO("waypointV2MissionStateSubCallback");
+  ROS_INFO("missionStatePushAck->commonDataVersion:%d\n",
+           waypoint_V2_mission_state_push_.commonDataVersion);
+  ROS_INFO("missionStatePushAck->commonDataLen:%d\n",
+           waypoint_V2_mission_state_push_.commonDataLen);
+  ROS_INFO("missionStatePushAck->data.state:0x%x\n",
+           waypoint_V2_mission_state_push_.state);
+  ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n",
+           waypoint_V2_mission_state_push_.curWaypointIndex);
+  ROS_INFO("missionStatePushAck->data.velocity:%d\n",
+           waypoint_V2_mission_state_push_.velocity);
 }
 
 bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
@@ -97,7 +96,7 @@ bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
 
 std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum)
 {
-    FFDS::COMMOM::WpV2Operator wpv2operator(nh);
+    FFDS::MODULES::WpV2Operator wpv2operator(nh);
   // Let's create a vector to store our waypoints in.
   std::vector<dji_osdk_ros::WaypointV2> waypointList;
   dji_osdk_ros::WaypointV2 startPoint;
@@ -115,8 +114,8 @@ std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &
     wpv2operator.setWaypointV2Defaults(waypointV2);
     DJI::OSDK::float32_t X = radius * cos(angle);
     DJI::OSDK::float32_t Y = radius * sin(angle);
-    waypointV2.latitude = Y/EARTH_R + startPoint.latitude;
-    waypointV2.longitude = X/(EARTH_R  * cos(startPoint.latitude)) + startPoint.longitude;
+    waypointV2.latitude = Y/FFDS::TOOLS::EARTH_R + startPoint.latitude;
+    waypointV2.longitude = X/(FFDS::TOOLS::EARTH_R  * cos(startPoint.latitude)) + startPoint.longitude;
     waypointV2.relativeHeight = startPoint.relativeHeight ;
     waypointList.push_back(waypointV2);
   }
@@ -162,9 +161,10 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   int timeout = 1;
   bool result = false;
 
-  FFDS::COMMOM::WpV2Operator wpv2operator(nh);
+  FFDS::MODULES::WpV2Operator wpv2operator(nh);
 
   get_drone_type_client = nh.serviceClient<dji_osdk_ros::GetDroneType>("get_drone_type");
+
   waypointV2_mission_state_push_client =
       nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
           "dji_osdk_ros/waypointV2_subscribeMissionState");
