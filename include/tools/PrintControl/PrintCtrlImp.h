@@ -17,7 +17,7 @@
  *
  */
 
-/* NOTE: namespace can not control macros! */
+/* NOTE: namespace can not control macros in Cpp! */
 
 #include <cstdio>
 #include <cstdlib>
@@ -30,16 +30,7 @@
 #define ENTRY 4
 #define DEBUG 5
 
-/**
- *TODO:
- * 需要定义PRINT_LEVEL
- * */
-
 #define PRINT_LEVEL DEBUG
-
-/* 颜色的定义
- * TODO: 此处的#color有两个宏定义初始化先后顺序的问题
- * */
 
 #define COLOR(color, msg) "\033[0;1;" #color "m" msg "\033[0m"
 #define RED 31
@@ -74,12 +65,12 @@
 
 #define PRINT_WARN(...)                                                        \
   do {                                                                         \
-    PRINT(32, WARN, ##__VA_ARGS__);                                            \
+    PRINT(33, WARN, ##__VA_ARGS__);                                            \
   } while (0);
 
 #define PRINT_INFO(...)                                                        \
   do {                                                                         \
-    PRINT(33, INFO, ##__VA_ARGS__);                                            \
+    PRINT(32, INFO, ##__VA_ARGS__);                                            \
   } while (0);
 
 #define PRINT_ENTRY(...)                                                       \

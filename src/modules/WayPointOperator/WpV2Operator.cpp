@@ -18,6 +18,7 @@
 
 using namespace FFDS::MODULES;
 
+/* TODO: to deal with the local_pos and gpos, as well as the test */
 void WpV2Operator::setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2) {
 
   waypointV2.waypointType =
