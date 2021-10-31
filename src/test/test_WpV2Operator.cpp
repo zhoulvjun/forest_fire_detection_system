@@ -60,17 +60,17 @@ void waypointV2MissionStateSubCallback(
 
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
 
-  /* ROS_INFO("waypointV2MissionStateSubCallback"); */
-  /* ROS_INFO("missionStatePushAck->commonDataVersion:%d\n", */
-  /*          waypoint_V2_mission_state_push_.commonDataVersion); */
-  /* ROS_INFO("missionStatePushAck->commonDataLen:%d\n", */
-  /*          waypoint_V2_mission_state_push_.commonDataLen); */
-  /* ROS_INFO("missionStatePushAck->data.state:0x%x\n", */
-  /*          waypoint_V2_mission_state_push_.state); */
-  /* ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n", */
-  /*          waypoint_V2_mission_state_push_.curWaypointIndex); */
-  /* ROS_INFO("missionStatePushAck->data.velocity:%d\n", */
-  /*          waypoint_V2_mission_state_push_.velocity); */
+  ROS_INFO("waypointV2MissionStateSubCallback");
+  ROS_INFO("missionStatePushAck->commonDataVersion:%d\n",
+           waypoint_V2_mission_state_push_.commonDataVersion);
+  ROS_INFO("missionStatePushAck->commonDataLen:%d\n",
+           waypoint_V2_mission_state_push_.commonDataLen);
+  ROS_INFO("missionStatePushAck->data.state:0x%x\n",
+           waypoint_V2_mission_state_push_.state);
+  ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n",
+           waypoint_V2_mission_state_push_.curWaypointIndex);
+  ROS_INFO("missionStatePushAck->data.velocity:%d\n",
+           waypoint_V2_mission_state_push_.velocity);
 }
 
 bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
@@ -164,6 +164,7 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   FFDS::MODULES::WpV2Operator wpv2operator(nh);
 
   get_drone_type_client = nh.serviceClient<dji_osdk_ros::GetDroneType>("get_drone_type");
+
   waypointV2_mission_state_push_client =
       nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
           "dji_osdk_ros/waypointV2_subscribeMissionState");
