@@ -23,10 +23,11 @@ namespace FFDS {
 namespace COMMON {
 
 /* Local earth-fixed coordinates position */
+template<typename T>
 struct LocalPosition {
-  float x{0.0};
-  float y{0.0};
-  float z{0.0};
+  T x{0.0};
+  T y{0.0};
+  T z{0.0};
 };
 
 } // namespace COMMON
