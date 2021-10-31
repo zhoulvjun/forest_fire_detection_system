@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 #include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
+#include <tools/PrintControl/PrintCtrlImp.h>
 
 using namespace FFDS::APP;
 
@@ -76,13 +77,13 @@ void SingleFirePointTaskManager::gpsPositionSubCallback(
 void SingleFirePointTaskManager::run() {
 
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
-  ROS_INFO_STREAM("The initial GPS Position is:");
+  PRINT_INFO("--------------------- Home Gpos ---------------------")
   ROS_INFO_STREAM("latitude:" << homeGPos.latitude);
   ROS_INFO_STREAM("longitude:" << homeGPos.longitude);
   ROS_INFO_STREAM("altitude:" << homeGPos.altitude);
 
   matrix::Eulerf initAtt = getInitAttAverage(100);
-  ROS_INFO_STREAM("The initial attitude in ENU frame is:");
+  PRINT_INFO("--------------------- Init ENU Attitude ---------------------")
   ROS_INFO_STREAM(
       "roll angle phi in ENU frame is:" << TOOLS::Rad2Deg(initAtt.phi()));
   ROS_INFO_STREAM(
