@@ -1,0 +1,10 @@
+
+# rotate setpoint on the IR img
+SingleFirePosIR setPos
+
+# error and time to stop controller
+float32 tolerance
+float32 timeOut
+
+---
+bool result
