@@ -19,6 +19,7 @@
 
 #include <PX4-Matrix/matrix/Vector2.hpp>
 #include <modules/BasicController/IncPIDController.hpp>
+/* #include <forest_fire_detection_system/SingleFirePosIR.h> */
 
 namespace FFDS {
 
