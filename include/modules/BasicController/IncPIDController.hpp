@@ -23,8 +23,7 @@ namespace MODULES {
 class IncPIDController {
 
 public:
-  IncPIDController(float Kp, float Ki, float Kd) : Kp(Kp), Ki(Ki), Kd(Kd){};
-  ~IncPIDController(){};
+  IncPIDController(float p, float i, float d) : Kp(p), Ki(i), Kd(d){};
 
   void ctrl(float in);
   float fullOutput();

@@ -18,19 +18,24 @@
 #define __GIMBALCAMERAOPERATOR_HPP__
 
 #include <PX4-Matrix/matrix/Vector2.hpp>
+#include <modules/BasicController/IncPIDController.hpp>
 
 namespace FFDS {
 
 namespace MODULES {
 
-class GimbalCameraOperator {
-  public:
-    void rotatePayload();
-    void zoomCamera();
-  private:
-    matrix::Vector2<int> currentPos;
-    matrix::Vector2<int> setPos;
+typedef matrix::Vector2<int> PixelPos;
 
+class GimbalCameraOperator {
+public:
+  GimbalCameraOperator() : pidController(0.01, 0.01, 0.01){};
+  void rotatePayload();
+  void zoomCamera();
+
+private:
+  IncPIDController pidController;
+  PixelPos currentPos;
+  PixelPos setPos;
 };
 
 } // namespace MODULES
