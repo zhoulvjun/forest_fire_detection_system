@@ -27,15 +27,17 @@ from sensor_msgs.msg import Image
 
 if __name__ == "__main__":
 
-    rospy.init_node('Camera', anonymous=True)
+    rospy.init_node('load_local_video_node', anonymous=True)
 
+    video_name = os.path.expanduser(
+            "/media/ls/WORK/FLIGHT_TEST/M300/DJI_202110171037_002/DJI_20211017104441_0001_T.MP4")
     # video_name = os.path.expanduser("~/DJI_0026.MOV")
     # video_name = os.path.expanduser("~/videoplayback.mp4")
-    video_name = os.path.expanduser("./datas/somek_dataset/videoplayback.mp4")
+    # video_name = os.path.expanduser("./datas/somek_dataset/videoplayback.mp4")
     capture = cv2.VideoCapture(video_name)
     bridge = CvBridge()
 
-    rospy.loginfo("video from: "+ video_name)
+    rospy.loginfo("video from: " + video_name)
 
     rate = rospy.Rate(10)
     image_pub = rospy.Publisher(
@@ -45,14 +47,13 @@ if __name__ == "__main__":
         ret, frame = capture.read()
 
         if frame is not None:
-            cv2.imshow("frame",frame)
+            cv2.imshow("frame", frame)
             cv2.waitKey(3)
             ros_img = bridge.cv2_to_imgmsg(frame, encoding="bgr8")
             image_pub.publish(ros_img)
         else:
             cv2.destroyAllWindows()
             rospy.loginfo("None frame! end of video")
-            break
 
         rate.sleep()
 
