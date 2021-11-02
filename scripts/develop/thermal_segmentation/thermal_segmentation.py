@@ -53,20 +53,25 @@ class ThermalDetector(object):
             self.cv_image = self.convertor.imgmsg_to_cv2(
                 self.ros_image, 'bgr8')
 
+    def image_seg(self,gray, threshold=20):
+
+        ret, binary = cv2.threshold(gray,threshold,255,cv2.THRESH_BINARY) 
+
+        # opening
+        kernel = np.ones((2,2),np.uint8)
+        opening = cv2.morphologyEx(gray,cv2.MORPH_OPEN,kernel, iterations = 2)
+
+        # 将图像等分小块，然后找含有最多的白点的块作为相机中心点。。。:
+
+
+        cv2.imshow("img", self.cv_image)  
+        cv2.waitKey(0)
+
+
     def run(self):
         while not rospy.is_shutdown():
-
             if self.cv_image is not None:
-                red = self.cv_image[:,:,2]
-                red[red>=30]=255
-                red[red<30]=0
-
-                fire_pixel_index = np.argwhere(red==255)
-                cg = fire_pixel_index.mean(axis=0).astype(np.uint8)
-                print(cg.shape)
-                cv2.circle(self.cv_image, (cg[0],cg[1]), 10,(0,0,255))
-                cv2.imshow('red',red)
-                cv2.waitKey(3)
+                self.image_seg(self.cv_image[:,:,2])
 
 
 if __name__ == '__main__':
