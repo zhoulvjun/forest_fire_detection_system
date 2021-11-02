@@ -59,8 +59,8 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
       PRINT_DEBUG("err Pitch:%f ", errX);
       PRINT_DEBUG("err Yaw:%f ", errY);
 
-      pidYaw.ctrl(errX);
-      pidPitch.ctrl(errY);
+      pidYaw.ctrl(-errX);
+      pidPitch.ctrl(-errY);
 
       dji_osdk_ros::GimbalAction gimbalAction;
       gimbalAction.request.is_reset = false;
