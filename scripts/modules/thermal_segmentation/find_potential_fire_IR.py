@@ -24,6 +24,8 @@ from sensor_msgs.msg import Image
 import cv2
 from cv_bridge import CvBridge
 
+from forest_fire_detection_system.msg import SingleFirePosIR
+
 
 class PotentialFireIrFinder(object):
 
@@ -33,10 +35,15 @@ class PotentialFireIrFinder(object):
         self.ros_image = None
         self.cv_image = None
 
+        self.pot_fire_pos = SingleFirePosIR()
+        self.pot_fire_pos.is_pot_fire = False
+
         # ros stuff
         self.rate = rospy.Rate(5)
         self.image_sub = rospy.Subscriber(
             "dji_osdk_ros/main_camera_images", Image, self.image_cb)
+        self.fire_pos_pub = rospy.Publisher(
+            "forest_fire_detection_system/single_fire_pos_ir_img", SingleFirePosIR, queue_size=10)
 
     def image_cb(self, msg):
 
@@ -59,6 +66,7 @@ class PotentialFireIrFinder(object):
 
         judge_list = []
         coord_list = []
+        clone = self.cv_image.copy()
 
         for (x, y, window) in self.sliding_window(binary_img, 10, [20, 20]):
             patch = binary_img[y:y+21, x:x+21]
@@ -67,33 +75,48 @@ class PotentialFireIrFinder(object):
             judge_list.append(np.count_nonzero(judje))
 
         if (np.count_nonzero(judge_list) != 0):
+
             best_index = judge_list.index(max(judge_list))
             best_pos = coord_list[best_index]
 
-            clone = self.cv_image.copy()
+            self.pot_fire_pos.x = best_pos[0]+10
+            self.pot_fire_pos.y = best_pos[1]+10
+            self.pot_fire_pos.is_pot_fire = True
+
             cv2.rectangle(clone, (best_pos[0], best_pos[1]),
                           (best_pos[0] + 21, best_pos[1] + 21), (0, 255, 0), 2)
-            cv2.imshow("Window", clone)
-            cv2.waitKey(1)
+        else:
+            self.pot_fire_pos.x = -1
+            self.pot_fire_pos.y = -1
+            self.pot_fire_pos.is_pot_fire = False
+            rospy.loginfo("no potential fire currently!")
+
+        self.fire_pos_pub.publish(self.pot_fire_pos)
+        cv2.imshow("Window", clone)
+        cv2.waitKey(1)
 
     def run(self):
         while not rospy.is_shutdown():
 
             if self.cv_image is not None:
-                rospy.loginfo("waiting for the image")
+
                 _, binary = cv2.threshold(
                     self.cv_image[:, :, 2], 25, 255, cv2.THRESH_BINARY)
 
-                # opening
+                # opening operation
                 kernel = np.ones((2, 2), np.uint8)
                 opening = cv2.morphologyEx(
                     binary, cv2.MORPH_OPEN, kernel, iterations=2)
 
                 self.find(opening)
 
+            else:
+                rospy.loginfo("waiting for the image")
+
+            self.rate.sleep()
+
 
 if __name__ == '__main__':
     rospy.init_node("find_potential_fire_ir_node", anonymous=True)
     detector = PotentialFireIrFinder()
     detector.run()
-
