@@ -1,5 +1,6 @@
 .clangd/
 .ccls-cache/
+.cache/
 .vscode/
 .idea/
 build/

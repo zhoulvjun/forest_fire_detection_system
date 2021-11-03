@@ -35,7 +35,6 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
   float timeinterval;
 
   while (ros::ok() && (!isTimeOut) && (!isCtrlDone)) {
-
     ros::spinOnce();
     if (!firePos.is_pot_fire) {
       PRINT_WARN("not stable potential fire, skip!")
@@ -43,14 +42,14 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
       pidPitch.reset();
       continue;
     } else {
-
       /* define error */
       float errX = setPosX - firePos.x;
       float errY = setPosY - firePos.y;
       if (fabs(errX) <= fabs(tolErr) && fabs(errY) <= fabs(tolErr)) {
-        PRINT_INFO("controling gimbal finish after %f seconds with x-error: "
-                   "%f, y-error: %f!",
-                   timeinterval, errX, errY);
+        PRINT_INFO(
+            "controling gimbal finish after %f seconds with x-error: "
+            "%f, y-error: %f!",
+            timeinterval, errX, errY);
         return true;
       }
 
@@ -71,7 +70,6 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
       PRINT_DEBUG("pidYaw:%f rad/s", pidYaw.fullOutput());
 
       gimbal_control_client.call(gimbalAction);
-
     }
 
     timeinterval = TOOLS::getRosTimeInterval(beginTime);
