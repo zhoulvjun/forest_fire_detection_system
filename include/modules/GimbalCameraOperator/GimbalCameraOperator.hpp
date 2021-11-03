@@ -24,6 +24,7 @@
 #include <tools/PrintControl/PrintCtrlImp.h>
 #include <tools/SystemLib.hpp>
 #include <dji_osdk_ros/common_type.h>
+#include <tools/MathLib.hpp>
 
 namespace FFDS {
 

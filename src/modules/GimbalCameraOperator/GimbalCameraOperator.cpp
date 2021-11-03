@@ -37,10 +37,12 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
   while (ros::ok() && (!isTimeOut) && (!isCtrlDone)) {
     ros::spinOnce();
     if (!firePos.is_pot_fire) {
-      PRINT_WARN("not stable potential fire, skip!")
+      PRINT_WARN("not stable potential fire, control restart!")
       pidYaw.reset();
       pidPitch.reset();
-      continue;
+
+      /* time retunn to zero*/
+      beginTime = ros::Time::now();
     } else {
       /* define error */
       float errX = setPosX - firePos.x;
@@ -53,8 +55,11 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
         return true;
       }
 
-      pidYaw.ctrl(errX);
-      pidPitch.ctrl(errY);
+      PRINT_DEBUG("err Pitch:%f ", errX);
+      PRINT_DEBUG("err Yaw:%f ", errY);
+
+      pidYaw.ctrl(-errX);
+      pidPitch.ctrl(-errY);
 
       dji_osdk_ros::GimbalAction gimbalAction;
       gimbalAction.request.is_reset = false;
@@ -66,8 +71,6 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
       gimbalAction.request.yaw = pidYaw.fullOutput();
       gimbalAction.request.time = 1.0;
 
-      PRINT_DEBUG("pidPitch:%f rad/s", pidPitch.fullOutput());
-      PRINT_DEBUG("pidYaw:%f rad/s", pidYaw.fullOutput());
 
       gimbal_control_client.call(gimbalAction);
     }
