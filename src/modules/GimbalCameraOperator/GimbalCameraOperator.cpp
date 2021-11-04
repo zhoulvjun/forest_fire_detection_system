@@ -128,7 +128,7 @@ bool GimbalCameraOperator::calRotateGimbal(
   setGimbalActionDefault();
   gimbalAction.request.is_reset = false;
   gimbalAction.request.pitch = TOOLS::Rad2Deg(pitchSetpoint);
-  gimbalAction.request.yaw = TOOLS::Rad2Deg(yawSetpoint)-46.0; /* ?? */
+  gimbalAction.request.yaw = TOOLS::Rad2Deg(yawSetpoint)-43.7; /* ?? */
 
   PRINT_DEBUG("yaw setpoint:%f, pitch setpoint:%f", TOOLS::Rad2Deg(yawSetpoint),
               TOOLS::Rad2Deg(pitchSetpoint));
