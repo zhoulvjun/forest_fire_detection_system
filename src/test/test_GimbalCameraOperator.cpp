@@ -18,7 +18,8 @@
 int main(int argc, char **argv) {
   ros::init(argc, argv, "test_GimbalCameraOperator_node");
   FFDS::MODULES::GimbalCameraOperator gimbalCameraOperator;
-  gimbalCameraOperator.rotateGimbalPID(300, 200, 30.0, 10.0);
+  FFDS::COMMON::IRCameraParams H20t;
+  gimbalCameraOperator.calRotateGimbal(H20t.orgImgWidthPix/2, H20t.orgImgHeightPix/2, H20t);
 
   return 0;
 }

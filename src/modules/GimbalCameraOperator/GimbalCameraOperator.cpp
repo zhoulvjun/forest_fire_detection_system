@@ -19,9 +19,9 @@
 using namespace FFDS::MODULES;
 
 void GimbalCameraOperator::singleFirePosIRCallback(
-    const forest_fire_detection_system::SingleFirePosIR::ConstPtr
-        &firePosition) {
-  firePos = *firePosition;
+    const forest_fire_detection_system::SingleFirePosIR::ConstPtr&
+        firePosition) {
+  firePosPix = *firePosition;
 };
 
 void GimbalCameraOperator::setGimbalActionDefault() {
@@ -45,9 +45,11 @@ void GimbalCameraOperator::setGimbalActionDefault() {
  * @note control the gimbal rotate by the a PID controller, no need to use the
  * focal length, control several time according to the "timeOut"
  */
-bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
-                                           float timeOutInS, float tolErr) {
-  PRINT_INFO("Start controlling the gimbal!");
+bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
+                                            const float setPosYPix,
+                                            const float timeOutInS,
+                                            const float tolErrPix) {
+  PRINT_INFO("Start controlling the gimbal using controller!");
 
   ros::Time beginTime = ros::Time::now();
   float timeinterval;
@@ -55,19 +57,17 @@ bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
   while (ros::ok()) {
     ros::spinOnce();
 
-    if (!firePos.is_pot_fire) {
-
+    if (!firePosPix.is_pot_fire) {
       PRINT_WARN("not stable potential fire, control restart!")
       pidYaw.reset();
       pidPitch.reset();
       beginTime = ros::Time::now();
 
     } else {
+      float errX = setPosXPix - firePosPix.x;
+      float errY = setPosYPix - firePosPix.y;
 
-      float errX = setPosX - firePos.x;
-      float errY = setPosY - firePos.y;
-
-      if (fabs(errX) <= fabs(tolErr) && fabs(errY) <= fabs(tolErr)) {
+      if (fabs(errX) <= fabs(tolErrPix) && fabs(errY) <= fabs(tolErrPix)) {
         PRINT_INFO(
             "controling gimbal finish after %f seconds with x-error: "
             "%f, y-error: %f!",
@@ -88,7 +88,7 @@ bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
       gimbalAction.request.roll = 0.0f;
       gimbalAction.request.time = 1.0;
 
-      gimbal_control_client.call(gimbalAction);
+      gimbalCtrlClient.call(gimbalAction);
     }
 
     timeinterval = TOOLS::getRosTimeInterval(beginTime);
@@ -112,14 +112,38 @@ bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
  * @note rotate the camera using the focal length and the image pixel length.
  * Rotate only one time.
  */
-bool GimbalCameraOperator::rotateGimbalAngle(float setPosX, float setPosY) {
-  return false;
+bool GimbalCameraOperator::calRotateGimbal(
+    const float setPosXPix, const float setPosYPix,
+    const COMMON::IRCameraParams& H20TIr) {
+  PRINT_INFO("Start controlling the gimbal using calculation!");
+
+  double errX = setPosXPix - firePosPix.x;
+  double errY = setPosYPix - firePosPix.y;
+
+  float yawSetpoint =
+      std::atan(errX * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
+  float pitchSetpoint =
+      std::atan(errY * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
+
+  setGimbalActionDefault();
+  gimbalAction.request.is_reset = false;
+  gimbalAction.request.pitch = pitchSetpoint;
+  gimbalAction.request.yaw = yawSetpoint;
+
+  /* from current point */
+  gimbalAction.request.rotationMode = 1;
+  gimbalAction.request.roll = 0.0f;
+  gimbalAction.request.time = 1.0;
+
+  gimbalCtrlClient.call(gimbalAction);
+
+  return gimbalAction.response.result;
 }
 
 bool GimbalCameraOperator::resetGimbal() {
   setGimbalActionDefault();
   gimbalAction.request.is_reset = true;
-  gimbal_control_client.call(gimbalAction);
+  gimbalCtrlClient.call(gimbalAction);
   return gimbalAction.response.result;
 }
 

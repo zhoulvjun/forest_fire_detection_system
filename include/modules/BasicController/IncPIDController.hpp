@@ -25,16 +25,16 @@ class IncPIDController {
 public:
   IncPIDController(float p, float i, float d) : Kp(p), Ki(i), Kd(d){};
 
-  void ctrl(float in);
+  void ctrl(const float in);
   float fullOutput();
   float incOutput();
   void reset();
-  void setPrevOutput(float prev);
+  void setPrevOutput(const float prev);
 
 private:
-  float Kp;
-  float Ki;
-  float Kd;
+  const float Kp;
+  const float Ki;
+  const float Kd;
 
   float input{0.0};
   float prev_input{0.0};
@@ -54,7 +54,7 @@ inline float IncPIDController::incOutput() { return increment; }
  * @Output:
  * @Description: 用于第一次进入时与其他控制方式的衔接
  */
-inline void IncPIDController::setPrevOutput(float prev) { prev_output = prev; }
+inline void IncPIDController::setPrevOutput(const float prev) { prev_output = prev; }
 
 inline float IncPIDController::fullOutput() {
 
@@ -77,7 +77,7 @@ inline void IncPIDController::updateInput() {
   prev_input = input;
 }
 
-inline void IncPIDController::ctrl(float in) {
+inline void IncPIDController::ctrl(const float in) {
 
   input = in;
   float param_p = Kp * (input - prev_input);

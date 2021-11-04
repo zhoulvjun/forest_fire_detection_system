@@ -24,6 +24,7 @@
 #include <tools/PrintControl/PrintCtrlImp.h>
 
 #include <boost/exception/exception.hpp>
+#include <common/CommonTypes.hpp>
 #include <modules/BasicController/IncPIDController.hpp>
 #include <tools/MathLib.hpp>
 #include <tools/SystemLib.hpp>
@@ -34,23 +35,22 @@ namespace MODULES {
 
 class GimbalCameraOperator {
  public:
-  GimbalCameraOperator()
-      : pidYaw(0.01, 0.00, 0.00), pidPitch(0.01, 0.00, 0.00) {
+  GimbalCameraOperator() {
     singleFirePosIRSub =
         nh.subscribe("forest_fire_detection_system/single_fire_pos_ir_img", 10,
                      &GimbalCameraOperator::singleFirePosIRCallback, this);
 
-    gimbal_control_client =
+    gimbalCtrlClient =
         nh.serviceClient<dji_osdk_ros::GimbalAction>("gimbal_task_control");
-
 
     ros::Duration(3.0).sleep();
     PRINT_INFO("initialize GimbalCameraOperator done!");
   };
 
-  bool rotateGimbalPID(float setPosX, float setPosY, float timeOutInS,
-                       float tolErr);
-  bool rotateGimbalAngle(float setPosX, float setPosY);
+  bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
+                       const float timeOutInS, const float tolErrPix);
+  bool calRotateGimbal(const float setPosXPix, const float setPosYPix,
+                         const COMMON::IRCameraParams& H20TIr);
   bool resetGimbal();
 
   bool zoomCamera();
@@ -59,19 +59,19 @@ class GimbalCameraOperator {
  private:
   ros::NodeHandle nh;
   ros::Subscriber singleFirePosIRSub;
-  ros::ServiceClient gimbal_control_client;
+  ros::ServiceClient gimbalCtrlClient;
 
   dji_osdk_ros::GimbalAction gimbalAction;
-  forest_fire_detection_system::SingleFirePosIR firePos;
+  forest_fire_detection_system::SingleFirePosIR firePosPix;
 
   void singleFirePosIRCallback(
-      const forest_fire_detection_system::SingleFirePosIR::ConstPtr
-          &firePosition);
+      const forest_fire_detection_system::SingleFirePosIR::ConstPtr&
+          firePosition);
 
   void setGimbalActionDefault();
 
-  IncPIDController pidYaw;
-  IncPIDController pidPitch;
+  IncPIDController pidYaw{0.01, 0.0, 0.0};
+  IncPIDController pidPitch{0.01, 0.0, 0.0};
 };
 
 }  // namespace MODULES
