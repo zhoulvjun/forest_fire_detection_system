@@ -121,9 +121,9 @@ bool GimbalCameraOperator::calRotateGimbal(
   double errY = setPosYPix - firePosPix.y;
 
   float yawSetpoint =
-      std::atan(errX * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
+      std::atan(-errX * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
   float pitchSetpoint =
-      std::atan(errY * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
+      std::atan(-errY * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
 
   setGimbalActionDefault();
   gimbalAction.request.is_reset = false;
