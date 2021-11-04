@@ -14,59 +14,49 @@
  *
  ******************************************************************************/
 
-#include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
 #include <tools/PrintControl/PrintCtrlImp.h>
+
+#include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
 
 using namespace FFDS::APP;
 
 void SingleFirePointTaskManager::attitudeSubCallback(
-    const geometry_msgs::QuaternionStampedConstPtr &attitudeData)
-{
-
+    const geometry_msgs::QuaternionStampedConstPtr &attitudeData) {
   attitude_data_ = *attitudeData;
 }
 
 void SingleFirePointTaskManager::gpsPositionSubCallback(
-    const sensor_msgs::NavSatFix::ConstPtr &gpsPosition)
-{
-
+    const sensor_msgs::NavSatFix::ConstPtr &gpsPosition) {
   gps_position_ = *gpsPosition;
 }
 
 void SingleFirePointTaskManager::waypointV2MissionEventSubCallback(
     const dji_osdk_ros::WaypointV2MissionEventPush::ConstPtr
-        &waypointV2MissionEventPush)
-{
-
+        &waypointV2MissionEventPush) {
   waypoint_V2_mission_event_push_ = *waypointV2MissionEventPush;
 
   ROS_INFO("waypoint_V2_mission_event_push_.event ID :0x%x\n",
            waypoint_V2_mission_event_push_.event);
 
-  if (waypoint_V2_mission_event_push_.event == 0x01)
-  {
+  if (waypoint_V2_mission_event_push_.event == 0x01) {
     ROS_INFO("interruptReason:0x%x\n",
              waypoint_V2_mission_event_push_.interruptReason);
   }
-  if (waypoint_V2_mission_event_push_.event == 0x02)
-  {
+  if (waypoint_V2_mission_event_push_.event == 0x02) {
     ROS_INFO("recoverProcess:0x%x\n",
              waypoint_V2_mission_event_push_.recoverProcess);
   }
-  if (waypoint_V2_mission_event_push_.event == 0x03)
-  {
+  if (waypoint_V2_mission_event_push_.event == 0x03) {
     ROS_INFO("finishReason:0x%x\n",
              waypoint_V2_mission_event_push_.finishReason);
   }
 
-  if (waypoint_V2_mission_event_push_.event == 0x10)
-  {
+  if (waypoint_V2_mission_event_push_.event == 0x10) {
     ROS_INFO("current waypointIndex:%d\n",
              waypoint_V2_mission_event_push_.waypointIndex);
   }
 
-  if (waypoint_V2_mission_event_push_.event == 0x11)
-  {
+  if (waypoint_V2_mission_event_push_.event == 0x11) {
     ROS_INFO("currentMissionExecNum:%d\n",
              waypoint_V2_mission_event_push_.currentMissionExecNum);
   }
@@ -83,9 +73,7 @@ void SingleFirePointTaskManager::waypointV2MissionEventSubCallback(
  * */
 void SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
     const dji_osdk_ros::WaypointV2MissionStatePush::ConstPtr
-        &waypointV2MissionStatePush)
-{
-
+        &waypointV2MissionStatePush) {
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
 
   ROS_INFO("waypointV2MissionStateSubCallback");
@@ -101,14 +89,11 @@ void SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
            waypoint_V2_mission_state_push_.velocity);
 }
 
-sensor_msgs::NavSatFix
-SingleFirePointTaskManager::getHomeGPosAverage(int times)
-{
-
+sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(
+    int times) {
   sensor_msgs::NavSatFix homeGPos;
 
-  for (int i = 0; (i < times) && ros::ok(); i++)
-  {
+  for (int i = 0; (i < times) && ros::ok(); i++) {
     ros::spinOnce();
     homeGPos.latitude += gps_position_.latitude;
     homeGPos.longitude += gps_position_.longitude;
@@ -116,8 +101,7 @@ SingleFirePointTaskManager::getHomeGPosAverage(int times)
 
     if (TOOLS::isEquald(0.0, homeGPos.latitude) ||
         TOOLS::isEquald(0.0, homeGPos.longitude) ||
-        TOOLS::isEquald(0.0, homeGPos.altitude))
-    {
+        TOOLS::isEquald(0.0, homeGPos.altitude)) {
       PRINT_WARN("zero in homeGPos");
     }
   }
@@ -128,16 +112,13 @@ SingleFirePointTaskManager::getHomeGPosAverage(int times)
   return homeGPos;
 }
 
-matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times)
-{
-
+matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
   /* NOTE: the quaternion from dji_osdk_ros to Eular angle is ENU! */
   /* NOTE: but the FlightTaskControl smaple node is NEU. Why they do this! :( */
 
   geometry_msgs::QuaternionStamped quat;
 
-  for (int i = 0; (i < times) && ros::ok(); i++)
-  {
+  for (int i = 0; (i < times) && ros::ok(); i++) {
     ros::spinOnce();
     quat.quaternion.w += attitude_data_.quaternion.w;
     quat.quaternion.x += attitude_data_.quaternion.x;
@@ -156,9 +137,7 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times)
 }
 
 void SingleFirePointTaskManager::initMission(
-    dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_)
-{
-
+    dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_) {
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   PRINT_INFO("--------------------- Home Gpos ---------------------")
   ROS_INFO_STREAM("latitude:" << homeGPos.latitude);
@@ -206,9 +185,7 @@ void SingleFirePointTaskManager::initMission(
       initWaypointV2Setting_.request.waypointV2InitSettings.mission.size();
 }
 
-void SingleFirePointTaskManager::run()
-{
-
+void SingleFirePointTaskManager::run() {
   dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
   obtainCtrlAuthority.request.enable_obtain = true;
   obtain_ctrl_authority_client.call(obtainCtrlAuthority);
@@ -218,24 +195,21 @@ void SingleFirePointTaskManager::run()
   /* Step: 1 init the mission */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
   initMission(initWaypointV2Setting_);
-  if (!wpV2Operator.initWaypointV2Setting(initWaypointV2Setting_))
-  {
+  if (!wpV2Operator.initWaypointV2Setting(initWaypointV2Setting_)) {
     PRINT_ERROR("Quit!");
     return;
   }
 
   /* Step: 2 upload mission */
   dji_osdk_ros::UploadWaypointV2Mission uploadWaypointV2Mission_;
-  if (!wpV2Operator.uploadWaypointV2Mission(uploadWaypointV2Mission_))
-  {
+  if (!wpV2Operator.uploadWaypointV2Mission(uploadWaypointV2Mission_)) {
     PRINT_ERROR("Quit!");
     return;
   }
 
   /* Step: 3 start mission */
   dji_osdk_ros::StartWaypointV2Mission startWaypointV2Mission_;
-  if (!wpV2Operator.startWaypointV2Mission(startWaypointV2Mission_))
-  {
+  if (!wpV2Operator.startWaypointV2Mission(startWaypointV2Mission_)) {
     PRINT_ERROR("Quit!");
     return;
   }
@@ -244,19 +218,12 @@ void SingleFirePointTaskManager::run()
   bool isPotentialFire = true;
 
   /* Step: 5 main loop */
-  while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6))
-  {
-
-    if (!isPotentialFire)
-    {
+  while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) {
+    if (!isPotentialFire) {
       continue;
-    }
-    else
-    {
-
+    } else {
       dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
-      if (!wpV2Operator.pauseWaypointV2Mission(pauseWaypointV2Mission_))
-      {
+      if (!wpV2Operator.pauseWaypointV2Mission(pauseWaypointV2Mission_)) {
         PRINT_ERROR("Quit!");
         return;
       }
@@ -268,9 +235,7 @@ void SingleFirePointTaskManager::run()
   return;
 }
 
-int main(int argc, char *argv[])
-{
-
+int main(int argc, char *argv[]) {
   ros::init(argc, argv, "single_fire_point_task_manager_node");
 
   SingleFirePointTaskManager taskManager;

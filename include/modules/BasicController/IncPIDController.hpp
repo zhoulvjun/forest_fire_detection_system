@@ -47,16 +47,16 @@ private:
   void updateInput();
 };
 
-float IncPIDController::incOutput() { return increment; }
+inline float IncPIDController::incOutput() { return increment; }
 
 /**
  * @Input:
  * @Output:
  * @Description: 用于第一次进入时与其他控制方式的衔接
  */
-void IncPIDController::setPrevOutput(float prev) { prev_output = prev; }
+inline void IncPIDController::setPrevOutput(float prev) { prev_output = prev; }
 
-float IncPIDController::fullOutput() {
+inline float IncPIDController::fullOutput() {
 
   output = prev_output + increment;
   prev_output = output;
@@ -64,20 +64,20 @@ float IncPIDController::fullOutput() {
   return output;
 }
 
-void IncPIDController::reset() {
+inline void IncPIDController::reset() {
 
   prev_input = 0.0;
   prev2_input = 0.0;
   output = 0.0;
 }
 
-void IncPIDController::updateInput() {
+inline void IncPIDController::updateInput() {
 
   prev2_input = prev_input;
   prev_input = input;
 }
 
-void IncPIDController::ctrl(float in) {
+inline void IncPIDController::ctrl(float in) {
 
   input = in;
   float param_p = Kp * (input - prev_input);

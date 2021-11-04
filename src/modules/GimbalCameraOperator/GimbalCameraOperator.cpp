@@ -71,7 +71,6 @@ bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
       gimbalAction.request.yaw = pidYaw.fullOutput();
       gimbalAction.request.time = 1.0;
 
-
       gimbal_control_client.call(gimbalAction);
     }
 
