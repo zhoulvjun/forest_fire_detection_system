@@ -120,28 +120,39 @@ bool GimbalCameraOperator::calRotateGimbal(
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  double errX = setPosXPix - firePosPix.x;
-  double errY = setPosYPix - firePosPix.y;
+  while (ros::ok()) {
+    ros::spinOnce();
 
-  float yawSetpoint =
-      std::atan(-errX * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
-  float pitchSetpoint =
-      std::atan(errY * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
+    if (!firePosPix.is_pot_fire) {
+      PRINT_WARN("not stable potential fire, control restart!");
+      continue;
+    } else {
+      double errX = setPosXPix - firePosPix.x;
+      double errY = setPosYPix - firePosPix.y;
 
-  setGimbalActionDefault();
-  gimbalAction.request.is_reset = false;
-  gimbalAction.request.pitch = TOOLS::Rad2Deg(pitchSetpoint);
-  gimbalAction.request.yaw = TOOLS::Rad2Deg(yawSetpoint)-43.7; /* ?? */
+      float yawSetpoint =
+          std::atan(-errX * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
+      float pitchSetpoint =
+          std::atan(errY * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
 
-  PRINT_DEBUG("yaw setpoint:%f, pitch setpoint:%f", TOOLS::Rad2Deg(yawSetpoint),
-              TOOLS::Rad2Deg(pitchSetpoint));
+      setGimbalActionDefault();
+      gimbalAction.request.is_reset = false;
+      gimbalAction.request.pitch = TOOLS::Rad2Deg(pitchSetpoint);
+      gimbalAction.request.yaw = TOOLS::Rad2Deg(yawSetpoint) - 43.7; /* ?? */
 
-  /* from current point */
-  gimbalAction.request.rotationMode = 1;
-  gimbalAction.request.roll = 0.0f;
-  gimbalAction.request.time = 1.0;
+      PRINT_DEBUG("yaw setpoint:%f, pitch setpoint:%f",
+                  TOOLS::Rad2Deg(yawSetpoint), TOOLS::Rad2Deg(pitchSetpoint));
 
-  gimbalCtrlClient.call(gimbalAction);
+      /* from current point */
+      gimbalAction.request.rotationMode = 1;
+      gimbalAction.request.roll = 0.0f;
+      gimbalAction.request.time = 1.0;
+
+      gimbalCtrlClient.call(gimbalAction);
+
+      break;
+    }
+  }
 
   return gimbalAction.response.result;
 }
