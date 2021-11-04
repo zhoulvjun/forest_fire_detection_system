@@ -19,6 +19,7 @@
 
 #include <dji_osdk_ros/GimbalAction.h>
 #include <forest_fire_detection_system/SingleFirePosIR.h>
+#include <boost/exception/exception.hpp>
 #include <modules/BasicController/IncPIDController.hpp>
 #include <ros/ros.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
@@ -45,7 +46,8 @@ public:
     PRINT_INFO("initialize GimbalCameraOperator done!");
   };
 
-  bool rotateGimbal(float setPosX, float setPosY, float timeOut, float tolErr);
+  bool rotateGimbalPID(float setPosX, float setPosY, float timeOut, float tolErr);
+  bool rotateGimbalGeometry();
   bool resetGimbal();
 
   void zoomCamera();

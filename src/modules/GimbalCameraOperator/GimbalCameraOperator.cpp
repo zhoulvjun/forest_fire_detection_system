@@ -24,7 +24,7 @@ void GimbalCameraOperator::singleFirePosIRCallback(
   firePos = *firePosition;
 };
 
-bool GimbalCameraOperator::rotateGimbal(float setPosX, float setPosY,
+bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
                                         float timeOut, float tolErr) {
   PRINT_INFO("Start controlling the gimbal!");
 

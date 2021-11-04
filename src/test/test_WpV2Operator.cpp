@@ -24,7 +24,6 @@ void gpsPositionSubCallback(
 void waypointV2MissionEventSubCallback(
     const dji_osdk_ros::WaypointV2MissionEventPush::ConstPtr
         &waypointV2MissionEventPush) {
-
   waypoint_V2_mission_event_push_ = *waypointV2MissionEventPush;
 
   ROS_INFO("waypoint_V2_mission_event_push_.event ID :0x%x\n",
@@ -57,7 +56,6 @@ void waypointV2MissionEventSubCallback(
 void waypointV2MissionStateSubCallback(
     const dji_osdk_ros::WaypointV2MissionStatePush::ConstPtr
         &waypointV2MissionStatePush) {
-
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
 
   ROS_INFO("waypointV2MissionStateSubCallback");
@@ -73,36 +71,41 @@ void waypointV2MissionStateSubCallback(
            waypoint_V2_mission_state_push_.velocity);
 }
 
-bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum)
-{
-    waypointV2_generate_actions_client = nh.serviceClient<dji_osdk_ros::GenerateWaypointV2Action>("dji_osdk_ros/waypointV2_generateActions");
-    dji_osdk_ros::WaypointV2Action actionVector;
-    for (uint16_t i = 0; i < actionNum; i++)
-    {
-      actionVector.actionId  = i;
-      actionVector.waypointV2ActionTriggerType  = dji_osdk_ros::WaypointV2Action::DJIWaypointV2ActionTriggerTypeSampleReachPoint;
-      actionVector.waypointV2SampleReachPointTrigger.waypointIndex = i;
-      actionVector.waypointV2SampleReachPointTrigger.terminateNum = 0;
-      actionVector.waypointV2ACtionActuatorType = dji_osdk_ros::WaypointV2Action::DJIWaypointV2ActionActuatorTypeCamera;
-      actionVector.waypointV2CameraActuator.actuatorIndex = 0;
-      actionVector.waypointV2CameraActuator.DJIWaypointV2ActionActuatorCameraOperationType = dji_osdk_ros::WaypointV2CameraActuator::DJIWaypointV2ActionActuatorCameraOperationTypeTakePhoto;
-      generateWaypointV2Action_.request.actions.push_back(actionVector);
-    }
+bool generateWaypointV2Actions(ros::NodeHandle &nh, uint16_t actionNum) {
+  waypointV2_generate_actions_client =
+      nh.serviceClient<dji_osdk_ros::GenerateWaypointV2Action>(
+          "dji_osdk_ros/waypointV2_generateActions");
+  dji_osdk_ros::WaypointV2Action actionVector;
+  for (uint16_t i = 0; i < actionNum; i++) {
+    actionVector.actionId = i;
+    actionVector.waypointV2ActionTriggerType = dji_osdk_ros::WaypointV2Action::
+        DJIWaypointV2ActionTriggerTypeSampleReachPoint;
+    actionVector.waypointV2SampleReachPointTrigger.waypointIndex = i;
+    actionVector.waypointV2SampleReachPointTrigger.terminateNum = 0;
+    actionVector.waypointV2ACtionActuatorType =
+        dji_osdk_ros::WaypointV2Action::DJIWaypointV2ActionActuatorTypeCamera;
+    actionVector.waypointV2CameraActuator.actuatorIndex = 0;
+    actionVector.waypointV2CameraActuator
+        .DJIWaypointV2ActionActuatorCameraOperationType =
+        dji_osdk_ros::WaypointV2CameraActuator::
+            DJIWaypointV2ActionActuatorCameraOperationTypeTakePhoto;
+    generateWaypointV2Action_.request.actions.push_back(actionVector);
+  }
 
-    waypointV2_generate_actions_client.call(generateWaypointV2Action_);
+  waypointV2_generate_actions_client.call(generateWaypointV2Action_);
 
-    return generateWaypointV2Action_.response.result;
+  return generateWaypointV2Action_.response.result;
 }
 
-std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum)
-{
-    FFDS::MODULES::WpV2Operator wpv2operator(nh);
+std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(
+    ros::NodeHandle &nh, DJI::OSDK::float32_t radius, uint16_t polygonNum) {
+  FFDS::MODULES::WpV2Operator wpv2operator(nh);
   // Let's create a vector to store our waypoints in.
   std::vector<dji_osdk_ros::WaypointV2> waypointList;
   dji_osdk_ros::WaypointV2 startPoint;
   dji_osdk_ros::WaypointV2 waypointV2;
 
-  startPoint.latitude  = gps_position_.latitude * M_PI  / 180.0;
+  startPoint.latitude = gps_position_.latitude * M_PI / 180.0;
   startPoint.longitude = gps_position_.longitude * M_PI / 180.0;
   startPoint.relativeHeight = 15;
   wpv2operator.setWaypointV2Defaults(startPoint);
@@ -114,9 +117,11 @@ std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &
     wpv2operator.setWaypointV2Defaults(waypointV2);
     DJI::OSDK::float32_t X = radius * cos(angle);
     DJI::OSDK::float32_t Y = radius * sin(angle);
-    waypointV2.latitude = Y/FFDS::TOOLS::EARTH_R + startPoint.latitude;
-    waypointV2.longitude = X/(FFDS::TOOLS::EARTH_R  * cos(startPoint.latitude)) + startPoint.longitude;
-    waypointV2.relativeHeight = startPoint.relativeHeight ;
+    waypointV2.latitude = Y / FFDS::TOOLS::EARTH_R + startPoint.latitude;
+    waypointV2.longitude =
+        X / (FFDS::TOOLS::EARTH_R * cos(startPoint.latitude)) +
+        startPoint.longitude;
+    waypointV2.relativeHeight = startPoint.relativeHeight;
     waypointList.push_back(waypointV2);
   }
   waypointList.push_back(startPoint);
@@ -124,46 +129,51 @@ std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(ros::NodeHandle &
   return waypointList;
 }
 
-bool initWaypointV2Setting(ros::NodeHandle &nh)
-{
-    waypointV2_init_setting_client = nh.serviceClient<dji_osdk_ros::InitWaypointV2Setting>("dji_osdk_ros/waypointV2_initSetting");
-    initWaypointV2Setting_.request.polygonNum = 6;
-    initWaypointV2Setting_.request.radius = 6;
-    initWaypointV2Setting_.request.actionNum = 5;
+bool initWaypointV2Setting(ros::NodeHandle &nh) {
+  waypointV2_init_setting_client =
+      nh.serviceClient<dji_osdk_ros::InitWaypointV2Setting>(
+          "dji_osdk_ros/waypointV2_initSetting");
+  initWaypointV2Setting_.request.polygonNum = 6;
+  initWaypointV2Setting_.request.radius = 6;
+  initWaypointV2Setting_.request.actionNum = 5;
 
-    /*! Generate actions*/
-    generateWaypointV2Actions(nh, initWaypointV2Setting_.request.actionNum);
-    initWaypointV2Setting_.request.waypointV2InitSettings.repeatTimes = 1;
-    initWaypointV2Setting_.request.waypointV2InitSettings.finishedAction = initWaypointV2Setting_.request.waypointV2InitSettings.DJIWaypointV2MissionFinishedGoHome;
-    initWaypointV2Setting_.request.waypointV2InitSettings.maxFlightSpeed = 10;
-    initWaypointV2Setting_.request.waypointV2InitSettings.autoFlightSpeed = 2;
-    initWaypointV2Setting_.request.waypointV2InitSettings.exitMissionOnRCSignalLost = 1;
-    initWaypointV2Setting_.request.waypointV2InitSettings.gotoFirstWaypointMode = initWaypointV2Setting_.request.waypointV2InitSettings.DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
-    initWaypointV2Setting_.request.waypointV2InitSettings.mission = generatePolygonWaypoints(nh, initWaypointV2Setting_.request.radius, initWaypointV2Setting_.request.polygonNum);
-    initWaypointV2Setting_.request.waypointV2InitSettings.missTotalLen = initWaypointV2Setting_.request.waypointV2InitSettings.mission.size();
+  /*! Generate actions*/
+  generateWaypointV2Actions(nh, initWaypointV2Setting_.request.actionNum);
+  initWaypointV2Setting_.request.waypointV2InitSettings.repeatTimes = 1;
+  initWaypointV2Setting_.request.waypointV2InitSettings.finishedAction =
+      initWaypointV2Setting_.request.waypointV2InitSettings
+          .DJIWaypointV2MissionFinishedGoHome;
+  initWaypointV2Setting_.request.waypointV2InitSettings.maxFlightSpeed = 10;
+  initWaypointV2Setting_.request.waypointV2InitSettings.autoFlightSpeed = 2;
+  initWaypointV2Setting_.request.waypointV2InitSettings
+      .exitMissionOnRCSignalLost = 1;
+  initWaypointV2Setting_.request.waypointV2InitSettings.gotoFirstWaypointMode =
+      initWaypointV2Setting_.request.waypointV2InitSettings
+          .DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
+  initWaypointV2Setting_.request.waypointV2InitSettings.mission =
+      generatePolygonWaypoints(nh, initWaypointV2Setting_.request.radius,
+                               initWaypointV2Setting_.request.polygonNum);
+  initWaypointV2Setting_.request.waypointV2InitSettings.missTotalLen =
+      initWaypointV2Setting_.request.waypointV2InitSettings.mission.size();
 
-    waypointV2_init_setting_client.call(initWaypointV2Setting_);
-    if (initWaypointV2Setting_.response.result)
-    {
-      ROS_INFO("Init mission setting successfully!\n");
-    }
-    else
-    {
-      ROS_ERROR("Init mission setting failed!\n");
-    }
+  waypointV2_init_setting_client.call(initWaypointV2Setting_);
+  if (initWaypointV2Setting_.response.result) {
+    ROS_INFO("Init mission setting successfully!\n");
+  } else {
+    ROS_ERROR("Init mission setting failed!\n");
+  }
 
-    return initWaypointV2Setting_.response.result;
-
+  return initWaypointV2Setting_.response.result;
 }
 
 bool runWaypointV2Mission(ros::NodeHandle &nh) {
-
   int timeout = 1;
   bool result = false;
 
   FFDS::MODULES::WpV2Operator wpv2operator(nh);
 
-  get_drone_type_client = nh.serviceClient<dji_osdk_ros::GetDroneType>("get_drone_type");
+  get_drone_type_client =
+      nh.serviceClient<dji_osdk_ros::GetDroneType>("get_drone_type");
 
   waypointV2_mission_state_push_client =
       nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
@@ -210,7 +220,8 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
 
   /*! download mission */
   std::vector<dji_osdk_ros::WaypointV2> mission;
-  result = wpv2operator.downloadWaypointV2Mission(downloadWaypointV2Mission_, mission);
+  result = wpv2operator.downloadWaypointV2Mission(downloadWaypointV2Mission_,
+                                                  mission);
   if (!result) {
     return false;
   }
@@ -261,7 +272,6 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
 }
 
 int main(int argc, char **argv) {
-
   ros::init(argc, argv, "test_WpV2Operator_node");
   ros::NodeHandle nh;
 
@@ -282,5 +292,4 @@ int main(int argc, char **argv) {
   runWaypointV2Mission(nh);
 
   ros::waitForShutdown();
-
 }
