@@ -117,6 +117,9 @@ bool GimbalCameraOperator::calRotateGimbal(
     const COMMON::IRCameraParams& H20TIr) {
   PRINT_INFO("Start controlling the gimbal using calculation!");
 
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+
   double errX = setPosXPix - firePosPix.x;
   double errY = setPosYPix - firePosPix.y;
 
