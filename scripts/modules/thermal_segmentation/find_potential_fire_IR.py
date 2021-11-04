@@ -54,7 +54,6 @@ class PotentialFireIrFinder(object):
         else:
             self.cv_image = self.convertor.imgmsg_to_cv2(
                 self.ros_image, 'bgr8')
-            self.cv_image = cv2.resize(self.cv_image, (480,360))
 
 
     def sliding_window(self, image, stepSize=10, windowSize=[20, 20]):
@@ -69,7 +68,7 @@ class PotentialFireIrFinder(object):
         judge_list = []
         coord_list = []
 
-        for (x, y, window) in self.sliding_window(binary_img, 10, [20, 20]):
+        for (x, y, window) in self.sliding_window(binary_img, 20, [40, 40]):
             patch = binary_img[y:y+21, x:x+21]
             coord_list.append([x, y])
             judje = patch > 0
@@ -93,7 +92,8 @@ class PotentialFireIrFinder(object):
             rospy.loginfo("no potential fire currently!")
 
         self.fire_pos_pub.publish(self.pot_fire_pos)
-        cv2.imshow("Window", self.cv_image)
+        cv_image = cv2.resize(self.cv_image, (480,360))
+        cv2.imshow("Window", cv_image)
         cv2.waitKey(1)
 
     def run(self):
