@@ -18,57 +18,63 @@
 #define __GIMBALCAMERAOPERATOR_HPP__
 
 #include <dji_osdk_ros/GimbalAction.h>
+#include <dji_osdk_ros/common_type.h>
 #include <forest_fire_detection_system/SingleFirePosIR.h>
-#include <boost/exception/exception.hpp>
-#include <modules/BasicController/IncPIDController.hpp>
 #include <ros/ros.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
-#include <tools/SystemLib.hpp>
-#include <dji_osdk_ros/common_type.h>
+
+#include <boost/exception/exception.hpp>
+#include <modules/BasicController/IncPIDController.hpp>
 #include <tools/MathLib.hpp>
+#include <tools/SystemLib.hpp>
 
 namespace FFDS {
 
 namespace MODULES {
 
 class GimbalCameraOperator {
-public:
+ public:
   GimbalCameraOperator()
       : pidYaw(0.01, 0.00, 0.00), pidPitch(0.01, 0.00, 0.00) {
-
     singleFirePosIRSub =
         nh.subscribe("forest_fire_detection_system/single_fire_pos_ir_img", 10,
                      &GimbalCameraOperator::singleFirePosIRCallback, this);
 
-     gimbal_control_client = nh.serviceClient<dji_osdk_ros::GimbalAction>("gimbal_task_control");
+    gimbal_control_client =
+        nh.serviceClient<dji_osdk_ros::GimbalAction>("gimbal_task_control");
+
 
     ros::Duration(3.0).sleep();
     PRINT_INFO("initialize GimbalCameraOperator done!");
   };
 
-  bool rotateGimbalPID(float setPosX, float setPosY, float timeOut, float tolErr);
-  bool rotateGimbalGeometry();
+  bool rotateGimbalPID(float setPosX, float setPosY, float timeOutInS,
+                       float tolErr);
+  bool rotateGimbalAngle(float setPosX, float setPosY);
   bool resetGimbal();
 
-  void zoomCamera();
-  void resetCamera();
+  bool zoomCamera();
+  bool resetCamera();
 
-private:
+ private:
   ros::NodeHandle nh;
   ros::Subscriber singleFirePosIRSub;
   ros::ServiceClient gimbal_control_client;
 
+  dji_osdk_ros::GimbalAction gimbalAction;
   forest_fire_detection_system::SingleFirePosIR firePos;
 
   void singleFirePosIRCallback(
       const forest_fire_detection_system::SingleFirePosIR::ConstPtr
           &firePosition);
 
+  void setGimbalActionDefault();
+
   IncPIDController pidYaw;
   IncPIDController pidPitch;
 };
 
-} // namespace MODULES
-} // namespace FFDS
+}  // namespace MODULES
+}  // namespace FFDS
 
 #endif /* GIMBALCAMERAOPERATOR_HPP */

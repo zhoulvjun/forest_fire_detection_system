@@ -24,29 +24,49 @@ void GimbalCameraOperator::singleFirePosIRCallback(
   firePos = *firePosition;
 };
 
-bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
-                                        float timeOut, float tolErr) {
-  PRINT_INFO("Start controlling the gimbal!");
+void GimbalCameraOperator::setGimbalActionDefault() {
+  gimbalAction.request.payload_index =
+      static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
+  gimbalAction.request.is_reset = false;
+  gimbalAction.request.pitch = 0.0;
+  gimbalAction.request.yaw = 0.0;
+  gimbalAction.request.rotationMode = 0;
+  gimbalAction.request.roll = 0.0f;
+  gimbalAction.request.time = 1.0;
+}
 
-  bool isTimeOut = false;
-  bool isCtrlDone = false;
+/**
+ * @param[in]  x and y set position on the IR image, the controlling time and
+ * finally control stop error.
+ * @param[out]
+ * @return
+ * @ref
+ * @see
+ * @note control the gimbal rotate by the a PID controller, no need to use the
+ * focal length, control several time according to the "timeOut"
+ */
+bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
+                                           float timeOutInS, float tolErr) {
+  PRINT_INFO("Start controlling the gimbal!");
 
   ros::Time beginTime = ros::Time::now();
   float timeinterval;
 
-  while (ros::ok() && (!isTimeOut) && (!isCtrlDone)) {
+  while (ros::ok()) {
     ros::spinOnce();
+
     if (!firePos.is_pot_fire) {
+
       PRINT_WARN("not stable potential fire, control restart!")
       pidYaw.reset();
       pidPitch.reset();
-
-      /* time retunn to zero*/
       beginTime = ros::Time::now();
+
     } else {
-      /* define error */
+
       float errX = setPosX - firePos.x;
       float errY = setPosY - firePos.y;
+
       if (fabs(errX) <= fabs(tolErr) && fabs(errY) <= fabs(tolErr)) {
         PRINT_INFO(
             "controling gimbal finish after %f seconds with x-error: "
@@ -61,22 +81,18 @@ bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
       pidYaw.ctrl(-errX);
       pidPitch.ctrl(-errY);
 
-      dji_osdk_ros::GimbalAction gimbalAction;
       gimbalAction.request.is_reset = false;
-      gimbalAction.request.payload_index =
-          static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
-      gimbalAction.request.rotationMode = 0;
-      gimbalAction.request.roll = 0.0f;
       gimbalAction.request.pitch = pidPitch.fullOutput();
       gimbalAction.request.yaw = pidYaw.fullOutput();
+      gimbalAction.request.rotationMode = 0;
+      gimbalAction.request.roll = 0.0f;
       gimbalAction.request.time = 1.0;
 
       gimbal_control_client.call(gimbalAction);
     }
 
     timeinterval = TOOLS::getRosTimeInterval(beginTime);
-    if (timeinterval >= timeOut) {
-      isTimeOut = true;
+    if (timeinterval >= timeOutInS) {
       PRINT_WARN("control gimbal time out after %f seconds", timeinterval);
       return false;
     }
@@ -87,4 +103,24 @@ bool GimbalCameraOperator::rotateGimbalPID(float setPosX, float setPosY,
   return false;
 }
 
-void GimbalCameraOperator::zoomCamera() {}
+/**
+ * @param[in]  x: position desired on the IR image along width, y : along height
+ * @param[out]  void
+ * @return void
+ * @ref
+ * @see
+ * @note rotate the camera using the focal length and the image pixel length.
+ * Rotate only one time.
+ */
+bool GimbalCameraOperator::rotateGimbalAngle(float setPosX, float setPosY) {
+  return false;
+}
+
+bool GimbalCameraOperator::resetGimbal() {
+  setGimbalActionDefault();
+  gimbalAction.request.is_reset = true;
+  gimbal_control_client.call(gimbalAction);
+  return gimbalAction.response.result;
+}
+
+bool GimbalCameraOperator::zoomCamera() { return false; }
