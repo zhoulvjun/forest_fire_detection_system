@@ -65,11 +65,11 @@ class PIDController : public ControllerBase {
         use_integ(useInteg),
         use_diff(useDiff) {}
 
-  ~PIDController();
+  ~PIDController(){};
 
   void reset() override;
   void ctrl(const float in) override;
-  inline float getOutput() override { return output; }
+  float getOutput() override;
 
   inline float getInteg() { return integ; }
 };
@@ -85,6 +85,8 @@ inline void PIDController::reset() {
   _dt = 0;
   integ = 0;
 }
+
+inline float PIDController::getOutput() { return output; }
 
 inline void PIDController::ctrl(const float in) {
   current_time = getSysTime() / 1000.0;

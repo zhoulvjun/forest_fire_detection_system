@@ -25,6 +25,7 @@ namespace MODULES {
 class IncPIDController : public ControllerBase {
  public:
   IncPIDController(float p, float i, float d) : Kp(p), Ki(i), Kd(d){};
+  ~IncPIDController(){};
 
   void reset() override;
   void ctrl(const float in) override;

@@ -22,9 +22,9 @@ namespace MODULES {
 
 class ControllerBase {
  public:
-  virtual void reset();
-  virtual void ctrl(const float in);
-  virtual float getOutput();
+  virtual void reset() = 0;
+  virtual void ctrl(const float in) = 0;
+  virtual float getOutput() = 0;
 
  protected:
   float input{0.0};
