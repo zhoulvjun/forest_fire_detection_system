@@ -23,11 +23,12 @@
 #include <ros/ros.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
 
-#include <boost/exception/exception.hpp>
 #include <common/CommonTypes.hpp>
 #include <modules/BasicController/IncPIDController.hpp>
+#include <modules/BasicController/PIDController.hpp>
 #include <tools/MathLib.hpp>
 #include <tools/SystemLib.hpp>
+#include <PX4-Matrix/matrix/Matrix.hpp>
 
 namespace FFDS {
 
@@ -48,9 +49,9 @@ class GimbalCameraOperator {
   };
 
   bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
-                       const float timeOutInS, const float tolErrPix);
+                        const float timeOutInS, const float tolErrPix);
   bool calRotateGimbal(const float setPosXPix, const float setPosYPix,
-                         const COMMON::IRCameraParams& H20TIr);
+                       const COMMON::IRCameraParams& H20TIr);
   bool resetGimbal();
 
   bool zoomCamera();
@@ -70,8 +71,8 @@ class GimbalCameraOperator {
 
   void setGimbalActionDefault();
 
-  IncPIDController pidYaw{0.01, 0.0, 0.0};
-  IncPIDController pidPitch{0.01, 0.0, 0.0};
+  PIDController pidYaw{0.01, 0.0, 0.0, false, false};
+  PIDController pidPitch{0.01, 0.0, 0.0, false, false};
 };
 
 }  // namespace MODULES

@@ -17,21 +17,23 @@
 #ifndef __INCPIDCONTROLLER_HPP__
 #define __INCPIDCONTROLLER_HPP__
 
+#include "ControllerBase.hpp"
+
 namespace FFDS {
 namespace MODULES {
 
-class IncPIDController {
-
-public:
+class IncPIDController : public ControllerBase {
+ public:
   IncPIDController(float p, float i, float d) : Kp(p), Ki(i), Kd(d){};
 
-  void ctrl(const float in);
-  float fullOutput();
-  float incOutput();
-  void reset();
+  void reset() override;
+  void ctrl(const float in) override;
+  float getOutput() override;
+
+  float getIncOutput();
   void setPrevOutput(const float prev);
 
-private:
+ private:
   const float Kp;
   const float Ki;
   const float Kd;
@@ -47,17 +49,18 @@ private:
   void updateInput();
 };
 
-inline float IncPIDController::incOutput() { return increment; }
+inline float IncPIDController::getIncOutput() { return increment; }
 
 /**
  * @Input:
  * @Output:
  * @Description: 用于第一次进入时与其他控制方式的衔接
  */
-inline void IncPIDController::setPrevOutput(const float prev) { prev_output = prev; }
+inline void IncPIDController::setPrevOutput(const float prev) {
+  prev_output = prev;
+}
 
-inline float IncPIDController::fullOutput() {
-
+inline float IncPIDController::getOutput() {
   output = prev_output + increment;
   prev_output = output;
 
@@ -65,20 +68,17 @@ inline float IncPIDController::fullOutput() {
 }
 
 inline void IncPIDController::reset() {
-
   prev_input = 0.0;
   prev2_input = 0.0;
   output = 0.0;
 }
 
 inline void IncPIDController::updateInput() {
-
   prev2_input = prev_input;
   prev_input = input;
 }
 
 inline void IncPIDController::ctrl(const float in) {
-
   input = in;
   float param_p = Kp * (input - prev_input);
   float param_i = Ki * input;
@@ -88,8 +88,8 @@ inline void IncPIDController::ctrl(const float in) {
   updateInput();
 }
 
-} // namespace MODULES
+}  // namespace MODULES
 
-} // namespace FFDS
+}  // namespace FFDS
 
 #endif /* INCPIDCONTROLLER_HPP */

@@ -45,6 +45,7 @@ void GimbalCameraOperator::setGimbalActionDefault() {
  * @note control the gimbal rotate by the a PID controller, no need to use the
  * focal length, control several time according to the "timeOut"
  */
+/* TODO: need to sleep to wait until control done? */
 bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
                                             const float setPosYPix,
                                             const float timeOutInS,
@@ -78,12 +79,12 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       PRINT_DEBUG("err Pitch:%f ", errX);
       PRINT_DEBUG("err Yaw:%f ", errY);
 
-      pidYaw.ctrl(-errX);
-      pidPitch.ctrl(-errY);
+      pidYaw.ctrl(errX);
+      pidPitch.ctrl(errY);
 
       gimbalAction.request.is_reset = false;
-      gimbalAction.request.pitch = pidPitch.fullOutput();
-      gimbalAction.request.yaw = pidYaw.fullOutput();
+      gimbalAction.request.pitch = pidPitch.getOutput();
+      gimbalAction.request.yaw = pidYaw.getOutput();
       gimbalAction.request.rotationMode = 0;
       gimbalAction.request.roll = 0.0f;
       gimbalAction.request.time = 1.0;
@@ -96,6 +97,7 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       PRINT_WARN("control gimbal time out after %f seconds", timeinterval);
       return false;
     }
+
   }
 
   /* shutdown by keyboard */
@@ -159,6 +161,7 @@ bool GimbalCameraOperator::calRotateGimbal(
 
 bool GimbalCameraOperator::resetGimbal() {
   setGimbalActionDefault();
+
   gimbalAction.request.is_reset = true;
   gimbalCtrlClient.call(gimbalAction);
   return gimbalAction.response.result;
