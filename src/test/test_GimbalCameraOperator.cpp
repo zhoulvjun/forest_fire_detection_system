@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
   FFDS::COMMON::IRCameraParams H20t;
   /* PRINT_INFO("control test result: %d", gimbalCameraOperator.calRotateGimbal(H20t.orgImgWidthPix/2, H20t.orgImgHeightPix/2, H20t)); */
 
-  PRINT_INFO("control test result: %d", gimbalCameraOperator.ctrlRotateGimbal(H20t.orgImgWidthPix/2, H20t.orgImgHeightPix/2, 10, 100));
+  PRINT_INFO("control test result: %d", gimbalCameraOperator.ctrlRotateGimbal(H20t.orgImgWidthPix/2, H20t.orgImgHeightPix/2, 10, 30));
 
   return 0;
 }
