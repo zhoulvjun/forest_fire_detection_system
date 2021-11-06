@@ -102,11 +102,13 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
         return true;
       }
 
-      PRINT_DEBUG("err Pitch:%f pixel", errX);
-      PRINT_DEBUG("err Yaw:%f pixel", errY);
+      PRINT_DEBUG("err Yaw:%f pixel", errX);
+      PRINT_DEBUG("err Pitch:%f pixel", errY);
 
+      /* +x error -> - inc yaw */
+      /* +y error -> + inc pitch */
       pidYaw.ctrl(-errX);
-      pidPitch.ctrl(-errY);
+      pidPitch.ctrl(errY);
 
       /*NOTE: treat these attCam as degree */
       float d_pitchCam = pidPitch.getOutput();

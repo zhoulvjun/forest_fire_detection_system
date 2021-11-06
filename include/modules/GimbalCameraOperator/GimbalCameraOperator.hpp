@@ -81,8 +81,8 @@ class GimbalCameraOperator {
 
   matrix::Vector3f camera2NED(const matrix::Vector3f& d_attInCamera);
 
-  PIDController pidYaw{0.01, 0.0, 0.0, false, false};
-  PIDController pidPitch{0.01, 0.0, 0.0, false, false};
+  PIDController pidYaw{0.005, 0.0, 0.0, false, false};
+  PIDController pidPitch{0.005, 0.0, 0.0, false, false};
 };
 
 }  // namespace MODULES
