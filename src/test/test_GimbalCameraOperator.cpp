@@ -19,7 +19,9 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "test_GimbalCameraOperator_node");
   FFDS::MODULES::GimbalCameraOperator gimbalCameraOperator;
   FFDS::COMMON::IRCameraParams H20t;
-  PRINT_INFO("control test result: %d", gimbalCameraOperator.calRotateGimbal(H20t.orgImgWidthPix/2, H20t.orgImgHeightPix/2, H20t));
+  /* PRINT_INFO("control test result: %d", gimbalCameraOperator.calRotateGimbal(H20t.orgImgWidthPix/2, H20t.orgImgHeightPix/2, H20t)); */
+
+  PRINT_INFO("control test result: %d", gimbalCameraOperator.ctrlRotateGimbal(H20t.orgImgWidthPix/2, H20t.orgImgHeightPix/2, 10, 20));
 
   return 0;
 }
