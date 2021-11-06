@@ -105,8 +105,8 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       PRINT_DEBUG("err Pitch:%f pixel", errX);
       PRINT_DEBUG("err Yaw:%f pixel", errY);
 
-      pidYaw.ctrl(errX);
-      pidPitch.ctrl(errY);
+      pidYaw.ctrl(-errX);
+      pidPitch.ctrl(-errY);
 
       /*NOTE: treat these attCam as degree */
       float d_pitchCam = pidPitch.getOutput();
@@ -142,8 +142,8 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
 
       ctrl_times += 1;
 
-      /* ros::Duration(3.0).sleep(); */
-      int pause = std::cin.get();
+      ros::Duration(1.0).sleep();
+      /* int pause = std::cin.get(); */
     }
   }
 
