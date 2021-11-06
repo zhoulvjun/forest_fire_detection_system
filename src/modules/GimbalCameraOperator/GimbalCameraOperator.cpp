@@ -18,11 +18,16 @@
 
 using namespace FFDS::MODULES;
 
+void GimbalCameraOperator::gimbalAttCallback(
+    const geometry_msgs::Vector3Stamped::ConstPtr& att) {
+  gimbalAtt = *att;
+}
+
 void GimbalCameraOperator::singleFirePosIRCallback(
     const forest_fire_detection_system::SingleFirePosIR::ConstPtr&
         firePosition) {
   firePosPix = *firePosition;
-};
+}
 
 void GimbalCameraOperator::setGimbalActionDefault() {
   gimbalAction.request.payload_index =
@@ -33,6 +38,21 @@ void GimbalCameraOperator::setGimbalActionDefault() {
   gimbalAction.request.rotationMode = 0;
   gimbalAction.request.roll = 0.0f;
   gimbalAction.request.time = 1.0;
+}
+
+matrix::Vector3f GimbalCameraOperator::camera2NED(
+    const matrix::Vector3f& d_attInCamera) {
+  float phi = TOOLS::Deg2Rad(gimbalAtt.vector.x);   /* roll angle */
+  float theta = TOOLS::Deg2Rad(gimbalAtt.vector.y); /* pitch angle */
+  float psi = TOOLS::Deg2Rad(gimbalAtt.vector.z);   /* yaw angle */
+
+  float convert[3][3] = {{1, sin(phi) * tan(theta), cos(phi) * tan(theta)},
+                         {0, cos(phi), -sin(phi)},
+                         {0, sin(phi) / cos(theta), cos(phi) / cos(theta)}};
+
+  matrix::Matrix3f eularMatrix(convert);
+
+  return eularMatrix * d_attInCamera;
 }
 
 /**
@@ -48,13 +68,10 @@ void GimbalCameraOperator::setGimbalActionDefault() {
 /* TODO: need to sleep to wait until control done? */
 bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
                                             const float setPosYPix,
-                                            const float timeOutInS,
+                                            const int times,
                                             const float tolErrPix) {
   PRINT_INFO("Start controlling the gimbal using controller!");
-
-  ros::Time beginTime = ros::Time::now();
-  float timeinterval;
-
+  int ctrl_times = 0;
   while (ros::ok()) {
     ros::spinOnce();
 
@@ -62,42 +79,61 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       PRINT_WARN("not stable potential fire, control restart!")
       pidYaw.reset();
       pidPitch.reset();
-      beginTime = ros::Time::now();
+      ctrl_times = 0;
 
     } else {
+      if (ctrl_times > times) {
+        PRINT_WARN("control gimbal times out after %d controlling!", ctrl_times);
+        return false;
+      }
+
       float errX = setPosXPix - firePosPix.x;
       float errY = setPosYPix - firePosPix.y;
 
       if (fabs(errX) <= fabs(tolErrPix) && fabs(errY) <= fabs(tolErrPix)) {
         PRINT_INFO(
-            "controling gimbal finish after %f seconds with x-error: "
-            "%f, y-error: %f!",
-            timeinterval, errX, errY);
+            "controling gimbal finish after %d times trying with x-error: "
+            "%f pixel, y-error: %f pixel!",
+            ctrl_times, errX, errY);
         return true;
       }
 
-      PRINT_DEBUG("err Pitch:%f ", errX);
-      PRINT_DEBUG("err Yaw:%f ", errY);
+      PRINT_DEBUG("err Pitch:%f pixel", errX);
+      PRINT_DEBUG("err Yaw:%f pixel", errY);
 
       pidYaw.ctrl(errX);
       pidPitch.ctrl(errY);
 
+      /*NOTE: treat these attCam as degree */
+      float d_pitchCam = pidPitch.getOutput();
+      float d_yawCam = pidYaw.getOutput();
+
+      PRINT_DEBUG("Pitch increment in Cam frame:%f deg ", errX);
+      PRINT_DEBUG("Yaw increment in Cam frame:%f deg", errY);
+
+      matrix::Vector3f d_attNED =
+          camera2NED(matrix::Vector3f(0.0f, d_pitchCam, d_yawCam));
+      ROS_INFO_STREAM("d_attNED:" << d_attNED);
+
+      matrix::Vector3f AttStNED =
+          d_attNED + matrix::Vector3f(gimbalAtt.vector.x, gimbalAtt.vector.y,
+                                      gimbalAtt.vector.z);
+      ROS_INFO_STREAM("AttStNED:" << AttStNED);
+
+      setGimbalActionDefault();
       gimbalAction.request.is_reset = false;
-      gimbalAction.request.pitch = pidPitch.getOutput();
-      gimbalAction.request.yaw = pidYaw.getOutput();
+      gimbalAction.request.roll = AttStNED(0);
+      gimbalAction.request.pitch = AttStNED(1);
+      gimbalAction.request.yaw = AttStNED(2);
       gimbalAction.request.rotationMode = 0;
-      gimbalAction.request.roll = 0.0f;
-      gimbalAction.request.time = 1.0;
-
+      gimbalAction.request.time = 0.5;
       gimbalCtrlClient.call(gimbalAction);
-    }
 
-    timeinterval = TOOLS::getRosTimeInterval(beginTime);
-    if (timeinterval >= timeOutInS) {
-      PRINT_WARN("control gimbal time out after %f seconds", timeinterval);
-      return false;
-    }
+      ctrl_times += 1;
 
+      /* ros::Duration(3.0).sleep(); */
+      int pause = std::cin.get();
+    }
   }
 
   /* shutdown by keyboard */
