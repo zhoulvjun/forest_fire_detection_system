@@ -134,7 +134,9 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       gimbalAction.request.pitch = AttStCam(0);
       gimbalAction.request.roll = AttStCam(1);
       gimbalAction.request.yaw = AttStCam(2);
-      gimbalAction.request.rotationMode = 0;
+
+      /* chang mode have a try */
+      gimbalAction.request.rotationMode = 1;
       gimbalAction.request.time = 0.5;
       gimbalCtrlClient.call(gimbalAction);
 

@@ -96,7 +96,7 @@ class PotentialFireIrFinder(object):
             rospy.loginfo("no potential fire currently!")
 
         self.fire_pos_pub.publish(self.pot_fire_pos)
-        cv_image = cv2.resize(self.cv_image, (480, 360))
+        cv_image = cv2.resize(self.cv_image, (360, 480))
         cv2.imshow("Window", cv_image)
         cv2.waitKey(1)
 
