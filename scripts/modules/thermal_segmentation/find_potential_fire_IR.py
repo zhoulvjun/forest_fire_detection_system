@@ -55,7 +55,6 @@ class PotentialFireIrFinder(object):
             self.cv_image = self.convertor.imgmsg_to_cv2(
                 self.ros_image, 'bgr8')
 
-
     def sliding_window(self, image, stepSize=10, windowSize=[20, 20]):
         # slide a window across the image
         for y in range(0, image.shape[0], stepSize):
@@ -68,8 +67,10 @@ class PotentialFireIrFinder(object):
         judge_list = []
         coord_list = []
 
-        for (x, y, window) in self.sliding_window(binary_img, 20, [40, 40]):
-            patch = binary_img[y:y+21, x:x+21]
+        windowSize = [40, 40]
+        stepSize = 20
+
+        for (x, y, patch) in self.sliding_window(binary_img, stepSize, windowSize):
             coord_list.append([x, y])
             judje = patch > 0
             judge_list.append(np.count_nonzero(judje))
@@ -79,12 +80,15 @@ class PotentialFireIrFinder(object):
             best_index = judge_list.index(max(judge_list))
             best_pos = coord_list[best_index]
 
-            self.pot_fire_pos.x = best_pos[0]+10
-            self.pot_fire_pos.y = best_pos[1]+10
             self.pot_fire_pos.is_pot_fire = True
+            self.pot_fire_pos.x = best_pos[0]+windowSize[0]/2
+            self.pot_fire_pos.y = best_pos[1]+windowSize[1]/2
+
+            rospy.loginfo("pot_fire_pos.x: %d", self.pot_fire_pos.x)
+            rospy.loginfo("pot_fire_pos.y: %d", self.pot_fire_pos.y)
 
             cv2.rectangle(self.cv_image, (best_pos[0], best_pos[1]),
-                          (best_pos[0] + 21, best_pos[1] + 21), (0, 255, 0), 2)
+                          (best_pos[0] + windowSize, best_pos[1] + windowSize), (0, 255, 0), 2)
         else:
             self.pot_fire_pos.x = -1
             self.pot_fire_pos.y = -1
@@ -92,7 +96,7 @@ class PotentialFireIrFinder(object):
             rospy.loginfo("no potential fire currently!")
 
         self.fire_pos_pub.publish(self.pot_fire_pos)
-        cv_image = cv2.resize(self.cv_image, (480,360))
+        cv_image = cv2.resize(self.cv_image, (480, 360))
         cv2.imshow("Window", cv_image)
         cv2.waitKey(1)
 
