@@ -34,9 +34,9 @@ void GimbalCameraOperator::setGimbalActionDefault() {
       static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
   gimbalAction.request.is_reset = false;
   gimbalAction.request.pitch = 0.0;
+  gimbalAction.request.roll = 0.0f;
   gimbalAction.request.yaw = 0.0;
   gimbalAction.request.rotationMode = 0;
-  gimbalAction.request.roll = 0.0f;
   gimbalAction.request.time = 1.0;
 }
 
@@ -125,7 +125,9 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       matrix::Vector3f AttStCam =
           d_attCam + matrix::Vector3f(gimbalAtt.vector.x, gimbalAtt.vector.y,
                                       gimbalAtt.vector.z);
-      ROS_INFO_STREAM("AttStNED:" << AttStCam);
+      ROS_INFO_STREAM("AttStCam[0] pitch deg" << AttStCam(0));
+      ROS_INFO_STREAM("AttStCam[1] roll deg" << AttStCam(1));
+      ROS_INFO_STREAM("AttStCam[2] yaw deg" << AttStCam(2));
 
       setGimbalActionDefault();
       gimbalAction.request.is_reset = false;
