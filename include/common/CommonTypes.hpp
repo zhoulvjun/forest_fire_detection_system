@@ -66,8 +66,11 @@ struct IRCameraParams {
 
   ~IRCameraParams() {}
 
-  float orgImgWidthPix{640};
-  float orgImgHeightPix{512};
+  float orgImgWidthPix{1920};
+  float orgImgHeightPix{1080};
+
+  /* FIXME: not sure about these parameters ... */
+
   float focalLength{13.5};
   float equivalentFocalLength{58};
   float equivalentCrossLineInMM{42.27};
