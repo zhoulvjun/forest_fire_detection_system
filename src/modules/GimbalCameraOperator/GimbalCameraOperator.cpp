@@ -115,20 +115,23 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       PRINT_DEBUG("Pitch increment in Cam frame:%f deg ", d_pitchCam);
       PRINT_DEBUG("Yaw increment in Cam frame:%f deg", d_yawCam);
 
-      matrix::Vector3f d_attNED =
-          camera2NED(matrix::Vector3f(0.0f, d_pitchCam, d_yawCam));
-      ROS_INFO_STREAM("d_attNED:" << d_attNED);
+      /* NOTE: the gimbal x is pitch, y is roll, z is yaw, it's left hand
+       * NOTE: rule??? YOU GOT BE KIDDING ME! */
+      matrix::Vector3f d_attCam(d_pitchCam, 0.0f, d_yawCam);
 
-      matrix::Vector3f AttStNED =
-          d_attNED + matrix::Vector3f(gimbalAtt.vector.x, gimbalAtt.vector.y,
+      /* matrix::Vector3f d_attNED = camera2NED(d_attNED); */
+      /* ROS_INFO_STREAM("d_attNED:" << d_attNED); */
+
+      matrix::Vector3f AttStCam =
+          d_attCam + matrix::Vector3f(gimbalAtt.vector.x, gimbalAtt.vector.y,
                                       gimbalAtt.vector.z);
-      ROS_INFO_STREAM("AttStNED:" << AttStNED);
+      ROS_INFO_STREAM("AttStNED:" << AttStCam);
 
       setGimbalActionDefault();
       gimbalAction.request.is_reset = false;
-      gimbalAction.request.roll = AttStNED(0);
-      gimbalAction.request.pitch = AttStNED(1);
-      gimbalAction.request.yaw = AttStNED(2);
+      gimbalAction.request.pitch = AttStCam(0);
+      gimbalAction.request.roll = AttStCam(1);
+      gimbalAction.request.yaw = AttStCam(2);
       gimbalAction.request.rotationMode = 0;
       gimbalAction.request.time = 0.5;
       gimbalCtrlClient.call(gimbalAction);
