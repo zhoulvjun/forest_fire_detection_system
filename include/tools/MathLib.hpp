@@ -18,7 +18,7 @@
 #define __MATHLIB_HPP__
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 #include <common/CommonTypes.hpp>
 
@@ -30,7 +30,7 @@ using namespace std;
 const double EARTH_R = 6378137.0;
 const double CONSTANTS_ONE_G = 9.80665;
 
-bool isEqualf(const float a, const float b) {
+inline bool isEqualf(const float a, const float b) {
   if (fabs(a - b) <= 1e-6) {
     return true;
   } else {
@@ -38,7 +38,7 @@ bool isEqualf(const float a, const float b) {
   }
 }
 
-bool isEquald(const double a, const double b) {
+inline bool isEquald(const double a, const double b) {
   if (fabs(a - b) <= 1e-15) {
     return true;
   } else {

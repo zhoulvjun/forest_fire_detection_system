@@ -18,54 +18,74 @@
 #define __GIMBALCAMERAOPERATOR_HPP__
 
 #include <dji_osdk_ros/GimbalAction.h>
+#include <dji_osdk_ros/common_type.h>
 #include <forest_fire_detection_system/SingleFirePosIR.h>
-#include <modules/BasicController/IncPIDController.hpp>
+#include <geometry_msgs/Vector3Stamped.h>
 #include <ros/ros.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
+
+#include <PX4-Matrix/matrix/Matrix.hpp>
+#include <common/CommonTypes.hpp>
+#include <modules/BasicController/PIDController.hpp>
+#include <tools/MathLib.hpp>
 #include <tools/SystemLib.hpp>
-#include <dji_osdk_ros/common_type.h>
 
 namespace FFDS {
 
 namespace MODULES {
 
 class GimbalCameraOperator {
-public:
-  GimbalCameraOperator()
-      : pidYaw(0.01, 0.00, 0.00), pidPitch(0.01, 0.00, 0.00) {
-
+ public:
+  GimbalCameraOperator() {
     singleFirePosIRSub =
         nh.subscribe("forest_fire_detection_system/single_fire_pos_ir_img", 10,
                      &GimbalCameraOperator::singleFirePosIRCallback, this);
 
-     gimbal_control_client = nh.serviceClient<dji_osdk_ros::GimbalAction>("gimbal_task_control");
+    gimbalAttSub = nh.subscribe("dji_osdk_ros/gimbal_angle", 10,
+                                &GimbalCameraOperator::gimbalAttCallback, this);
+
+    gimbalCtrlClient =
+        nh.serviceClient<dji_osdk_ros::GimbalAction>("gimbal_task_control");
 
     ros::Duration(3.0).sleep();
     PRINT_INFO("initialize GimbalCameraOperator done!");
   };
 
-  bool rotateGimbal(float setPosX, float setPosY, float timeOut, float tolErr);
+  bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
+                        const int times, const float tolErrPix);
+  bool calRotateGimbal(const float setPosXPix, const float setPosYPix,
+                       const COMMON::IRCameraParams& H20TIr);
   bool resetGimbal();
 
-  void zoomCamera();
-  void resetCamera();
+  bool zoomCamera();
+  bool resetCamera();
 
-private:
+ private:
   ros::NodeHandle nh;
   ros::Subscriber singleFirePosIRSub;
-  ros::ServiceClient gimbal_control_client;
+  ros::Subscriber gimbalAttSub;
+  ros::ServiceClient gimbalCtrlClient;
 
-  forest_fire_detection_system::SingleFirePosIR firePos;
+  dji_osdk_ros::GimbalAction gimbalAction;
+
+  geometry_msgs::Vector3Stamped gimbalAtt;
+  forest_fire_detection_system::SingleFirePosIR firePosPix;
 
   void singleFirePosIRCallback(
-      const forest_fire_detection_system::SingleFirePosIR::ConstPtr
-          &firePosition);
+      const forest_fire_detection_system::SingleFirePosIR::ConstPtr&
+          firePosition);
 
-  IncPIDController pidYaw;
-  IncPIDController pidPitch;
+  void gimbalAttCallback(const geometry_msgs::Vector3Stamped::ConstPtr& att);
+
+  void setGimbalActionDefault();
+
+  matrix::Vector3f camera2NED(const matrix::Vector3f& d_attInCamera);
+
+  PIDController pidYaw{0.01, 0.0, 0.0, false, false};
+  PIDController pidPitch{0.01, 0.0, 0.0, false, false};
 };
 
-} // namespace MODULES
-} // namespace FFDS
+}  // namespace MODULES
+}  // namespace FFDS
 
 #endif /* GIMBALCAMERAOPERATOR_HPP */

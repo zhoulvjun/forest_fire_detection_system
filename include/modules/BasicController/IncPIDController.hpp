@@ -17,24 +17,27 @@
 #ifndef __INCPIDCONTROLLER_HPP__
 #define __INCPIDCONTROLLER_HPP__
 
+#include "ControllerBase.hpp"
+
 namespace FFDS {
 namespace MODULES {
 
-class IncPIDController {
-
-public:
+class IncPIDController : public ControllerBase {
+ public:
   IncPIDController(float p, float i, float d) : Kp(p), Ki(i), Kd(d){};
+  ~IncPIDController(){};
 
-  void ctrl(float in);
-  float fullOutput();
-  float incOutput();
-  void reset();
-  void setPrevOutput(float prev);
+  void reset() override;
+  void ctrl(const float in) override;
+  float getOutput() override;
 
-private:
-  float Kp;
-  float Ki;
-  float Kd;
+  float getIncOutput();
+  void setPrevOutput(const float prev);
+
+ private:
+  const float Kp;
+  const float Ki;
+  const float Kd;
 
   float input{0.0};
   float prev_input{0.0};
@@ -47,38 +50,36 @@ private:
   void updateInput();
 };
 
-float IncPIDController::incOutput() { return increment; }
+inline float IncPIDController::getIncOutput() { return increment; }
 
 /**
  * @Input:
  * @Output:
  * @Description: 用于第一次进入时与其他控制方式的衔接
  */
-void IncPIDController::setPrevOutput(float prev) { prev_output = prev; }
+inline void IncPIDController::setPrevOutput(const float prev) {
+  prev_output = prev;
+}
 
-float IncPIDController::fullOutput() {
-
+inline float IncPIDController::getOutput() {
   output = prev_output + increment;
   prev_output = output;
 
   return output;
 }
 
-void IncPIDController::reset() {
-
+inline void IncPIDController::reset() {
   prev_input = 0.0;
   prev2_input = 0.0;
   output = 0.0;
 }
 
-void IncPIDController::updateInput() {
-
+inline void IncPIDController::updateInput() {
   prev2_input = prev_input;
   prev_input = input;
 }
 
-void IncPIDController::ctrl(float in) {
-
+inline void IncPIDController::ctrl(const float in) {
   input = in;
   float param_p = Kp * (input - prev_input);
   float param_i = Ki * input;
@@ -88,8 +89,8 @@ void IncPIDController::ctrl(float in) {
   updateInput();
 }
 
-} // namespace MODULES
+}  // namespace MODULES
 
-} // namespace FFDS
+}  // namespace FFDS
 
 #endif /* INCPIDCONTROLLER_HPP */

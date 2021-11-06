@@ -30,7 +30,7 @@ if __name__ == "__main__":
     rospy.init_node('load_local_video_node', anonymous=True)
 
     video_name = os.path.expanduser(
-            "/media/ls/WORK/FLIGHT_TEST/M300/DJI_202110171037_002/DJI_20211017104441_0001_T.MP4")
+            "/media/ls/WORK/FLIGHT_TEST/M300/DJI_202110171037_002/DJI_20211017111617_0004_T.MP4")
     # video_name = os.path.expanduser("~/DJI_0026.MOV")
     # video_name = os.path.expanduser("~/videoplayback.mp4")
     # video_name = os.path.expanduser("./datas/somek_dataset/videoplayback.mp4")

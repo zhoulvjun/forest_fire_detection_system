@@ -17,13 +17,15 @@
 #ifndef __COMMONTYPES_HPP__
 #define __COMMONTYPES_HPP__
 
+#include <cmath>
 #include <iostream>
 
 namespace FFDS {
 namespace COMMON {
 
 /* Local earth-fixed coordinates position */
-template <typename T> struct LocalPosition {
+template <typename T>
+struct LocalPosition {
   T x{0.0};
   T y{0.0};
   T z{0.0};
@@ -39,10 +41,43 @@ template <typename T> struct LocalPosition {
  * 0x5:enter mission after ending pause.
  * 0x6:exit mission.
  * */
-enum WpV2MissionState {
+enum WpV2MissionState {};
+
+/* defalut is for H20T IR camera */
+struct IRCameraParams {
+  IRCameraParams(float orgImgWidthPix_, float orgImgHeightPix_,
+                 float focalLength_, float equivalentFocalLength_,
+                 float equivalentCrossLineInMM_)
+      : orgImgWidthPix(orgImgWidthPix_),
+        orgImgHeightPix(orgImgHeightPix_),
+        focalLength(focalLength_),
+        equivalentFocalLength(equivalentFocalLength_),
+        equivalentCrossLineInMM(equivalentCrossLineInMM_) {
+    float crossLinePix = std::sqrt(orgImgWidthPix * orgImgWidthPix +
+                                    orgImgHeightPix * orgImgHeightPix);
+    eachPixInMM = equivalentCrossLineInMM / crossLinePix;
+  }
+
+  IRCameraParams() {
+    float crossLinePix = std::sqrt(orgImgWidthPix * orgImgWidthPix +
+                                    orgImgHeightPix * orgImgHeightPix);
+    eachPixInMM = equivalentCrossLineInMM / crossLinePix;
+  }
+
+  ~IRCameraParams() {}
+
+  float orgImgWidthPix{1920};
+  float orgImgHeightPix{1080};
+
+  /* FIXME: not sure about these parameters ... */
+
+  float focalLength{13.5};
+  float equivalentFocalLength{58};
+  float equivalentCrossLineInMM{42.27};
+  float eachPixInMM;
 };
 
-} // namespace COMMON
-} // namespace FFDS
+}  // namespace COMMON
+}  // namespace FFDS
 
 #endif /* COMMONTYPES_HPP */
