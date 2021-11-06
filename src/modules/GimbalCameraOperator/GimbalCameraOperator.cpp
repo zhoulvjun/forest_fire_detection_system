@@ -76,19 +76,23 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
     ros::spinOnce();
 
     if (!firePosPix.is_pot_fire) {
-      PRINT_WARN("not stable potential fire, control restart!")
       pidYaw.reset();
       pidPitch.reset();
       ctrl_times = 0;
+      PRINT_WARN("not stable potential fire, control restart!")
+      ros::Duration(1.0).sleep();
 
     } else {
       if (ctrl_times > times) {
-        PRINT_WARN("control gimbal times out after %d controlling!", ctrl_times);
+        PRINT_WARN("control gimbal times out after %d controlling!",
+                   ctrl_times);
         return false;
       }
 
       float errX = setPosXPix - firePosPix.x;
       float errY = setPosYPix - firePosPix.y;
+      PRINT_DEBUG("firePosition x %f", firePosPix.x);
+      PRINT_DEBUG("firePosition y %f", firePosPix.y);
 
       if (fabs(errX) <= fabs(tolErrPix) && fabs(errY) <= fabs(tolErrPix)) {
         PRINT_INFO(
@@ -108,8 +112,8 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       float d_pitchCam = pidPitch.getOutput();
       float d_yawCam = pidYaw.getOutput();
 
-      PRINT_DEBUG("Pitch increment in Cam frame:%f deg ", errX);
-      PRINT_DEBUG("Yaw increment in Cam frame:%f deg", errY);
+      PRINT_DEBUG("Pitch increment in Cam frame:%f deg ", d_pitchCam);
+      PRINT_DEBUG("Yaw increment in Cam frame:%f deg", d_yawCam);
 
       matrix::Vector3f d_attNED =
           camera2NED(matrix::Vector3f(0.0f, d_pitchCam, d_yawCam));
