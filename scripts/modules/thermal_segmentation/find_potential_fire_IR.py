@@ -81,8 +81,8 @@ class PotentialFireIrFinder(object):
             best_pos = coord_list[best_index]
 
             self.pot_fire_pos.is_pot_fire = True
-            self.pot_fire_pos.x = best_pos[1]+windowSize[1]/2
-            self.pot_fire_pos.y = best_pos[0]+windowSize[0]/2
+            self.pot_fire_pos.x = best_pos[0]+windowSize[0]/2
+            self.pot_fire_pos.y = best_pos[1]+windowSize[1]/2
 
             rospy.loginfo("pot_fire_pos.x: %d", self.pot_fire_pos.x)
             rospy.loginfo("pot_fire_pos.y: %d", self.pot_fire_pos.y)
