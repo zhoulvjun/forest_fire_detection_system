@@ -120,6 +120,10 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     )
 
+# for PX4 Matrix Lib
+add_definitions(-DSUPPORT_STDIOSTREAM)
+
+
 add_subdirectory(src)
 add_subdirectory(scripts)
 
