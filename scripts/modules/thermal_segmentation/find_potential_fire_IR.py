@@ -87,8 +87,8 @@ class PotentialFireIrFinder(object):
             rospy.loginfo("pot_fire_pos.x: %d", self.pot_fire_pos.x)
             rospy.loginfo("pot_fire_pos.y: %d", self.pot_fire_pos.y)
 
-            cv2.rectangle(self.cv_image, (best_pos[0], best_pos[1]),
-                          (best_pos[0] + windowSize, best_pos[1] + windowSize), (0, 255, 0), 2)
+            cv2.rectangle(self.cv_image, (best_pos[0], best_pos[1]), (
+                best_pos[0] + windowSize[0], best_pos[1] + windowSize[1]), (0, 255, 0), 2)
         else:
             self.pot_fire_pos.x = -1
             self.pot_fire_pos.y = -1
