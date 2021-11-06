@@ -81,6 +81,7 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       ctrl_times = 0;
       PRINT_WARN("not stable potential fire, control restart!")
       ros::Duration(1.0).sleep();
+      continue;
 
     } else {
       if (ctrl_times > times) {
@@ -124,21 +125,25 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       /* matrix::Vector3f d_attNED = camera2NED(d_attNED); */
       /* ROS_INFO_STREAM("d_attNED:" << d_attNED); */
 
-      matrix::Vector3f AttStCam =
-          d_attCam + matrix::Vector3f(gimbalAtt.vector.x, gimbalAtt.vector.y,
-                                      gimbalAtt.vector.z);
-      ROS_INFO_STREAM("AttStCam[0] pitch deg" << AttStCam(0));
-      ROS_INFO_STREAM("AttStCam[1] roll deg" << AttStCam(1));
-      ROS_INFO_STREAM("AttStCam[2] yaw deg" << AttStCam(2));
+      /* matrix::Vector3f AttStCam = */
+      /*     d_attCam + matrix::Vector3f(gimbalAtt.vector.x, gimbalAtt.vector.y, */
+      /*                                 gimbalAtt.vector.z); */
+      /* ROS_INFO_STREAM("AttStCam[0] pitch deg" << AttStCam(0)); */
+      /* ROS_INFO_STREAM("AttStCam[1] roll deg" << AttStCam(1)); */
+      /* ROS_INFO_STREAM("AttStCam[2] yaw deg" << AttStCam(2)); */
 
       setGimbalActionDefault();
       gimbalAction.request.is_reset = false;
-      gimbalAction.request.pitch = AttStCam(0);
-      gimbalAction.request.roll = AttStCam(1);
-      gimbalAction.request.yaw = AttStCam(2);
+      /* gimbalAction.request.pitch = AttStCam(0); */
+      /* gimbalAction.request.roll = AttStCam(1); */
+      /* gimbalAction.request.yaw = AttStCam(2); */
+
+      gimbalAction.request.pitch = d_attCam(0);
+      gimbalAction.request.roll = d_attCam(1);
+      gimbalAction.request.yaw = d_attCam(2);
 
       /* chang mode have a try */
-      gimbalAction.request.rotationMode = 1;
+      gimbalAction.request.rotationMode = 0;
       gimbalAction.request.time = 0.5;
       gimbalCtrlClient.call(gimbalAction);
 
