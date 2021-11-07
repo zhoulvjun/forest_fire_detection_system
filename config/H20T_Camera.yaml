@@ -1,0 +1,17 @@
+# original(full) image szie 1920 x 1440
+full_img_width: 1920
+full_img_height: 1440
+
+# pure image position in the full image
+upper_bound: 0
+lower_bound: 0
+left_bound: 0
+right_bound: 0
+
+# pure IR image size
+pure_IR_width: 960
+pure_IR_height: 1440
+
+# pure RGB image size
+pure_RGB_width: 960
+pure_RGB_height: 1440

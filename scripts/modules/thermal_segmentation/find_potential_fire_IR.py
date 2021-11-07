@@ -30,10 +30,16 @@ class PotentialFireIrFinder():
     def __init__(self):
 
         # read the camera parameters
-        config = open( "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_IR_Camera.yaml")
+        config = open(
+            "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_IR_Camera.yaml"
+        )
         self.H20T_IR_camera_params = yaml.load(config, Loader=CLoader)
-        self.ir_image = np.zeros((self.H20T_IR_camera_params["split_img_height"], self.H20T_IR_camera_params["split_img_width"],3), dtype='uint8')
+        self.ir_image = np.zeros(
+            (self.H20T_IR_camera_params["split_img_height"],
+             self.H20T_IR_camera_params["split_img_width"], 3),
+            dtype='uint8')
         self.ros_image = Image()
+
         self.convertor = CvBridge()
         self.pot_fire_pos = SingleFirePosIR()
         self.pot_fire_pos.is_pot_fire = False
@@ -114,7 +120,8 @@ class PotentialFireIrFinder():
 
     def run(self):
         while not rospy.is_shutdown():
-            _, binary = cv2.threshold(self.ir_image[:, :, 2], 25, 255, cv2.THRESH_BINARY)
+            _, binary = cv2.threshold(self.ir_image[:, :, 2], 25, 255,
+                                      cv2.THRESH_BINARY)
             # opening operation
             kernel = np.ones((2, 2), dtype="uint8")
             opening = cv2.morphologyEx(binary,
