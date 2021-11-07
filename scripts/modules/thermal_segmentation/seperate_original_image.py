@@ -34,7 +34,7 @@ class OriginalImageSeperator(object):
         )
         self.H20T = yaml.load(config_path, Loader=CLoader)
 
-        self.full_cv_image = np.zeros(
+        self.full_img = np.zeros(
             (self.H20T["full_img_height"], self.H20T["full_img_width"], 3),
             dtype='uint8')
         self.pure_ir_img = np.zeros(
@@ -53,7 +53,7 @@ class OriginalImageSeperator(object):
 
     def image_cb(self, msg):
         self.ros_image = msg
-        full_img = self.convertor.imgmsg_to_cv2(self.ros_image, 'bgr8')
+        self.full_img = self.convertor.imgmsg_to_cv2(self.ros_image, 'bgr8')
 
         # 1920 x 1440
         # rospy.loginfo("ros Image size(W x H): %d x %d", self.ros_image.width,
@@ -61,13 +61,21 @@ class OriginalImageSeperator(object):
         # rospy.loginfo("cv Image size(W x H): %d x %d", full_img.shape[1],
         #         full_img.shape[0])
 
-        pure_ir_img = full_img[
+        self.pure_ir_img = self.full_img[
             self.H20T["upper_bound"]:self.H20T["lower_bound"], :self.
             H20T["pure_IR_width"], :]
 
-        pure_rgb_img = full_img[
+        print(self.pure_ir_img.shape)
+        cv2.imshow("ir", self.pure_ir_img)
+
+        self.pure_rgb_img = self.full_img[
             self.H20T["upper_bound"]:self.H20T["lower_bound"],
             self.H20T["pure_RGB_width"]:, :]
 
     def run(self):
-        pass
+        rospy.spin()
+
+if __name__ == '__main__':
+    rospy.init_node("seperate_original_image_node", anonymous=True)
+    detector =OriginalImageSeperator()
+    detector.run()

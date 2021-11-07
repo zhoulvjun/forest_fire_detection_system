@@ -16,4 +16,4 @@ pure_IR_height: 770
 # pure RGB image size
 pure_RGB_width: 960
   # 1106-336
-pure_IR_height: 770
+pure_RGB_height: 770
