@@ -30,7 +30,7 @@ class OriginalImageSeperator(object):
     def __init__(self):
         # read the camera parameters
         config_path = open(
-            "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_IR_Camera.yaml"
+            "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_Camera.yaml"
         )
         self.H20T = yaml.load(config_path, Loader=CLoader)
 
@@ -67,10 +67,13 @@ class OriginalImageSeperator(object):
 
         print(self.pure_ir_img.shape)
         cv2.imshow("ir", self.pure_ir_img)
+        cv2.waitKey(1)
 
         self.pure_rgb_img = self.full_img[
             self.H20T["upper_bound"]:self.H20T["lower_bound"],
             self.H20T["pure_RGB_width"]:, :]
+        cv2.imshow("rgb", self.pure_rgb_img)
+        cv2.waitKey(1)
 
     def run(self):
         rospy.spin()
