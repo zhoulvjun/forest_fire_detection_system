@@ -48,9 +48,13 @@ class PotentialFireIrFinder():
 
     def image_cb(self, msg):
         self.ros_image = msg
-        rospy.loginfo("ros Image size(W x H): %d x %d", self.ros_image.width,
-                self.ros_image.height)
         full_img = self.convertor.imgmsg_to_cv2(self.ros_image, 'bgr8')
+
+        # 1920 x 1440
+        # rospy.loginfo("ros Image size(W x H): %d x %d", self.ros_image.width,
+        #         self.ros_image.height)
+        # rospy.loginfo("cv Image size(W x H): %d x %d", full_img.shape[1],
+        #         full_img.shape[0])
 
         # crop the image ONLY for IR image.
         self.ir_image = full_img[
