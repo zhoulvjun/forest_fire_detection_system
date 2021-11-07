@@ -45,30 +45,6 @@ struct LocalPosition {
  * */
 enum WpV2MissionState {};
 
-struct CameraParams {
-  CameraParams(float fullImgWidthPix_, float fullImgHeightPix_)
-      : fullImgWidthPix(fullImgWidthPix_), fullImgHeightPix(fullImgHeightPix_) {
-    splitImgWidthPix = fullImgWidthPix / 2;
-    splitImgHeightPix = fullImgHeightPix / 2;
-  }
-
-  explicit CameraParams(std::string configPath) {
-    YAML::Node node = YAML::LoadFile(configPath);
-    fullImgWidthPix = FFDS::TOOLS::getParam(node, "full_img_width", 1920);
-    fullImgHeightPix = FFDS::TOOLS::getParam(node, "full_img_height", 1080);
-
-    splitImgWidthPix = FFDS::TOOLS::getParam(node, "split_img_width", 960);
-    splitImgHeightPix = FFDS::TOOLS::getParam(node, "split_img_height", 540);
-  }
-
-  ~CameraParams() {}
-
-  float fullImgWidthPix;
-  float fullImgHeightPix;
-  float splitImgWidthPix;
-  float splitImgHeightPix;
-};
-
 }  // namespace COMMON
 }  // namespace FFDS
 

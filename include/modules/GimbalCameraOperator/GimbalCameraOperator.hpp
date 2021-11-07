@@ -25,7 +25,6 @@
 #include <tools/PrintControl/PrintCtrlImp.h>
 
 #include <PX4-Matrix/matrix/Matrix.hpp>
-#include <common/CommonTypes.hpp>
 #include <modules/BasicController/PIDController.hpp>
 #include <tools/MathLib.hpp>
 #include <tools/SystemLib.hpp>
