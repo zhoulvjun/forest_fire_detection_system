@@ -18,7 +18,6 @@
 
 import cv2
 from cv_bridge import CvBridge
-from forest_fire_detection_system.msg import SingleFirePosIR
 import numpy as np
 import rospy
 from sensor_msgs.msg import Image
@@ -50,6 +49,14 @@ class OriginalImageSeperator(object):
         rospy.wait_for_message("dji_osdk_ros/main_camera_images", Image)
         self.image_sub = rospy.Subscriber("dji_osdk_ros/main_camera_images",
                                           Image, self.image_cb)
+        self.image_ir_pub = rospy.Publisher(
+            "forest_fire_detection_system/main_camera_ir_image",
+            Image,
+            queue_size=10)
+        self.image_rgb_pub = rospy.Publisher(
+            "forest_fire_detection_system/main_camera_rgb_image",
+            Image,
+            queue_size=10)
 
     def image_cb(self, msg):
         self.ros_image = msg
@@ -65,20 +72,30 @@ class OriginalImageSeperator(object):
             self.H20T["upper_bound"]:self.H20T["lower_bound"], :self.
             H20T["pure_IR_width"], :]
 
-        print(self.pure_ir_img.shape)
-        cv2.imshow("ir", self.pure_ir_img)
-        cv2.waitKey(1)
-
         self.pure_rgb_img = self.full_img[
             self.H20T["upper_bound"]:self.H20T["lower_bound"],
             self.H20T["pure_RGB_width"]:, :]
-        cv2.imshow("rgb", self.pure_rgb_img)
-        cv2.waitKey(1)
+
+        # print(self.pure_ir_img.shape)
+        # cv2.imshow("ir", self.pure_ir_img)
+        # cv2.waitKey(1)
+        # cv2.imshow("rgb", self.pure_rgb_img)
+        # cv2.waitKey(1)
 
     def run(self):
-        rospy.spin()
+        while not rospy.is_shutdown():
+            ros_ir_img = self.convertor.cv2_to_imgmsg(self.pure_ir_img,
+                                                      encoding="bgr8")
+            self.image_ir_pub.publish(ros_ir_img)
+
+            ros_rgb_img = self.convertor.cv2_to_imgmsg(self.pure_rgb_img,
+                                                       encoding="bgr8")
+            self.image_rgb_pub.publish(ros_rgb_img)
+
+            rospy.Rate(10).sleep()
+
 
 if __name__ == '__main__':
     rospy.init_node("seperate_original_image_node", anonymous=True)
-    detector =OriginalImageSeperator()
+    detector = OriginalImageSeperator()
     detector.run()
