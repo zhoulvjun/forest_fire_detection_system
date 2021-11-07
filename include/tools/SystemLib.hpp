@@ -14,21 +14,20 @@
  *
  ******************************************************************************/
 
-#ifndef __SYSTEMLIB_HPP__
-#define __SYSTEMLIB_HPP__
+#ifndef INCLUDE_TOOLS_SYSTEMLIB_HPP_
+#define INCLUDE_TOOLS_SYSTEMLIB_HPP_
 
 #include <ros/ros.h>
-#include <string.h>
 #include <sys/time.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
 
+#include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <string>
 
 namespace FFDS {
 namespace TOOLS {
-
-using namespace std;
 
 /* return as second */
 inline float getRosTimeInterval(ros::Time begin) {
@@ -53,16 +52,16 @@ inline long getTimeInterval(const long begin_time) {
 }
 
 template <typename T>
-void write2Files(string file_path_name, string item, T data) {
+void write2Files(std::string file_path_name, std::string item, T data) {
   long time_stamp = getSysTime();
-  fstream oufile;
+  std::fstream oufile;
 
-  oufile.open(file_path_name.c_str(), ios::app | ios::out);
+  oufile.open(file_path_name.c_str(), std::ios::app | std::ios::out);
 
-  oufile << fixed << time_stamp << "\t"
+  oufile << std::fixed << time_stamp << "\t"
          << "\t" << item;
   oufile << "\t" << data;
-  oufile << endl;
+  oufile << std::endl;
 
   if (!oufile) PRINT_ERROR("something wrong to open or write!");
   oufile.close();
@@ -73,8 +72,8 @@ void write2Files(string file_path_name, string item, T data) {
  * @Output:string
  * @Description:将两个string合并
  */
-inline string addStr(string a, string b) { return a + b; }
+inline std::string addStr(std::string a, std::string b) { return a + b; }
 }  // namespace TOOLS
 }  // namespace FFDS
 
-#endif
+#endif  // INCLUDE_TOOLS_SYSTEMLIB_HPP_

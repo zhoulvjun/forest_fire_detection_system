@@ -1,5 +1,3 @@
-#ifndef _PRINT_CTRL_IMP_H_
-#define _PRINT_CTRL_IMP_H_
 
 /**
  *
@@ -18,6 +16,9 @@
  */
 
 /* NOTE: namespace can not control macros in Cpp! */
+
+#ifndef INCLUDE_TOOLS_PRINTCONTROL_PRINTCTRLIMP_H_
+#define INCLUDE_TOOLS_PRINTCONTROL_PRINTCTRLIMP_H_
 
 #include <cstdio>
 #include <cstdlib>
@@ -40,47 +41,47 @@
 #define PINK 35
 #define BLUE 36
 
-#define PRINT_PURE(level, ...)                                                 \
-  do {                                                                         \
-    if (level <= PRINT_LEVEL) {                                                \
-      printf("[" #level "]>>" __VA_ARGS__);                                    \
-      printf("\n");                                                            \
-    }                                                                          \
+#define PRINT_PURE(level, ...)              \
+  do {                                      \
+    if (level <= PRINT_LEVEL) {             \
+      printf("[" #level "]>>" __VA_ARGS__); \
+      printf("\n");                         \
+    }                                       \
   } while (0);
 
-#define PRINT(color, level, ...)                                               \
-  do {                                                                         \
-    if (level <= PRINT_LEVEL) {                                                \
-      printf(COLOR(36, "[File:%s  Line:%d  Function:%s]\n"), __FILE__,         \
-             __LINE__, __PRETTY_FUNCTION__);                                   \
-      printf(COLOR(color, "[" #level "]") __VA_ARGS__);                        \
-      printf("\n");                                                            \
-    }                                                                          \
+#define PRINT(color, level, ...)                                       \
+  do {                                                                 \
+    if (level <= PRINT_LEVEL) {                                        \
+      printf(COLOR(36, "[File:%s  Line:%d  Function:%s]\n"), __FILE__, \
+             __LINE__, __PRETTY_FUNCTION__);                           \
+      printf(COLOR(color, "[" #level "]") __VA_ARGS__);                \
+      printf("\n");                                                    \
+    }                                                                  \
   } while (0);
 
-#define PRINT_ERROR(...)                                                       \
-  do {                                                                         \
-    PRINT(31, ERROR, ##__VA_ARGS__);                                           \
+#define PRINT_ERROR(...)             \
+  do {                               \
+    PRINT(31, ERROR, ##__VA_ARGS__); \
   } while (0);
 
-#define PRINT_WARN(...)                                                        \
-  do {                                                                         \
-    PRINT(33, WARN, ##__VA_ARGS__);                                            \
+#define PRINT_WARN(...)             \
+  do {                              \
+    PRINT(33, WARN, ##__VA_ARGS__); \
   } while (0);
 
-#define PRINT_INFO(...)                                                        \
-  do {                                                                         \
-    PRINT(32, INFO, ##__VA_ARGS__);                                            \
+#define PRINT_INFO(...)             \
+  do {                              \
+    PRINT(32, INFO, ##__VA_ARGS__); \
   } while (0);
 
-#define PRINT_ENTRY(...)                                                       \
-  do {                                                                         \
-    PRINT(34, ENTRY, ##__VA_ARGS__);                                           \
+#define PRINT_ENTRY(...)             \
+  do {                               \
+    PRINT(34, ENTRY, ##__VA_ARGS__); \
   } while (0);
 
-#define PRINT_DEBUG(...)                                                       \
-  do {                                                                         \
-    PRINT(35, DEBUG, ##__VA_ARGS__);                                           \
+#define PRINT_DEBUG(...)             \
+  do {                               \
+    PRINT(35, DEBUG, ##__VA_ARGS__); \
   } while (0);
 
-#endif /*头文件 */
+#endif  // INCLUDE_TOOLS_PRINTCONTROL_PRINTCTRLIMP_H_

@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __GIMBALCAMERAOPERATOR_HPP__
-#define __GIMBALCAMERAOPERATOR_HPP__
+#ifndef INCLUDE_MODULES_GIMBALCAMERAOPERATOR_GIMBALCAMERAOPERATOR_HPP_
+#define INCLUDE_MODULES_GIMBALCAMERAOPERATOR_GIMBALCAMERAOPERATOR_HPP_
 
 #include <dji_osdk_ros/GimbalAction.h>
 #include <dji_osdk_ros/common_type.h>
@@ -49,7 +49,7 @@ class GimbalCameraOperator {
 
     ros::Duration(3.0).sleep();
     PRINT_INFO("initialize GimbalCameraOperator done!");
-  };
+  }
 
   bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
                         const int times, const float tolErrPix);
@@ -88,4 +88,4 @@ class GimbalCameraOperator {
 }  // namespace MODULES
 }  // namespace FFDS
 
-#endif /* GIMBALCAMERAOPERATOR_HPP */
+#endif  // INCLUDE_MODULES_GIMBALCAMERAOPERATOR_GIMBALCAMERAOPERATOR_HPP_

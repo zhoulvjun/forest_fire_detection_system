@@ -16,11 +16,9 @@
 
 #include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 
-using namespace FFDS::MODULES;
-
-void ZigzagPathPlanner::setParams(sensor_msgs::NavSatFix home, int num,
-                                  float len, float wid, float height) {
-
+void FFDS::MODULES::ZigzagPathPlanner::setParams(sensor_msgs::NavSatFix home,
+                                                 int num, float len, float wid,
+                                                 float height) {
   homeGPos = home;
   zigzagNum = num;
   zigzagLen = len;
@@ -28,8 +26,7 @@ void ZigzagPathPlanner::setParams(sensor_msgs::NavSatFix home, int num,
   zigzagHeight = height;
 }
 
-void ZigzagPathPlanner::calLocalPos() {
-
+void FFDS::MODULES::ZigzagPathPlanner::calLocalPos() {
   float each_len = zigzagLen / zigzagNum;
   int point_num = 2 * (zigzagNum + 1);
   COMMON::LocalPosition<double> pos;
@@ -46,7 +43,6 @@ void ZigzagPathPlanner::calLocalPos() {
   LocalPosVec.push_back(pos);
 
   for (int i = 0; i < point_num - 1; ++i) {
-
     pos.z = zigzagHeight;
 
     if (is_lower_left) {
@@ -91,13 +87,11 @@ void ZigzagPathPlanner::calLocalPos() {
   }
 }
 
-void ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
-
+void FFDS::MODULES::ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
   float rot_x;
   float rot_y;
 
   for (int i = 0; i < LocalPosVec.size(); ++i) {
-
     rot_x = LocalPosVec[i].x * cos(homeHeadRad) -
             LocalPosVec[i].y * sin(homeHeadRad);
 
@@ -110,8 +104,7 @@ void ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
   }
 }
 
-void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
-
+void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   dji_osdk_ros::WaypointV2 wpV2;
   MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
 
@@ -121,7 +114,6 @@ void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   ref[2] = homeGPos.altitude;
 
   for (int i = 0; i < LocalPosVec.size(); ++i) {
-
     MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
 
     if (isGlobal) {
@@ -132,7 +124,6 @@ void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
       wpV2.relativeHeight = LocalPosVec[i].z;
 
     } else {
-
       wpV2.positionX = LocalPosVec[i].x;
       wpV2.positionY = LocalPosVec[i].y;
       wpV2.positionZ = LocalPosVec[i].z;
@@ -142,9 +133,11 @@ void ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   }
 }
 
-std::vector<dji_osdk_ros::WaypointV2> &
-ZigzagPathPlanner::getWpV2Vec(bool isGlobal, bool useInitHeadDirection,
-                              float homeHeadRad) {
+/* NOTE: The gps pos is in RAD!!  */
+std::vector<dji_osdk_ros::WaypointV2>&
+FFDS::MODULES::ZigzagPathPlanner::getWpV2Vec(bool isGlobal,
+                                             bool useInitHeadDirection,
+                                             float homeHeadRad) {
   /* Step: 1 generate the local zigzag LocalPosVec */
   calLocalPos();
 

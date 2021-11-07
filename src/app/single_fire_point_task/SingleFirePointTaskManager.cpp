@@ -14,23 +14,19 @@
  *
  ******************************************************************************/
 
-#include <tools/PrintControl/PrintCtrlImp.h>
-
 #include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
 
-using namespace FFDS::APP;
-
-void SingleFirePointTaskManager::attitudeSubCallback(
+void FFDS::APP::SingleFirePointTaskManager::attitudeSubCallback(
     const geometry_msgs::QuaternionStampedConstPtr &attitudeData) {
   attitude_data_ = *attitudeData;
 }
 
-void SingleFirePointTaskManager::gpsPositionSubCallback(
+void FFDS::APP::SingleFirePointTaskManager::gpsPositionSubCallback(
     const sensor_msgs::NavSatFix::ConstPtr &gpsPosition) {
   gps_position_ = *gpsPosition;
 }
 
-void SingleFirePointTaskManager::waypointV2MissionEventSubCallback(
+void FFDS::APP::SingleFirePointTaskManager::waypointV2MissionEventSubCallback(
     const dji_osdk_ros::WaypointV2MissionEventPush::ConstPtr
         &waypointV2MissionEventPush) {
   waypoint_V2_mission_event_push_ = *waypointV2MissionEventPush;
@@ -71,7 +67,7 @@ void SingleFirePointTaskManager::waypointV2MissionEventSubCallback(
  * 0x5:enter mission after ending pause.
  * 0x6:exit mission.
  * */
-void SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
+void FFDS::APP::SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
     const dji_osdk_ros::WaypointV2MissionStatePush::ConstPtr
         &waypointV2MissionStatePush) {
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
@@ -89,8 +85,8 @@ void SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
            waypoint_V2_mission_state_push_.velocity);
 }
 
-sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(
-    int times) {
+sensor_msgs::NavSatFix
+FFDS::APP::SingleFirePointTaskManager::getHomeGPosAverage(int times) {
   sensor_msgs::NavSatFix homeGPos;
 
   for (int i = 0; (i < times) && ros::ok(); i++) {
@@ -112,7 +108,8 @@ sensor_msgs::NavSatFix SingleFirePointTaskManager::getHomeGPosAverage(
   return homeGPos;
 }
 
-matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
+matrix::Eulerf FFDS::APP::SingleFirePointTaskManager::getInitAttAverage(
+    int times) {
   /* NOTE: the quaternion from dji_osdk_ros to Eular angle is ENU! */
   /* NOTE: but the FlightTaskControl smaple node is NEU. Why they do this! :( */
 
@@ -136,7 +133,7 @@ matrix::Eulerf SingleFirePointTaskManager::getInitAttAverage(int times) {
   return matrix::Eulerf(average_quat);
 }
 
-void SingleFirePointTaskManager::initMission(
+void FFDS::APP::SingleFirePointTaskManager::initMission(
     dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_) {
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   PRINT_INFO("--------------------- Home Gpos ---------------------")
@@ -185,7 +182,7 @@ void SingleFirePointTaskManager::initMission(
       initWaypointV2Setting_.request.waypointV2InitSettings.mission.size();
 }
 
-void SingleFirePointTaskManager::run() {
+void FFDS::APP::SingleFirePointTaskManager::run() {
   dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
   obtainCtrlAuthority.request.enable_obtain = true;
   obtain_ctrl_authority_client.call(obtainCtrlAuthority);
@@ -238,7 +235,7 @@ void SingleFirePointTaskManager::run() {
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "single_fire_point_task_manager_node");
 
-  SingleFirePointTaskManager taskManager;
+  FFDS::APP::SingleFirePointTaskManager taskManager;
   taskManager.run();
   return 0;
 }

@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __CONTROLLERBASE_HPP__
-#define __CONTROLLERBASE_HPP__
+#ifndef INCLUDE_MODULES_BASICCONTROLLER_CONTROLLERBASE_HPP_
+#define INCLUDE_MODULES_BASICCONTROLLER_CONTROLLERBASE_HPP_
 
 namespace FFDS {
 namespace MODULES {
@@ -32,4 +32,4 @@ class ControllerBase {
 };
 }  // namespace MODULES
 }  // namespace FFDS
-#endif
+#endif  // INCLUDE_MODULES_BASICCONTROLLER_CONTROLLERBASE_HPP_

@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __PIDCONTROLLER_HPP__
-#define __PIDCONTROLLER_HPP__
+#ifndef INCLUDE_MODULES_BASICCONTROLLER_PIDCONTROLLER_HPP_
+#define INCLUDE_MODULES_BASICCONTROLLER_PIDCONTROLLER_HPP_
 
 #include <iostream>
 #include <tools/MathLib.hpp>
@@ -25,9 +25,6 @@
 
 namespace FFDS {
 namespace MODULES {
-
-using namespace std;
-using namespace TOOLS;
 
 class PIDController : public ControllerBase {
  private:
@@ -65,7 +62,7 @@ class PIDController : public ControllerBase {
         use_integ(useInteg),
         use_diff(useDiff) {}
 
-  ~PIDController(){};
+  ~PIDController() {}
 
   void reset() override;
   void ctrl(const float in) override;
@@ -76,7 +73,7 @@ class PIDController : public ControllerBase {
 
 inline void PIDController::cal_dt() {
   _dt = current_time - last_time;
-  _dt = Constrain(_dt, _dt_min, _dt_max);
+  _dt = TOOLS::Constrain(_dt, _dt_min, _dt_max);
 }
 
 inline void PIDController::reset() {
@@ -89,7 +86,7 @@ inline void PIDController::reset() {
 inline float PIDController::getOutput() { return output; }
 
 inline void PIDController::ctrl(const float in) {
-  current_time = getSysTime() / 1000.0;
+  current_time = TOOLS::getSysTime() / 1000.0;
   input = in;
 
   cal_dt();
@@ -129,4 +126,4 @@ inline void PIDController::ctrl(const float in) {
 }  // namespace MODULES
 }  // namespace FFDS
 
-#endif  // PIDCONTROLLER_HPP
+#endif  // INCLUDE_MODULES_BASICCONTROLLER_PIDCONTROLLER_HPP_
