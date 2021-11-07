@@ -23,15 +23,17 @@ import numpy as np
 import rospy
 from sensor_msgs.msg import Image
 import yaml
+from yaml import CLoader
 
 
 class PotentialFireIrFinder():
     def __init__(self):
 
         # read the camera parameters
-        config = open( "/home/ls/catkin_ws/src/forest_fire_detection_system/config/H20T_IR_Camera.yaml")
-        self.H20T_IR_camera_params = yaml.load(config)
-
+        config = open( "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_IR_Camera.yaml")
+        self.H20T_IR_camera_params = yaml.load(config, Loader=CLoader)
+        self.ir_image = np.zeros((self.H20T_IR_camera_params["split_img_height"], self.H20T_IR_camera_params["split_img_width"],3), dtype='uint8')
+        self.ros_image = Image()
         self.convertor = CvBridge()
         self.pot_fire_pos = SingleFirePosIR()
         self.pot_fire_pos.is_pot_fire = False
@@ -47,6 +49,12 @@ class PotentialFireIrFinder():
     def image_cb(self, msg):
         self.ros_image = msg
         full_img = self.convertor.imgmsg_to_cv2(self.ros_image, 'bgr8')
+
+        # 1920 x 1440
+        # rospy.loginfo("ros Image size(W x H): %d x %d", self.ros_image.width,
+        #         self.ros_image.height)
+        # rospy.loginfo("cv Image size(W x H): %d x %d", full_img.shape[1],
+        #         full_img.shape[0])
 
         # crop the image ONLY for IR image.
         self.ir_image = full_img[
@@ -106,8 +114,7 @@ class PotentialFireIrFinder():
 
     def run(self):
         while not rospy.is_shutdown():
-            _, binary = cv2.threshold(self.ir_image[:, :, 2], 25, 255,
-                                      cv2.THRESH_BINARY)
+            _, binary = cv2.threshold(self.ir_image[:, :, 2], 25, 255, cv2.THRESH_BINARY)
             # opening operation
             kernel = np.ones((2, 2), dtype="uint8")
             opening = cv2.morphologyEx(binary,

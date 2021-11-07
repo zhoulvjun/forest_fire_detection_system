@@ -1,8 +1,8 @@
-# original(full) image szie
+# original(full) image szie 1920 x 1080
 full_img_width: 1920
 full_img_height: 1080
 
 
-# split image szie
+  # split image szie: 1920 x 1440
 split_img_width: 960
-split_img_height: 540
+split_img_height: 1440
