@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.0.2)
 project(forest_fire_detection_system)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
+
+find_library(YAML_CPP_LIBRARIES yaml-cpp)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -103,9 +105,8 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES forest_fire_detection_system
+    LIBRARIES forest_fire_detection_system 
     CATKIN_DEPENDS roscpp rospy std_msgs dji_osdk_ros message_runtime
-    #  DEPENDS system_lib
     )
 
 ###########

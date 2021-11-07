@@ -20,6 +20,7 @@
 #include <ros/ros.h>
 #include <sys/time.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
+#include <yaml-cpp/yaml.h>
 
 #include <cstdint>
 #include <fstream>
@@ -73,7 +74,24 @@ void write2Files(std::string file_path_name, std::string item, T data) {
  * @Description:将两个string合并
  */
 inline std::string addStr(std::string a, std::string b) { return a + b; }
+
+template <typename T>
+T getParam(const YAML::Node& node, const std::string& name,
+           const T& defaultValue) {
+  T v;
+  try {
+    v = node[name].as<T>();
+    ROS_INFO_STREAM("Found parameter: " << name << ",\tvalue: " << v);
+  } catch (std::exception e) {
+    v = defaultValue;
+    ROS_WARN_STREAM("Cannot find value for parameter: "
+                    << name << ",\tassigning default: " << defaultValue);
+  }
+  return v;
+}
+
 }  // namespace TOOLS
 }  // namespace FFDS
+
 
 #endif  // INCLUDE_TOOLS_SYSTEMLIB_HPP_

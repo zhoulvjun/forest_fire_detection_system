@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __WPV2OPERATOR_HPP__
-#define __WPV2OPERATOR_HPP__
+#ifndef INCLUDE_MODULES_WAYPOINTOPERATOR_WPV2OPERATOR_HPP_
+#define INCLUDE_MODULES_WAYPOINTOPERATOR_WPV2OPERATOR_HPP_
 
 #include <dji_osdk_ros/DownloadWaypointV2Mission.h>
 #include <dji_osdk_ros/GenerateWaypointV2Action.h>
@@ -100,8 +100,8 @@ class WpV2Operator {
   ros::ServiceClient waypointV2_get_global_cruisespeed_client;
 };
 
-} /* namespace MODULES */
+}  // namespace MODULES
 
-} /* namespace FFDS */
+}  // namespace FFDS
 
 #endif  // INCLUDE_MODULES_WAYPOINTOPERATOR_WPV2OPERATOR_HPP_

@@ -25,7 +25,6 @@
 #include <tools/PrintControl/PrintCtrlImp.h>
 
 #include <PX4-Matrix/matrix/Matrix.hpp>
-#include <common/CommonTypes.hpp>
 #include <modules/BasicController/PIDController.hpp>
 #include <tools/MathLib.hpp>
 #include <tools/SystemLib.hpp>
@@ -53,8 +52,6 @@ class GimbalCameraOperator {
 
   bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
                         const int times, const float tolErrPix);
-  bool calRotateGimbal(const float setPosXPix, const float setPosYPix,
-                       const COMMON::IRCameraParams& H20TIr);
   bool resetGimbal();
 
   bool zoomCamera();
@@ -81,8 +78,8 @@ class GimbalCameraOperator {
 
   matrix::Vector3f camera2NED(const matrix::Vector3f& d_attInCamera);
 
-  PIDController pidYaw{0.01, 0.0, 0.0, false, false};
-  PIDController pidPitch{0.01, 0.0, 0.0, false, false};
+  PIDController pidYaw{0.015, 0.0, 0.0, false, false};
+  PIDController pidPitch{0.015, 0.0, 0.0, false, false};
 };
 
 }  // namespace MODULES

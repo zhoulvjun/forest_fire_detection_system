@@ -42,6 +42,7 @@ target_link_libraries(test_zigzag_planner
 add_executable(test_GimbalCameraOperator test_GimbalCameraOperator.cpp)
 target_link_libraries(test_GimbalCameraOperator
   ${catkin_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
 )
 target_link_libraries(test_GimbalCameraOperator
   GimbalCameraOperator

@@ -16,6 +16,7 @@
 
 #ifndef INCLUDE_MODULES_PATHPLANNER_ZIGZAGPATHPLANNER_HPP_
 #define INCLUDE_MODULES_PATHPLANNER_ZIGZAGPATHPLANNER_HPP_
+
 #include <dji_osdk_ros/WaypointV2.h>
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
