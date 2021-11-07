@@ -17,15 +17,6 @@
 #ifndef __WPV2OPERATOR_HPP__
 #define __WPV2OPERATOR_HPP__
 
-#include <tools/PrintControl/PrintCtrlImp.h>
-
-/* dji_osdk */
-#include <dji_mission_type.hpp>
-#include <dji_type.hpp>
-
-#include <ros/ros.h>
-
-/* dji_osdk_ros */
 #include <dji_osdk_ros/DownloadWaypointV2Mission.h>
 #include <dji_osdk_ros/GenerateWaypointV2Action.h>
 #include <dji_osdk_ros/GetGlobalCruisespeed.h>
@@ -37,19 +28,24 @@
 #include <dji_osdk_ros/StopWaypointV2Mission.h>
 #include <dji_osdk_ros/UploadWaypointV2Action.h>
 #include <dji_osdk_ros/UploadWaypointV2Mission.h>
+#include <ros/ros.h>
+#include <tools/PrintControl/PrintCtrlImp.h>
+
+#include <dji_mission_type.hpp>
+#include <dji_type.hpp>
+#include <vector>
 
 namespace FFDS {
 namespace MODULES {
 
 class WpV2Operator {
-
   /**
    * NOTE: when calling the operators, prepare the "content" you want to pass
    * NOTE: first.
    **/
 
-public:
-  WpV2Operator(ros::NodeHandle &handle) : nh(handle){};
+ public:
+  explicit WpV2Operator(ros::NodeHandle &handle) : nh(handle) {}
 
   static void setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2);
 
@@ -88,7 +84,7 @@ public:
   DJI::OSDK::float32_t getGlobalCruiseSpeed(
       dji_osdk_ros::GetGlobalCruisespeed &getGlobalCruisespeed_);
 
-private:
+ private:
   ros::NodeHandle &nh;
 
   ros::ServiceClient waypointV2_init_setting_client;
@@ -108,4 +104,4 @@ private:
 
 } /* namespace FFDS */
 
-#endif /* WPV2OPERATOR_HPP */
+#endif  // INCLUDE_MODULES_WAYPOINTOPERATOR_WPV2OPERATOR_HPP_

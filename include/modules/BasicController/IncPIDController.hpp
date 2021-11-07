@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __INCPIDCONTROLLER_HPP__
-#define __INCPIDCONTROLLER_HPP__
+#ifndef INCLUDE_MODULES_BASICCONTROLLER_INCPIDCONTROLLER_HPP_
+#define INCLUDE_MODULES_BASICCONTROLLER_INCPIDCONTROLLER_HPP_
 
 #include "ControllerBase.hpp"
 
@@ -24,8 +24,8 @@ namespace MODULES {
 
 class IncPIDController : public ControllerBase {
  public:
-  IncPIDController(float p, float i, float d) : Kp(p), Ki(i), Kd(d){};
-  ~IncPIDController(){};
+  IncPIDController(float p, float i, float d) : Kp(p), Ki(i), Kd(d) {}
+  ~IncPIDController() {}
 
   void reset() override;
   void ctrl(const float in) override;
@@ -93,4 +93,4 @@ inline void IncPIDController::ctrl(const float in) {
 
 }  // namespace FFDS
 
-#endif /* INCPIDCONTROLLER_HPP */
+#endif  // INCLUDE_MODULES_BASICCONTROLLER_INCPIDCONTROLLER_HPP_

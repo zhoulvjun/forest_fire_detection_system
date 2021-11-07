@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __COMMONTYPES_HPP__
-#define __COMMONTYPES_HPP__
+#ifndef INCLUDE_COMMON_COMMONTYPES_HPP_
+#define INCLUDE_COMMON_COMMONTYPES_HPP_
 
 #include <cmath>
 #include <iostream>
@@ -54,13 +54,13 @@ struct IRCameraParams {
         equivalentFocalLength(equivalentFocalLength_),
         equivalentCrossLineInMM(equivalentCrossLineInMM_) {
     float crossLinePix = std::sqrt(orgImgWidthPix * orgImgWidthPix +
-                                    orgImgHeightPix * orgImgHeightPix);
+                                   orgImgHeightPix * orgImgHeightPix);
     eachPixInMM = equivalentCrossLineInMM / crossLinePix;
   }
 
   IRCameraParams() {
     float crossLinePix = std::sqrt(orgImgWidthPix * orgImgWidthPix +
-                                    orgImgHeightPix * orgImgHeightPix);
+                                   orgImgHeightPix * orgImgHeightPix);
     eachPixInMM = equivalentCrossLineInMM / crossLinePix;
   }
 
@@ -80,4 +80,4 @@ struct IRCameraParams {
 }  // namespace COMMON
 }  // namespace FFDS
 
-#endif /* COMMONTYPES_HPP */
+#endif  // INCLUDE_COMMON_COMMONTYPES_HPP_

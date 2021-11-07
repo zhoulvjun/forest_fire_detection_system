@@ -14,10 +14,6 @@
  *
  ******************************************************************************/
 
-#define DBG_MACRO_NO_WARNING
-
-#include <dbg-macro/dbg.h>
-
 #include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 #include <tools/GoogleEarthPath.hpp>
 
@@ -31,15 +27,14 @@ int main(int argc, char **argv) {
 
   float heading = FFDS::TOOLS::Deg2Rad(60);
 
-  waypointVec = zigzagPlanner.getWpV2Vec(false, true, heading);
+  waypointVec = zigzagPlanner.getWpV2Vec(true, true, heading);
 
-  GoogleEarthPath path("/home/ls/path1.kml", "path1");
+  FFDS::TOOLS::GoogleEarthPath path("/home/ls/path1.kml", "path1");
   double longitude, latitude;
 
   for (int i = 0; i < waypointVec.size(); ++i) {
-    latitude = waypointVec[i].latitude;
-    longitude = waypointVec[i].longitude;
-    dbg(waypointVec[i].relativeHeight);
+    latitude = FFDS::TOOLS::Rad2Deg(waypointVec[i].latitude);
+    longitude = FFDS::TOOLS::Rad2Deg(waypointVec[i].longitude);
     path.addPoint(longitude, latitude);
   }
 

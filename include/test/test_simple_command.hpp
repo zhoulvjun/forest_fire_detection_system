@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __TEST_SIMPLE_COMMAND_HPP__
-#define __TEST_SIMPLE_COMMAND_HPP__
+#ifndef INCLUDE_TEST_TEST_SIMPLE_COMMAND_HPP_
+#define INCLUDE_TEST_TEST_SIMPLE_COMMAND_HPP_
 
 // dji
 #include <dji_osdk_ros/FlightTaskControl.h>
@@ -37,8 +37,7 @@
 #include <vector>
 
 class TestSimpleCommand {
-
-private:
+ private:
   ros::NodeHandle nh;
   ros::Time begin_time;
 
@@ -61,14 +60,16 @@ private:
    * */
   void print_vehical_att(const geometry_msgs::QuaternionStamped &att);
 
-public:
+ public:
   TestSimpleCommand();
   ~TestSimpleCommand();
 
-  int run(float desired_height, float zigzag_len, float zigzag_wid, float zigzag_num);
+  int run(float desired_height, float zigzag_len, float zigzag_wid,
+          float zigzag_num);
 
-  std::vector<dji_osdk_ros::JoystickCommand>
-  generate_zigzag_path(float len, float wid, float num);
+  std::vector<dji_osdk_ros::JoystickCommand> generate_zigzag_path(float len,
+                                                                  float wid,
+                                                                  float num);
 
   bool moveByPosOffset(dji_osdk_ros::FlightTaskControl &task,
                        const dji_osdk_ros::JoystickCommand &offsetDesired,
@@ -77,4 +78,4 @@ public:
       const std::vector<dji_osdk_ros::JoystickCommand> &ctrl_command_vec);
 };
 
-#endif /* TEST_SIMPLE_COMMAND_HPP */
+#endif  // INCLUDE_TEST_TEST_SIMPLE_COMMAND_HPP_

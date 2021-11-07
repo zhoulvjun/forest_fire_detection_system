@@ -133,6 +133,7 @@ void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   }
 }
 
+/* NOTE: The gps pos is in RAD!!  */
 std::vector<dji_osdk_ros::WaypointV2>&
 FFDS::MODULES::ZigzagPathPlanner::getWpV2Vec(bool isGlobal,
                                              bool useInitHeadDirection,

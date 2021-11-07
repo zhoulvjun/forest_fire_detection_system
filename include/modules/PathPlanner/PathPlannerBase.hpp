@@ -14,8 +14,8 @@
  *
  ******************************************************************************/
 
-#ifndef __PATHPLANNERBASE_HPP__
-#define __PATHPLANNERBASE_HPP__
+#ifndef INCLUDE_MODULES_PATHPLANNER_PATHPLANNERBASE_HPP_
+#define INCLUDE_MODULES_PATHPLANNER_PATHPLANNERBASE_HPP_
 
 #include <iostream>
 
@@ -23,10 +23,10 @@ namespace FFDS {
 namespace MODULES {
 
 class PathPlannerBase {
-public:
+ public:
 };
 
-} // namespace MODULES
-} // namespace FFDS
+}  // namespace MODULES
+}  // namespace FFDS
 
-#endif /* PATHPLANNERBASE_HPP */
+#endif  // INCLUDE_MODULES_PATHPLANNER_PATHPLANNERBASE_HPP_
