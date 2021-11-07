@@ -115,7 +115,7 @@ class SingleFirePointTaskManager {
 
     ros::Duration(3.0).sleep();
     PRINT_INFO("initializing Done");
-  };
+  }
 
   void run();
 };

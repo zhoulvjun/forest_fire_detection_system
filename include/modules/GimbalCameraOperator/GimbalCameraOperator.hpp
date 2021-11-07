@@ -53,8 +53,6 @@ class GimbalCameraOperator {
 
   bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
                         const int times, const float tolErrPix);
-  bool calRotateGimbal(const float setPosXPix, const float setPosYPix,
-                       const COMMON::IRCameraParams& H20TIr);
   bool resetGimbal();
 
   bool zoomCamera();

@@ -1,0 +1,8 @@
+# original(full) image szie
+full_img_width: 1920
+full_img_height: 1080
+
+
+# split image szie
+split_img_width: 960
+split_img_height: 540

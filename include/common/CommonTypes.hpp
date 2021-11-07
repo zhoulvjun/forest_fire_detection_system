@@ -19,6 +19,8 @@
 
 #include <cmath>
 #include <iostream>
+#include <string>
+#include <tools/SystemLib.hpp>
 
 namespace FFDS {
 namespace COMMON {
@@ -43,38 +45,28 @@ struct LocalPosition {
  * */
 enum WpV2MissionState {};
 
-/* defalut is for H20T IR camera */
-struct IRCameraParams {
-  IRCameraParams(float orgImgWidthPix_, float orgImgHeightPix_,
-                 float focalLength_, float equivalentFocalLength_,
-                 float equivalentCrossLineInMM_)
-      : orgImgWidthPix(orgImgWidthPix_),
-        orgImgHeightPix(orgImgHeightPix_),
-        focalLength(focalLength_),
-        equivalentFocalLength(equivalentFocalLength_),
-        equivalentCrossLineInMM(equivalentCrossLineInMM_) {
-    float crossLinePix = std::sqrt(orgImgWidthPix * orgImgWidthPix +
-                                   orgImgHeightPix * orgImgHeightPix);
-    eachPixInMM = equivalentCrossLineInMM / crossLinePix;
+struct CameraParams {
+  CameraParams(float fullImgWidthPix_, float fullImgHeightPix_)
+      : fullImgWidthPix(fullImgWidthPix_), fullImgHeightPix(fullImgHeightPix_) {
+    splitImgWidthPix = fullImgWidthPix / 2;
+    splitImgHeightPix = fullImgHeightPix / 2;
   }
 
-  IRCameraParams() {
-    float crossLinePix = std::sqrt(orgImgWidthPix * orgImgWidthPix +
-                                   orgImgHeightPix * orgImgHeightPix);
-    eachPixInMM = equivalentCrossLineInMM / crossLinePix;
+  explicit CameraParams(std::string configPath) {
+    YAML::Node node = YAML::LoadFile(configPath);
+    fullImgWidthPix = FFDS::TOOLS::getParam(node, "full_img_width", 1920);
+    fullImgHeightPix = FFDS::TOOLS::getParam(node, "full_img_height", 1080);
+
+    splitImgWidthPix = FFDS::TOOLS::getParam(node, "split_img_width", 960);
+    splitImgHeightPix = FFDS::TOOLS::getParam(node, "split_img_height", 540);
   }
 
-  ~IRCameraParams() {}
+  ~CameraParams() {}
 
-  float orgImgWidthPix{1920};
-  float orgImgHeightPix{1080};
-
-  /* FIXME: not sure about these parameters ... */
-
-  float focalLength{13.5};
-  float equivalentFocalLength{58};
-  float equivalentCrossLineInMM{42.27};
-  float eachPixInMM;
+  float fullImgWidthPix;
+  float fullImgHeightPix;
+  float splitImgWidthPix;
+  float splitImgHeightPix;
 };
 
 }  // namespace COMMON

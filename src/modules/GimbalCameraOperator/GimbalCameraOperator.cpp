@@ -140,61 +140,6 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
   return false;
 }
 
-/**
- * @param[in]  x: position desired on the IR image along width, y : along height
- * @param[out]  void
- * @return void
- * @ref
- * @see
- * @note rotate the camera using the focal length and the image pixel length.
- * Rotate only one time.
- */
-/* FIXME: This is not DNOE. DO NOT USE OT. */
-bool FFDS::MODULES::GimbalCameraOperator::calRotateGimbal(
-    const float setPosXPix, const float setPosYPix,
-    const COMMON::IRCameraParams& H20TIr) {
-  PRINT_INFO("Start controlling the gimbal using calculation!");
-
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
-  while (ros::ok()) {
-    ros::spinOnce();
-
-    if (!firePosPix.is_pot_fire) {
-      PRINT_WARN("not stable potential fire, control restart!");
-      continue;
-    } else {
-      double errX = setPosXPix - firePosPix.x;
-      double errY = setPosYPix - firePosPix.y;
-
-      float yawSetpoint =
-          std::atan(-errX * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
-      float pitchSetpoint =
-          std::atan(-errY * H20TIr.eachPixInMM / H20TIr.equivalentFocalLength);
-
-      setGimbalActionDefault();
-      gimbalAction.request.is_reset = false;
-      gimbalAction.request.pitch = TOOLS::Rad2Deg(pitchSetpoint);
-      gimbalAction.request.yaw = TOOLS::Rad2Deg(yawSetpoint) - 43.7; /* ?? */
-
-      PRINT_DEBUG("yaw setpoint:%f, pitch setpoint:%f",
-                  TOOLS::Rad2Deg(yawSetpoint), TOOLS::Rad2Deg(pitchSetpoint));
-
-      /* from current point */
-      gimbalAction.request.rotationMode = 1;
-      gimbalAction.request.roll = 0.0f;
-      gimbalAction.request.time = 1.0;
-
-      gimbalCtrlClient.call(gimbalAction);
-
-      break;
-    }
-  }
-
-  return gimbalAction.response.result;
-}
-
 bool FFDS::MODULES::GimbalCameraOperator::resetGimbal() {
   setGimbalActionDefault();
 

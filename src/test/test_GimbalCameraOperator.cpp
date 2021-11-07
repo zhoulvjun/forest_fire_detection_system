@@ -18,11 +18,14 @@
 int main(int argc, char **argv) {
   ros::init(argc, argv, "test_GimbalCameraOperator_node");
   FFDS::MODULES::GimbalCameraOperator gimbalCameraOperator;
-  FFDS::COMMON::IRCameraParams H20t;
+  FFDS::COMMON::CameraParams H20t(
+      "/home/ls/catkin_ws/src/forest_fire_detection_system/config/"
+      "H20T_IR_Camera.yaml");
 
-  PRINT_INFO("control test result: %d",
-             gimbalCameraOperator.ctrlRotateGimbal(
-                 H20t.orgImgWidthPix / 2, H20t.orgImgHeightPix / 2, 10, 30));
+  PRINT_INFO(
+      "control test result: %d",
+      gimbalCameraOperator.ctrlRotateGimbal(
+          H20t.splitImgWidthPix / 2, H20t.splitImgHeightPix / 2, 10, 30));
 
   return 0;
 }
