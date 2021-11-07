@@ -33,11 +33,12 @@ class PotentialFireIrFinder():
         config = open(
             "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_IR_Camera.yaml"
         )
-        self.H20T_IR_camera_params = yaml.load(config, Loader=CLoader)
-        self.ir_image = np.zeros(
-            (self.H20T_IR_camera_params["split_img_height"],
-             self.H20T_IR_camera_params["split_img_width"], 3),
+        self.H20T = yaml.load(config, Loader=CLoader)
+
+        self.ir_img = np.zeros(
+            (self.H20T["pure_IR_height"], self.H20T["pure_IR_width"], 3),
             dtype='uint8')
+
         self.ros_image = Image()
 
         self.convertor = CvBridge()
@@ -45,8 +46,9 @@ class PotentialFireIrFinder():
         self.pot_fire_pos.is_pot_fire = False
 
         rospy.wait_for_message("dji_osdk_ros/main_camera_images", Image)
-        self.image_sub = rospy.Subscriber("dji_osdk_ros/main_camera_images",
-                                          Image, self.image_cb)
+        self.image_sub = rospy.Subscriber(
+            "forest_fire_detection_system/main_camera_ir_image", Image,
+            self.image_cb)
         self.fire_pos_pub = rospy.Publisher(
             "forest_fire_detection_system/single_fire_pos_ir_img",
             SingleFirePosIR,
@@ -54,18 +56,7 @@ class PotentialFireIrFinder():
 
     def image_cb(self, msg):
         self.ros_image = msg
-        full_img = self.convertor.imgmsg_to_cv2(self.ros_image, 'bgr8')
-
-        # 1920 x 1440
-        # rospy.loginfo("ros Image size(W x H): %d x %d", self.ros_image.width,
-        #         self.ros_image.height)
-        # rospy.loginfo("cv Image size(W x H): %d x %d", full_img.shape[1],
-        #         full_img.shape[0])
-
-        # crop the image ONLY for IR image.
-        self.ir_image = full_img[
-            0:self.H20T_IR_camera_params["split_img_height"] + 1,
-            0:self.H20T_IR_camera_params["split_img_width"] + 1, :]
+        self.ir_img = self.convertor.imgmsg_to_cv2(self.ros_image, 'bgr8')
 
     def sliding_window(self, image, stepSize=10, windowSize=[20, 20]):
         # slide a window across the image
@@ -101,7 +92,7 @@ class PotentialFireIrFinder():
             rospy.loginfo("pot_fire_pos.y: %d", self.pot_fire_pos.y)
 
             cv2.rectangle(
-                self.ir_image, (best_pos[0], best_pos[1]),
+                self.ir_img, (best_pos[0], best_pos[1]),
                 (best_pos[0] + windowSize[0], best_pos[1] + windowSize[1]),
                 (0, 255, 0), 2)
         else:
@@ -110,17 +101,17 @@ class PotentialFireIrFinder():
             self.pot_fire_pos.is_pot_fire = False
             rospy.loginfo("no potential fire currently!")
 
-        self.pot_fire_pos.img_width = self.ir_image.shape[1]
-        self.pot_fire_pos.img_height = self.ir_image.shape[0]
+        self.pot_fire_pos.img_width = self.ir_img.shape[1]
+        self.pot_fire_pos.img_height = self.ir_img.shape[0]
         self.fire_pos_pub.publish(self.pot_fire_pos)
 
         # for display
-        cv2.imshow("Window", self.ir_image)
+        cv2.imshow("Window", self.ir_img)
         cv2.waitKey(1)
 
     def run(self):
         while not rospy.is_shutdown():
-            _, binary = cv2.threshold(self.ir_image[:, :, 2], 25, 255,
+            _, binary = cv2.threshold(self.ir_img[:, :, 2], 25, 255,
                                       cv2.THRESH_BINARY)
             # opening operation
             kernel = np.ones((2, 2), dtype="uint8")
