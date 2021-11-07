@@ -14,31 +14,28 @@
  *
  ******************************************************************************/
 
-#ifndef __SINGLEFIREPOINTTASKMANAGER_HPP__
-#define __SINGLEFIREPOINTTASKMANAGER_HPP__
-
-#include <geometry_msgs/QuaternionStamped.h>
-#include <ros/ros.h>
-#include <sensor_msgs/NavSatFix.h>
-
-#include <PX4-Matrix/matrix/Euler.hpp>
-#include <tools/PrintControl/PrintCtrlImp.h>
-
-#include <modules/PathPlanner/ZigzagPathPlanner.hpp>
-#include <modules/WayPointOperator/WpV2Operator.hpp>
+#ifndef INCLUDE_APP_SINGLE_FIRE_POINT_TASK_SINGLEFIREPOINTTASKMANAGER_HPP_
+#define INCLUDE_APP_SINGLE_FIRE_POINT_TASK_SINGLEFIREPOINTTASKMANAGER_HPP_
 
 #include <dji_osdk_ros/ObtainControlAuthority.h>
 #include <dji_osdk_ros/SubscribeWaypointV2Event.h>
 #include <dji_osdk_ros/SubscribeWaypointV2State.h>
 #include <dji_osdk_ros/WaypointV2MissionEventPush.h>
 #include <dji_osdk_ros/WaypointV2MissionStatePush.h>
+#include <geometry_msgs/QuaternionStamped.h>
+#include <ros/ros.h>
+#include <sensor_msgs/NavSatFix.h>
+#include <tools/PrintControl/PrintCtrlImp.h>
+
+#include <PX4-Matrix/matrix/Euler.hpp>
+#include <modules/PathPlanner/ZigzagPathPlanner.hpp>
+#include <modules/WayPointOperator/WpV2Operator.hpp>
 
 namespace FFDS {
 namespace APP {
 
 class SingleFirePointTaskManager {
-
-private:
+ private:
   ros::NodeHandle nh;
 
   ros::Subscriber gpsPositionSub;
@@ -72,8 +69,8 @@ private:
    * callback functions
    * */
 
-  void
-  gpsPositionSubCallback(const sensor_msgs::NavSatFix::ConstPtr &gpsPosition);
+  void gpsPositionSubCallback(
+      const sensor_msgs::NavSatFix::ConstPtr &gpsPosition);
 
   void attitudeSubCallback(
       const geometry_msgs::QuaternionStampedConstPtr &attitudeData);
@@ -86,9 +83,8 @@ private:
       const dji_osdk_ros::WaypointV2MissionStatePush::ConstPtr
           &waypointV2MissionStatePush);
 
-public:
+ public:
   SingleFirePointTaskManager() {
-
     obtain_ctrl_authority_client =
         nh.serviceClient<dji_osdk_ros::ObtainControlAuthority>(
             "obtain_release_control_authority");
@@ -124,7 +120,7 @@ public:
   void run();
 };
 
-} // namespace APP
-} // namespace FFDS
+}  // namespace APP
+}  // namespace FFDS
 
-#endif /* SINGLEFIREPOINTTASKMANAGER_HPP */
+#endif // INCLUDE_APP_SINGLE_FIRE_POINT_TASK_SINGLEFIREPOINTTASKMANAGER_HPP_

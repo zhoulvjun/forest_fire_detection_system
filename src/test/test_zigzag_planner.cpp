@@ -17,9 +17,9 @@
 #define DBG_MACRO_NO_WARNING
 
 #include <dbg-macro/dbg.h>
+
 #include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 #include <tools/GoogleEarthPath.hpp>
-
 
 int main(int argc, char **argv) {
   sensor_msgs::NavSatFix home;

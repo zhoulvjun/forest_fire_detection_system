@@ -16,20 +16,18 @@
 
 #include <modules/GimbalCameraOperator/GimbalCameraOperator.hpp>
 
-using namespace FFDS::MODULES;
-
-void GimbalCameraOperator::gimbalAttCallback(
+void FFDS::MODULES::GimbalCameraOperator::gimbalAttCallback(
     const geometry_msgs::Vector3Stamped::ConstPtr& att) {
   gimbalAtt = *att;
 }
 
-void GimbalCameraOperator::singleFirePosIRCallback(
+void FFDS::MODULES::GimbalCameraOperator::singleFirePosIRCallback(
     const forest_fire_detection_system::SingleFirePosIR::ConstPtr&
         firePosition) {
   firePosPix = *firePosition;
 }
 
-void GimbalCameraOperator::setGimbalActionDefault() {
+void FFDS::MODULES::GimbalCameraOperator::setGimbalActionDefault() {
   gimbalAction.request.payload_index =
       static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
   gimbalAction.request.is_reset = false;
@@ -40,7 +38,7 @@ void GimbalCameraOperator::setGimbalActionDefault() {
   gimbalAction.request.time = 1.0;
 }
 
-matrix::Vector3f GimbalCameraOperator::camera2NED(
+matrix::Vector3f FFDS::MODULES::GimbalCameraOperator::camera2NED(
     const matrix::Vector3f& d_attInCamera) {
   float phi = TOOLS::Deg2Rad(gimbalAtt.vector.x);   /* roll angle */
   float theta = TOOLS::Deg2Rad(gimbalAtt.vector.y); /* pitch angle */
@@ -65,12 +63,11 @@ matrix::Vector3f GimbalCameraOperator::camera2NED(
  * @note control the gimbal rotate by the a PID controller, no need to use the
  * focal length, control several time according to the "timeOut"
  */
-/* TODO: need to sleep to wait until control done? */
-bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
-                                            const float setPosYPix,
-                                            const int times,
-                                            const float tolErrPix) {
+bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
+    const float setPosXPix, const float setPosYPix, const int times,
+    const float tolErrPix) {
   PRINT_INFO("Start controlling the gimbal using controller!");
+
   int ctrl_times = 0;
   while (ros::ok()) {
     ros::spinOnce();
@@ -82,7 +79,6 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       PRINT_WARN("not stable potential fire, control restart!")
       ros::Duration(1.0).sleep();
       continue;
-
     } else {
       if (ctrl_times > times) {
         PRINT_WARN("control gimbal times out after %d controlling!",
@@ -122,27 +118,13 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
        * NOTE: rule??? YOU GOT BE KIDDING ME! */
       matrix::Vector3f d_attCam(d_pitchCam, 0.0f, d_yawCam);
 
-      /* matrix::Vector3f d_attNED = camera2NED(d_attNED); */
-      /* ROS_INFO_STREAM("d_attNED:" << d_attNED); */
-
-      /* matrix::Vector3f AttStCam = */
-      /*     d_attCam + matrix::Vector3f(gimbalAtt.vector.x, gimbalAtt.vector.y, */
-      /*                                 gimbalAtt.vector.z); */
-      /* ROS_INFO_STREAM("AttStCam[0] pitch deg" << AttStCam(0)); */
-      /* ROS_INFO_STREAM("AttStCam[1] roll deg" << AttStCam(1)); */
-      /* ROS_INFO_STREAM("AttStCam[2] yaw deg" << AttStCam(2)); */
-
       setGimbalActionDefault();
       gimbalAction.request.is_reset = false;
-      /* gimbalAction.request.pitch = AttStCam(0); */
-      /* gimbalAction.request.roll = AttStCam(1); */
-      /* gimbalAction.request.yaw = AttStCam(2); */
-
       gimbalAction.request.pitch = d_attCam(0);
       gimbalAction.request.roll = d_attCam(1);
       gimbalAction.request.yaw = d_attCam(2);
 
-      /* chang mode have a try */
+      /* 0 for incremental mode, 1 for absolute mode */
       gimbalAction.request.rotationMode = 0;
       gimbalAction.request.time = 0.5;
       gimbalCtrlClient.call(gimbalAction);
@@ -150,7 +132,6 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
       ctrl_times += 1;
 
       ros::Duration(1.0).sleep();
-      /* int pause = std::cin.get(); */
     }
   }
 
@@ -168,7 +149,8 @@ bool GimbalCameraOperator::ctrlRotateGimbal(const float setPosXPix,
  * @note rotate the camera using the focal length and the image pixel length.
  * Rotate only one time.
  */
-bool GimbalCameraOperator::calRotateGimbal(
+/* FIXME: This is not DNOE. DO NOT USE OT. */
+bool FFDS::MODULES::GimbalCameraOperator::calRotateGimbal(
     const float setPosXPix, const float setPosYPix,
     const COMMON::IRCameraParams& H20TIr) {
   PRINT_INFO("Start controlling the gimbal using calculation!");
@@ -213,7 +195,7 @@ bool GimbalCameraOperator::calRotateGimbal(
   return gimbalAction.response.result;
 }
 
-bool GimbalCameraOperator::resetGimbal() {
+bool FFDS::MODULES::GimbalCameraOperator::resetGimbal() {
   setGimbalActionDefault();
 
   gimbalAction.request.is_reset = true;
@@ -221,4 +203,4 @@ bool GimbalCameraOperator::resetGimbal() {
   return gimbalAction.response.result;
 }
 
-bool GimbalCameraOperator::zoomCamera() { return false; }
+bool FFDS::MODULES::GimbalCameraOperator::zoomCamera() { return false; }

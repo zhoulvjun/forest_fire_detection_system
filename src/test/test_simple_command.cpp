@@ -17,7 +17,6 @@
 #include <test/test_simple_command.hpp>
 
 TestSimpleCommand::TestSimpleCommand() {
-
   vehicle_att_subscriber = nh.subscribe<geometry_msgs::QuaternionStamped>(
       "dji_osdk_ros/attitude", 10, &TestSimpleCommand::vehical_att_cb, this);
 
@@ -75,7 +74,6 @@ TestSimpleCommand::generate_zigzag_path(float len, float wid, float num) {
   command.yaw = 0.0;
 
   for (int i = 0; i < point_num - 1; ++i) {
-
     if (is_lower_left) {
       command.x = 0.0;
       command.y = wid;
@@ -122,7 +120,6 @@ TestSimpleCommand::generate_zigzag_path(float len, float wid, float num) {
 
 void TestSimpleCommand::print_control_command(
     const std::vector<dji_osdk_ros::JoystickCommand> &ctrl_command_vec) {
-
   for (int i = 0; i < ctrl_command_vec.size(); ++i) {
     auto em = ctrl_command_vec[i];
     ROS_INFO_STREAM("point:" << i << "-------");
@@ -136,7 +133,6 @@ bool TestSimpleCommand::moveByPosOffset(
     dji_osdk_ros::FlightTaskControl &task,
     const dji_osdk_ros::JoystickCommand &offsetDesired, float posThresholdInM,
     float yawThresholdInDeg) {
-
   task.request.task =
       dji_osdk_ros::FlightTaskControl::Request::TASK_POSITION_AND_YAW_CONTROL;
   task.request.joystickCommand.x = offsetDesired.x;
@@ -153,7 +149,6 @@ bool TestSimpleCommand::moveByPosOffset(
 /* TODO: To test the control authority! */
 int TestSimpleCommand::run(float desired_height, float zigzag_len,
                            float zigzag_wid, float zigzag_num) {
-
   ros::Rate rate(1);
   begin_time = ros::Time::now();
   char inputChar;
@@ -166,15 +161,13 @@ int TestSimpleCommand::run(float desired_height, float zigzag_len,
   auto command_vec = generate_zigzag_path(zigzag_len, zigzag_wid, zigzag_num);
   /* print_control_command(command_vec); */
 
-  ROS_INFO_STREAM(
-      "Command generating finish, are you ready to take off? y/n");
+  ROS_INFO_STREAM("Command generating finish, are you ready to take off? y/n");
   std::cin >> inputChar;
   if (inputChar == 'n') {
     ROS_INFO_STREAM("exist!");
     return 0;
 
   } else {
-
     /* 0. Obtain the control authority */
     ROS_INFO_STREAM("Obtain the control authority ...");
     obtainCtrlAuthority.request.enable_obtain = true;
@@ -189,7 +182,6 @@ int TestSimpleCommand::run(float desired_height, float zigzag_len,
     if (control_task.response.result == false) {
       ROS_ERROR_STREAM("Takeoff task failed!");
     } else {
-
       ROS_INFO_STREAM("Takeoff task successful!");
       ros::Duration(2.0).sleep();
 
@@ -237,12 +229,10 @@ int main(int argc, char *argv[]) {
   ros::init(argc, argv, "test_simple_command_node");
 
   if (argc != 5) {
-
     ROS_ERROR_STREAM("usage: desired_height zigzag_len zigzag_wid zigzag_num");
     return 1;
 
   } else {
-
     TestSimpleCommand node;
     node.run(std::stof(argv[1]), std::stof(argv[2]), std::stof(argv[3]),
              std::stof(argv[4]));
