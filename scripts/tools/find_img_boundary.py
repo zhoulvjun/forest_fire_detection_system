@@ -1,3 +1,22 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- #
+
+# ------------------------------------------------------------------------------
+#
+#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#
+#   @Filename: find_img_boundary.py
+#
+#   @Author: Shun Li
+#
+#   @Date: 2021-09-20
+#
+#   @Email: 2015097272@qq.com
+#
+#   @Description: some functions between the opencv and pytorch
+#
+# ------------------------------------------------------------------------------
+
 import cv2
 from cv_bridge import CvBridge
 from forest_fire_detection_system.msg import SingleFirePosIR
@@ -22,11 +41,12 @@ class ImgBoundaryFinder(object):
         img_gray = cv2.cvtColor(full_img,cv2.COLOR_RGB2GRAY)
 
         img_bin = img_gray>0
-        cv2.imshow("bin", img_bin)
-        cv2.waitKey(3)
 
         img_white_arg = np.argwhere(img_bin==1)
         print(img_white_arg)
+
+        cv2.imshow("bin", full_img[336:1106, :,:])
+        cv2.waitKey(3)
 
     def run(self):
         rospy.spin()

@@ -2,16 +2,18 @@
 full_img_width: 1920
 full_img_height: 1440
 
-# pure image position in the full image
-upper_bound: 0
-lower_bound: 0
+# pure image position in the full image by testing!
+upper_bound: 336
+lower_bound: 1106
 left_bound: 0
-right_bound: 0
+right_bound: 1920
 
 # pure IR image size
 pure_IR_width: 960
-pure_IR_height: 1440
+  # 1106-336
+pure_IR_height: 770
 
 # pure RGB image size
 pure_RGB_width: 960
-pure_RGB_height: 1440
+  # 1106-336
+pure_IR_height: 770
