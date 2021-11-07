@@ -23,8 +23,6 @@ from forest_fire_detection_system.msg import SingleFirePosIR
 import numpy as np
 import rospy
 from sensor_msgs.msg import Image
-import yaml
-from yaml import CLoader
 
 class ImgBoundaryFinder(object):
     def __init__(self):

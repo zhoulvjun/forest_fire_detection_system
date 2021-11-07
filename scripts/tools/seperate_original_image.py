@@ -16,6 +16,7 @@
 #
 #------------------------------------------------------------------------------
 
+import os
 import cv2
 from cv_bridge import CvBridge
 import numpy as np
@@ -24,13 +25,13 @@ from sensor_msgs.msg import Image
 import yaml
 from yaml import CLoader
 
+PKG_PATH = os.path.expanduser('~/catkin_ws/src/forest_fire_detection_system')
+
 
 class OriginalImageSeperator(object):
     def __init__(self):
         # read the camera parameters
-        config_path = open(
-            "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_Camera.yaml"
-        )
+        config_path = open(PKG_PATH + "/config/H20T_Camera.yaml")
         self.H20T = yaml.load(config_path, Loader=CLoader)
 
         self.full_img = np.zeros(

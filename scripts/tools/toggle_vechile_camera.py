@@ -13,7 +13,7 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description: open the DJI flight camera image.
+#   @Description: open the DJI flight camera image, and seperate image
 #
 # ------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ import sys
 import rospy
 from dji_osdk_ros.srv import SetupCameraStream
 from sensor_msgs.msg import Image
-
+from seperate_original_image import OriginalImageSeperator
 
 class GetImageNode(object):
     def __init__(self):
@@ -42,7 +42,12 @@ class GetImageNode(object):
         if toggle == "open":
             result = self.set_camera_cli(
                 set_camera_handle._request_class.MAIN_CAM, 1)
-            rospy.loginfo("start the camera stream, "+ str(result))
+            rospy.loginfo("start the main camera stream, "+ str(result))
+
+            rospy.loginfo("start seperate the main aligned images into IR and RGB images!")
+            seperator = OriginalImageSeperator()
+            seperator.run()
+
 
         elif toggle == "close":
             result = self.set_camera_cli(
