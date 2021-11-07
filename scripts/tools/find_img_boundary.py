@@ -22,6 +22,8 @@ class ImgBoundaryFinder(object):
         img_gray = cv2.cvtColor(full_img,cv2.COLOR_RGB2GRAY)
 
         img_bin = img_gray>0
+        cv2.imshow("bin", img_bin)
+        cv2.waitKey(3)
 
         img_white_arg = np.argwhere(img_bin==1)
         print(img_white_arg)
