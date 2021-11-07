@@ -31,7 +31,7 @@ class PotentialFireIrFinder():
 
         # read the camera parameters
         config = open(
-            "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_IR_Camera.yaml"
+            "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_Camera.yaml"
         )
         self.H20T = yaml.load(config, Loader=CLoader)
 
