@@ -63,6 +63,9 @@ class GimbalCameraOperator {
     PRINT_INFO("initialize GimbalCameraOperator done!");
   }
 
+  /* NOTE: The following functions should work under the zoom mode and aligned
+   * NOTE: mode! */
+
   bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
                         const int times, const float tolErrPix);
   bool resetGimbal();
@@ -70,6 +73,8 @@ class GimbalCameraOperator {
   bool setCameraZoom(const float factor);
   bool resetCameraZoom();
 
+  /* NOTE: The set Focus Point only works in the zoom mode! Not the aligned
+   * NOTE: mode ... */
   bool setCameraFocusePoint(const float x, const float y);
   bool resetCameraFocusePoint();
 
