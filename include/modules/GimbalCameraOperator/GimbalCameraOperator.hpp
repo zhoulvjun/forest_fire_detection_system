@@ -17,6 +17,9 @@
 #ifndef INCLUDE_MODULES_GIMBALCAMERAOPERATOR_GIMBALCAMERAOPERATOR_HPP_
 #define INCLUDE_MODULES_GIMBALCAMERAOPERATOR_GIMBALCAMERAOPERATOR_HPP_
 
+#include <dji_osdk_ros/CameraFocusPoint.h>
+#include <dji_osdk_ros/CameraSetZoomPara.h>
+#include <dji_osdk_ros/CameraTapZoomPoint.h>
 #include <dji_osdk_ros/GimbalAction.h>
 #include <dji_osdk_ros/common_type.h>
 #include <forest_fire_detection_system/SingleFirePosIR.h>
@@ -46,6 +49,16 @@ class GimbalCameraOperator {
     gimbalCtrlClient =
         nh.serviceClient<dji_osdk_ros::GimbalAction>("gimbal_task_control");
 
+    cameraSetZoomParaClient = nh.serviceClient<dji_osdk_ros::CameraSetZoomPara>(
+        "camera_task_set_zoom_para");
+
+    cameraSetFocusPointClient =
+        nh.serviceClient<dji_osdk_ros::CameraFocusPoint>(
+            "camera_task_set_focus_point");
+
+    cameraSetTapZoomPointClient =
+        nh.serviceClient<dji_osdk_ros::CameraTapZoomPoint>(
+            "camera_task_tap_zoom_point");
     ros::Duration(3.0).sleep();
     PRINT_INFO("initialize GimbalCameraOperator done!");
   }
@@ -54,16 +67,30 @@ class GimbalCameraOperator {
                         const int times, const float tolErrPix);
   bool resetGimbal();
 
-  bool zoomCamera();
-  bool resetCamera();
+  bool setCameraZoom(const float factor);
+  bool resetCameraZoom();
+
+  bool setCameraFocusePoint(const float x, const float y);
+  bool resetCameraFocusePoint();
+
+  bool setTapZoomPoint(const float multiplier, const float x, const float y);
+  bool resetTapZoomPoint();
 
  private:
   ros::NodeHandle nh;
+
   ros::Subscriber singleFirePosIRSub;
   ros::Subscriber gimbalAttSub;
+
   ros::ServiceClient gimbalCtrlClient;
+  ros::ServiceClient cameraSetZoomParaClient;
+  ros::ServiceClient cameraSetFocusPointClient;
+  ros::ServiceClient cameraSetTapZoomPointClient;
 
   dji_osdk_ros::GimbalAction gimbalAction;
+  dji_osdk_ros::CameraSetZoomPara cameraSetZoomPara;
+  dji_osdk_ros::CameraFocusPoint cameraFocusPoint;
+  dji_osdk_ros::CameraTapZoomPoint cameraTapZoomPoint;
 
   geometry_msgs::Vector3Stamped gimbalAtt;
   forest_fire_detection_system::SingleFirePosIR firePosPix;
