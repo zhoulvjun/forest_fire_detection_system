@@ -114,8 +114,10 @@ class PotentialFireIrFinder():
 
     def run(self):
         while not rospy.is_shutdown():
-            lab_ir_img = cv2.cvtColor(self.ir_img, cv2.COLOR_BGR2LAB)
-            _, binary = cv2.threshold(lab_ir_img[:,:,2], 150, 255,
+            # lab_ir_img = cv2.cvtColor(self.ir_img, cv2.COLOR_BGR2LAB)
+            # _, binary = cv2.threshold(lab_ir_img[:,:,2], 150, 255,
+            #                           cv2.THRESH_BINARY)
+            _, binary = cv2.threshold(self.ir_img[:,:,2], 25, 255,
                                       cv2.THRESH_BINARY)
             # opening operation
             kernel = np.ones((2, 2), dtype="uint8")
