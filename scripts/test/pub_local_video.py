@@ -30,7 +30,7 @@ if __name__ == "__main__":
     rospy.init_node('load_local_video_node', anonymous=True)
 
     video_name = os.path.expanduser(
-            "/media/ls/WORK/FLIGHT_TEST/M300/DJI_202110171037_002/DJI_20211017111617_0004_T.MP4")
+            "/media/ls/WORK/FLIGHT_TEST/M300/DJI_202110171037_002/DJI_20211017104441_0001_T.MP4")
     # video_name = os.path.expanduser("~/DJI_0026.MOV")
     # video_name = os.path.expanduser("~/videoplayback.mp4")
     # video_name = os.path.expanduser("./datas/somek_dataset/videoplayback.mp4")
@@ -40,8 +40,10 @@ if __name__ == "__main__":
     rospy.loginfo("video from: " + video_name)
 
     rate = rospy.Rate(10)
+    # image_pub = rospy.Publisher(
+    #     "dji_osdk_ros/main_camera_images", Image, queue_size=10)
     image_pub = rospy.Publisher(
-        "dji_osdk_ros/main_camera_images", Image, queue_size=10)
+        "forest_fire_detection_system/main_camera_ir_image", Image, queue_size=10)
 
     while not rospy.is_shutdown():
         ret, frame = capture.read()

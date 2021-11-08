@@ -68,7 +68,7 @@ class ThermalDetector(object):
         ret, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
 
         # opening
-        kernel = np.ones((2, 2), np.uint8)
+        kernel = np.ones((2, 2), dtype='uint8')
         opening = cv2.morphologyEx(
             binary, cv2.MORPH_OPEN, kernel, iterations=2)
 
