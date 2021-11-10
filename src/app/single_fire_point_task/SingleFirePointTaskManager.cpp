@@ -208,6 +208,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
     PRINT_ERROR("Quit!");
     return;
   }
+  ros::Duration(1.0).sleep();
 
   /* Step: 2 upload mission */
   dji_osdk_ros::UploadWaypointV2Mission uploadWaypointV2Mission_;
@@ -215,6 +216,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
     PRINT_ERROR("Quit!");
     return;
   }
+  ros::Duration(1.0).sleep();
 
   /* Step: 3 start mission */
   dji_osdk_ros::StartWaypointV2Mission startWaypointV2Mission_;
@@ -222,6 +224,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
     PRINT_ERROR("Quit!");
     return;
   }
+  ros::Duration(30.0).sleep();
 
   /* Step: 4 call for the potential fire detecting */
   bool isPotentialFire = true;
