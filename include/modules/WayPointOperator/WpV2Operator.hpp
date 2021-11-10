@@ -47,42 +47,42 @@ class WpV2Operator {
  public:
   explicit WpV2Operator(ros::NodeHandle &handle) : nh(handle) {}
 
-  static void setWaypointV2Defaults(dji_osdk_ros::WaypointV2 &waypointV2);
+  static void setWaypointV2Defaults(dji_osdk_ros::WaypointV2 *waypointV2Ptr);
 
   bool initWaypointV2Setting(
-      dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_);
+      dji_osdk_ros::InitWaypointV2Setting *initWaypointV2SettingPtr);
 
   bool generateWaypointV2Actions(
-      dji_osdk_ros::GenerateWaypointV2Action &generateWaypointV2Action_,
+      dji_osdk_ros::GenerateWaypointV2Action *generateWaypointV2ActionPtr,
       uint16_t actionNum);
 
   bool uploadWaypointV2Mission(
-      dji_osdk_ros::UploadWaypointV2Mission &uploadWaypointV2Mission_);
+      dji_osdk_ros::UploadWaypointV2Mission *uploadWaypointV2MissionPtr);
 
   bool uploadWaypointV2Action(
-      dji_osdk_ros::UploadWaypointV2Action &uploadWaypointV2Action_);
+      dji_osdk_ros::UploadWaypointV2Action *uploadWaypointV2ActionPtr);
 
   bool downloadWaypointV2Mission(
-      dji_osdk_ros::DownloadWaypointV2Mission &downloadWaypointV2Mission_,
-      std::vector<dji_osdk_ros::WaypointV2> &mission);
+      dji_osdk_ros::DownloadWaypointV2Mission *downloadWaypointV2MissionPtr,
+      std::vector<dji_osdk_ros::WaypointV2> *missionPtr);
 
   bool startWaypointV2Mission(
-      dji_osdk_ros::StartWaypointV2Mission &startWaypointV2Mission_);
+      dji_osdk_ros::StartWaypointV2Mission *startWaypointV2MissionPtr);
 
   bool stopWaypointV2Mission(
-      dji_osdk_ros::StopWaypointV2Mission &stopWaypointV2Mission_);
+      dji_osdk_ros::StopWaypointV2Mission *stopWaypointV2MissionPtr);
 
   bool pauseWaypointV2Mission(
-      dji_osdk_ros::PauseWaypointV2Mission &pauseWaypointV2Mission_);
+      dji_osdk_ros::PauseWaypointV2Mission *pauseWaypointV2MissionPtr);
 
   bool resumeWaypointV2Mission(
-      dji_osdk_ros::ResumeWaypointV2Mission &resumeWaypointV2Mission_);
+      dji_osdk_ros::ResumeWaypointV2Mission *resumeWaypointV2MissionPtr);
 
   bool setGlobalCruiseSpeed(
-      dji_osdk_ros::SetGlobalCruisespeed &setGlobalCruisespeed_);
+      dji_osdk_ros::SetGlobalCruisespeed *setGlobalCruisespeedPtr);
 
   DJI::OSDK::float32_t getGlobalCruiseSpeed(
-      dji_osdk_ros::GetGlobalCruisespeed &getGlobalCruisespeed_);
+      dji_osdk_ros::GetGlobalCruisespeed *getGlobalCruisespeedPtr);
 
  private:
   ros::NodeHandle &nh;

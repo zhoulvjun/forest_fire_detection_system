@@ -134,7 +134,7 @@ matrix::Eulerf FFDS::APP::SingleFirePointTaskManager::getInitAttAverage(
 }
 
 void FFDS::APP::SingleFirePointTaskManager::initMission(
-    dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_) {
+    dji_osdk_ros::InitWaypointV2Setting *initWaypointV2Setting_) {
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   PRINT_INFO("--------------------- Home Gpos ---------------------")
   ROS_INFO_STREAM("latitude:" << homeGPos.latitude);
@@ -162,34 +162,34 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
 
   MODULES::ZigzagPathPlanner pathPlanner(homeGPos, num, len, wid, height);
 
-  initWaypointV2Setting_.request.polygonNum = 0;
+  initWaypointV2Setting_->request.polygonNum = 0;
 
-  initWaypointV2Setting_.request.radius = 3;
+  initWaypointV2Setting_->request.radius = 3;
 
-  initWaypointV2Setting_.request.actionNum = 0;
+  initWaypointV2Setting_->request.actionNum = 0;
 
-  initWaypointV2Setting_.request.waypointV2InitSettings.repeatTimes = 1;
+  initWaypointV2Setting_->request.waypointV2InitSettings.repeatTimes = 1;
 
-  initWaypointV2Setting_.request.waypointV2InitSettings.finishedAction =
-      initWaypointV2Setting_.request.waypointV2InitSettings
+  initWaypointV2Setting_->request.waypointV2InitSettings.finishedAction =
+      initWaypointV2Setting_->request.waypointV2InitSettings
           .DJIWaypointV2MissionFinishedGoHome;
 
-  initWaypointV2Setting_.request.waypointV2InitSettings.maxFlightSpeed = 10;
+  initWaypointV2Setting_->request.waypointV2InitSettings.maxFlightSpeed = 10;
 
-  initWaypointV2Setting_.request.waypointV2InitSettings.autoFlightSpeed = 2;
+  initWaypointV2Setting_->request.waypointV2InitSettings.autoFlightSpeed = 2;
 
-  initWaypointV2Setting_.request.waypointV2InitSettings
+  initWaypointV2Setting_->request.waypointV2InitSettings
       .exitMissionOnRCSignalLost = 1;
 
-  initWaypointV2Setting_.request.waypointV2InitSettings.gotoFirstWaypointMode =
-      initWaypointV2Setting_.request.waypointV2InitSettings
+  initWaypointV2Setting_->request.waypointV2InitSettings.gotoFirstWaypointMode =
+      initWaypointV2Setting_->request.waypointV2InitSettings
           .DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
 
-  initWaypointV2Setting_.request.waypointV2InitSettings.mission =
+  initWaypointV2Setting_->request.waypointV2InitSettings.mission =
       pathPlanner.getWpV2Vec(true, true, initAtt.psi());
 
-  initWaypointV2Setting_.request.waypointV2InitSettings.missTotalLen =
-      initWaypointV2Setting_.request.waypointV2InitSettings.mission.size();
+  initWaypointV2Setting_->request.waypointV2InitSettings.missTotalLen =
+      initWaypointV2Setting_->request.waypointV2InitSettings.mission.size();
 }
 
 void FFDS::APP::SingleFirePointTaskManager::run() {
@@ -201,22 +201,22 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
 
   /* Step: 1 init the mission */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
-  initMission(initWaypointV2Setting_);
-  if (!wpV2Operator.initWaypointV2Setting(initWaypointV2Setting_)) {
+  initMission(&initWaypointV2Setting_);
+  if (!wpV2Operator.initWaypointV2Setting(&initWaypointV2Setting_)) {
     PRINT_ERROR("Quit!");
     return;
   }
 
   /* Step: 2 upload mission */
   dji_osdk_ros::UploadWaypointV2Mission uploadWaypointV2Mission_;
-  if (!wpV2Operator.uploadWaypointV2Mission(uploadWaypointV2Mission_)) {
+  if (!wpV2Operator.uploadWaypointV2Mission(&uploadWaypointV2Mission_)) {
     PRINT_ERROR("Quit!");
     return;
   }
 
   /* Step: 3 start mission */
   dji_osdk_ros::StartWaypointV2Mission startWaypointV2Mission_;
-  if (!wpV2Operator.startWaypointV2Mission(startWaypointV2Mission_)) {
+  if (!wpV2Operator.startWaypointV2Mission(&startWaypointV2Mission_)) {
     PRINT_ERROR("Quit!");
     return;
   }
@@ -230,7 +230,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
       continue;
     } else {
       dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
-      if (!wpV2Operator.pauseWaypointV2Mission(pauseWaypointV2Mission_)) {
+      if (!wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_)) {
         PRINT_ERROR("Quit!");
         return;
       }

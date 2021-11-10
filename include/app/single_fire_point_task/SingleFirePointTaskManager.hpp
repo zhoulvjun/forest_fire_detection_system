@@ -64,7 +64,8 @@ class SingleFirePointTaskManager {
   void readPathParams();
   sensor_msgs::NavSatFix getHomeGPosAverage(int times);
   matrix::Eulerf getInitAttAverage(int times);
-  void initMission(dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_);
+  void initMission(
+      dji_osdk_ros::InitWaypointV2Setting *initWaypointV2SettingPtr);
 
   /**
    * callback functions

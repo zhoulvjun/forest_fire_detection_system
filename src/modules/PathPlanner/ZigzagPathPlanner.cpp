@@ -106,7 +106,7 @@ void FFDS::MODULES::ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
 
 void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   dji_osdk_ros::WaypointV2 wpV2;
-  MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
+  MODULES::WpV2Operator::setWaypointV2Defaults(&wpV2);
 
   double ref[3], result[3];
   ref[0] = homeGPos.latitude;
@@ -114,7 +114,7 @@ void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   ref[2] = homeGPos.altitude;
 
   for (int i = 0; i < LocalPosVec.size(); ++i) {
-    MODULES::WpV2Operator::setWaypointV2Defaults(wpV2);
+    MODULES::WpV2Operator::setWaypointV2Defaults(&wpV2);
 
     if (isGlobal) {
       /* NOTE: gps is represented by rad in DJI. */
