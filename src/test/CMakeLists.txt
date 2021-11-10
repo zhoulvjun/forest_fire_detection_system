@@ -48,3 +48,9 @@ target_link_libraries(test_GimbalCameraOperator
   GimbalCameraOperator
 )
 
+# test the getParam yaml
+add_executable(test_getParam test_getParam.cpp)
+target_link_libraries(test_getParam
+  ${catkin_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
+)

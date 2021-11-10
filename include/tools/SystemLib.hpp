@@ -74,16 +74,16 @@ inline std::string addStr(const std::string a, const std::string b) {
 }
 
 template <typename T>
-T getParam(const YAML::Node& node, const std::string& name,
+T getParam(const YAML::Node& node, const std::string& paramName,
            const T& defaultValue) {
   T v;
   try {
-    v = node[name].as<T>();
-    ROS_INFO_STREAM("Found parameter: " << name << ",\tvalue: " << v);
+    v = node[paramName].as<T>();
+    ROS_INFO_STREAM("Found parameter: " << paramName << ", value: " << v);
   } catch (std::exception e) {
     v = defaultValue;
     ROS_WARN_STREAM("Cannot find value for parameter: "
-                    << name << ",\tassigning default: " << defaultValue);
+                    << paramName << ", assigning default: " << v);
   }
   return v;
 }
