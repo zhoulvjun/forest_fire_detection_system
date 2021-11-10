@@ -20,7 +20,8 @@ add_executable(
 )
 target_link_libraries(
   SingleFirePointTaskManager
-  ${catkin_LIBRARIES}
   WpV2Operator
   ZigzagPathPlanner
+  ${catkin_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
 )

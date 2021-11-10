@@ -108,13 +108,13 @@ std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(
   startPoint.latitude = gps_position_.latitude * M_PI / 180.0;
   startPoint.longitude = gps_position_.longitude * M_PI / 180.0;
   startPoint.relativeHeight = 15;
-  wpv2operator.setWaypointV2Defaults(startPoint);
+  wpv2operator.setWaypointV2Defaults(&startPoint);
   waypointList.push_back(startPoint);
 
   // Iterative algorithm
   for (int i = 0; i < polygonNum; i++) {
     DJI::OSDK::float32_t angle = i * 2 * M_PI / polygonNum;
-    wpv2operator.setWaypointV2Defaults(waypointV2);
+    wpv2operator.setWaypointV2Defaults(&waypointV2);
     DJI::OSDK::float32_t X = radius * cos(angle);
     DJI::OSDK::float32_t Y = radius * sin(angle);
     waypointV2.latitude = Y / FFDS::TOOLS::EARTH_R + startPoint.latitude;
@@ -212,7 +212,7 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
   sleep(timeout);
 
   /*! upload mission */
-  result = wpv2operator.uploadWaypointV2Mission(uploadWaypointV2Mission_);
+  result = wpv2operator.uploadWaypointV2Mission(&uploadWaypointV2Mission_);
   if (!result) {
     return false;
   }
@@ -220,22 +220,22 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
 
   /*! download mission */
   std::vector<dji_osdk_ros::WaypointV2> mission;
-  result = wpv2operator.downloadWaypointV2Mission(downloadWaypointV2Mission_,
-                                                  mission);
+  result = wpv2operator.downloadWaypointV2Mission(&downloadWaypointV2Mission_,
+                                                  &mission);
   if (!result) {
     return false;
   }
   sleep(timeout);
 
   /*! upload  actions */
-  result = wpv2operator.uploadWaypointV2Action(uploadWaypointV2Action_);
+  result = wpv2operator.uploadWaypointV2Action(&uploadWaypointV2Action_);
   if (!result) {
     return false;
   }
   sleep(timeout);
 
   /*! start mission */
-  result = wpv2operator.startWaypointV2Mission(startWaypointV2Mission_);
+  result = wpv2operator.startWaypointV2Mission(&startWaypointV2Mission_);
   if (!result) {
     return false;
   }
@@ -243,7 +243,7 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
 
   /*! set global cruise speed */
   setGlobalCruisespeed_.request.global_cruisespeed = 1.5;
-  result = wpv2operator.setGlobalCruiseSpeed(setGlobalCruisespeed_);
+  result = wpv2operator.setGlobalCruiseSpeed(&setGlobalCruisespeed_);
   if (!result) {
     return false;
   }
@@ -251,18 +251,18 @@ bool runWaypointV2Mission(ros::NodeHandle &nh) {
 
   /*! get global cruise speed */
   DJI::OSDK::float32_t globalCruiseSpeed = 0;
-  globalCruiseSpeed = wpv2operator.getGlobalCruiseSpeed(getGlobalCruisespeed_);
+  globalCruiseSpeed = wpv2operator.getGlobalCruiseSpeed(&getGlobalCruisespeed_);
   sleep(timeout);
 
   /*! pause the mission*/
-  result = wpv2operator.pauseWaypointV2Mission(pauseWaypointV2Mission_);
+  result = wpv2operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_);
   if (!result) {
     return false;
   }
   sleep(5);
 
   /*! resume the mission*/
-  result = wpv2operator.resumeWaypointV2Mission(resumeWaypointV2Mission_);
+  result = wpv2operator.resumeWaypointV2Mission(&resumeWaypointV2Mission_);
   if (!result) {
     return false;
   }

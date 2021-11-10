@@ -24,6 +24,7 @@
 #include <dji_osdk_ros/WaypointV2MissionStatePush.h>
 #include <geometry_msgs/QuaternionStamped.h>
 #include <ros/ros.h>
+#include <ros/package.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
 
@@ -64,7 +65,8 @@ class SingleFirePointTaskManager {
   void readPathParams();
   sensor_msgs::NavSatFix getHomeGPosAverage(int times);
   matrix::Eulerf getInitAttAverage(int times);
-  void initMission(dji_osdk_ros::InitWaypointV2Setting &initWaypointV2Setting_);
+  void initMission(
+      dji_osdk_ros::InitWaypointV2Setting *initWaypointV2SettingPtr);
 
   /**
    * callback functions

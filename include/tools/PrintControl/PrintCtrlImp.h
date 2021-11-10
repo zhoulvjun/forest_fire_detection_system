@@ -1,19 +1,17 @@
-
-/**
+/*******************************************************************************
+ *   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
  *
- *@file Print control
+ *   @Filename: PrintCtrlImp.h
  *
- *@author lee-shun
+ *   @Author: Shun Li
  *
- *@data 2020-08-10
+ *   @Email: 2015097272@qq.com
  *
- *@version
+ *   @Date: 2021-11-10
  *
- *@brief control the output level
+ *   @Description:
  *
- *@copyright
- *
- */
+ *******************************************************************************/
 
 /* NOTE: namespace can not control macros in Cpp! */
 
@@ -22,6 +20,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 /** 调试输出级别 */
 #define NONE 0
@@ -41,6 +40,8 @@
 #define PINK 35
 #define BLUE 36
 
+#define FILENAME(x) strrchr(x, '/') ? strrchr(x, '/') + 1 : x
+
 #define PRINT_PURE(level, ...)              \
   do {                                      \
     if (level <= PRINT_LEVEL) {             \
@@ -49,14 +50,14 @@
     }                                       \
   } while (0);
 
-#define PRINT(color, level, ...)                                       \
-  do {                                                                 \
-    if (level <= PRINT_LEVEL) {                                        \
-      printf(COLOR(36, "[File:%s  Line:%d  Function:%s]\n"), __FILE__, \
-             __LINE__, __PRETTY_FUNCTION__);                           \
-      printf(COLOR(color, "[" #level "]") __VA_ARGS__);                \
-      printf("\n");                                                    \
-    }                                                                  \
+#define PRINT(color, level, ...)                                 \
+  do {                                                           \
+    if (level <= PRINT_LEVEL) {                                  \
+      printf(COLOR(36, "[File:%s  Line:%d  Function:%s]\n"),     \
+             FILENAME(__FILE__), __LINE__, __PRETTY_FUNCTION__); \
+      printf(COLOR(color, "[" #level "]") __VA_ARGS__);          \
+      printf("\n");                                              \
+    }                                                            \
   } while (0);
 
 #define PRINT_ERROR(...)             \
