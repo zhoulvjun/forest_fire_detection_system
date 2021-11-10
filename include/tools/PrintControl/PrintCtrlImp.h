@@ -22,7 +22,6 @@
 #include <cstdlib>
 #include <cstring>
 
-/** 调试输出级别 */
 #define NONE 0
 #define ERROR 1
 #define WARN 2
@@ -30,8 +29,7 @@
 #define ENTRY 4
 #define DEBUG 5
 
-#define PRINT_LEVEL DEBUG
-
+/* color control */
 #define COLOR(color, msg) "\033[0;1;" #color "m" msg "\033[0m"
 #define RED 31
 #define GREEN 32
@@ -39,6 +37,8 @@
 #define PURPLE 34
 #define PINK 35
 #define BLUE 36
+
+#define PRINT_LEVEL DEBUG
 
 #define FILENAME(x) strrchr(x, '/') ? strrchr(x, '/') + 1 : x
 
@@ -50,14 +50,15 @@
     }                                       \
   } while (0);
 
-#define PRINT(color, level, ...)                                 \
-  do {                                                           \
-    if (level <= PRINT_LEVEL) {                                  \
-      printf(COLOR(36, "[File:%s  Line:%d  Function:%s]\n"),     \
-             FILENAME(__FILE__), __LINE__, __PRETTY_FUNCTION__); \
-      printf(COLOR(color, "[" #level "]") __VA_ARGS__);          \
-      printf("\n");                                              \
-    }                                                            \
+#define PRINT(color, level, ...)                                        \
+  do {                                                                  \
+    if (level <= PRINT_LEVEL) {                                         \
+      printf(COLOR(color, "[" #level "]"));                             \
+      printf(COLOR(36, "[%s:%d|in %s] "), FILENAME(__FILE__), __LINE__, \
+             __FUNCTION__);                                             \
+      printf(__VA_ARGS__);                                              \
+      printf("\n");                                                     \
+    }                                                                   \
   } while (0);
 
 #define PRINT_ERROR(...)             \

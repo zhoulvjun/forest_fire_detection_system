@@ -79,11 +79,10 @@ T getParam(const YAML::Node& node, const std::string& paramName,
   T v;
   try {
     v = node[paramName].as<T>();
-    ROS_INFO_STREAM("Found parameter: " << paramName << ", value: " << v);
+    PRINT_INFO("Found param %s", paramName.c_str());
   } catch (std::exception e) {
     v = defaultValue;
-    ROS_WARN_STREAM("Cannot find value for parameter: "
-                    << paramName << ", assigning default: " << v);
+    PRINT_WARN("NOT Found param %s", paramName.c_str());
   }
   return v;
 }
