@@ -24,6 +24,7 @@
 #include <dji_osdk_ros/WaypointV2MissionStatePush.h>
 #include <geometry_msgs/QuaternionStamped.h>
 #include <ros/ros.h>
+#include <ros/package.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
 

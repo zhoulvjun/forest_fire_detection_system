@@ -151,9 +151,10 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
       "yaw angle psi in ENU frame is:" << TOOLS::Rad2Deg(initAtt.psi()));
 
   /* read the zigzag path shape parameters from yaml */
-  YAML::Node node = YAML::Load(
-      "/home/ls/catkin_ws/src/forest_fire_detection_system/config/"
-      "ZigzagPathShape.yaml");
+  const std::string package_path = ros::package::getPath("forest_fire_detection_system");
+  const std::string config_path = package_path+"/config/ZigzagPathShape.yaml";
+  ROS_INFO_STREAM(config_path);
+  YAML::Node node = YAML::Load(config_path);
 
   int num = TOOLS::getParam(node, "num", 10);
   float len = TOOLS::getParam(node, "len", 40.0);
