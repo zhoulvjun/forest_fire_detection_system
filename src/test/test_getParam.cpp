@@ -15,12 +15,14 @@
 
 #include <ros/package.h>
 #include <ros/ros.h>
+#include <tools/PrintControl/PrintCtrlImp.h>
 
 #include <tools/SystemLib.hpp>
 int main(int argc, char** argv) {
   const std::string package_path =
       ros::package::getPath("forest_fire_detection_system");
   const std::string config_path = package_path + "/config/ZigzagPathShape.yaml";
+  PRINT_INFO("get from %s", config_path.c_str());
   YAML::Node node = YAML::LoadFile(config_path);
   int num = FFDS::TOOLS::getParam(node, "num", 10);
   float len = FFDS::TOOLS::getParam(node, "len", 40.0);
