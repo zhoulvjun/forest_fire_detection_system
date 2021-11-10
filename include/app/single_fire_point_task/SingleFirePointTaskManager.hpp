@@ -30,6 +30,7 @@
 #include <PX4-Matrix/matrix/Euler.hpp>
 #include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 #include <modules/WayPointOperator/WpV2Operator.hpp>
+#include <tools/SystemLib.hpp>
 
 namespace FFDS {
 namespace APP {
