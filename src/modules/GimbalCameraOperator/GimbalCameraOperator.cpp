@@ -86,10 +86,12 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
         return false;
       }
 
+      PRINT_INFO("current control times: %d, tolerance: %d", ctrl_times, times);
+
       float errX = setPosXPix - firePosPix.x;
       float errY = setPosYPix - firePosPix.y;
-      PRINT_DEBUG("firePosition x %f", firePosPix.x);
-      PRINT_DEBUG("firePosition y %f", firePosPix.y);
+      PRINT_DEBUG("err Yaw:%f pixel", errX);
+      PRINT_DEBUG("err Pitch:%f pixel", errY);
 
       if (fabs(errX) <= fabs(tolErrPix) && fabs(errY) <= fabs(tolErrPix)) {
         PRINT_INFO(
@@ -98,9 +100,6 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
             ctrl_times, errX, errY);
         return true;
       }
-
-      PRINT_DEBUG("err Yaw:%f pixel", errX);
-      PRINT_DEBUG("err Pitch:%f pixel", errY);
 
       /* +x error -> - inc yaw */
       /* +y error -> + inc pitch */
