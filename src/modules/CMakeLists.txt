@@ -29,5 +29,8 @@ foreach(MODULE_PATH ${MODULE_PATH_LIST})
 
 endforeach()
 
-# special
+# ZigzagPathPlanner
 target_link_libraries(ZigzagPathPlanner WpV2Operator)
+
+# GimbalCameraOperator
+add_dependencies(gimbalCameraOperator SingleFirePosIR_generate_messages_cpp)
