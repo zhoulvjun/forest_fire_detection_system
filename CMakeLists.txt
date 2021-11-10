@@ -12,6 +12,7 @@ find_library(YAML_CPP_LIBRARIES yaml-cpp)
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     rospy
+    roslib
     dji_osdk_ros
     message_generation
     )
@@ -105,8 +106,14 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS include
-    LIBRARIES forest_fire_detection_system 
-    CATKIN_DEPENDS roscpp rospy std_msgs dji_osdk_ros message_runtime
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS
+    roscpp
+    rospy
+    roslib
+    std_msgs
+    dji_osdk_ros
+    message_runtime
     )
 
 ###########
@@ -116,7 +123,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-    3dparty
+    3rdparty
     include
     ${catkin_INCLUDE_DIRS}
     )

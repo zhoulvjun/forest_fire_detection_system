@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*- #
-# ------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 #
 #   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
 #
@@ -8,14 +9,15 @@
 #
 #   @Author: Shun Li
 #
-#   @Date: 2021-11-01
+#   @Date: 2021-11-08
 #
 #   @Email: 2015097272@qq.com
 #
 #   @Description:
 #
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
+import os
 import cv2
 from cv_bridge import CvBridge
 from forest_fire_detection_system.msg import SingleFirePosIR
@@ -25,13 +27,14 @@ from sensor_msgs.msg import Image
 import yaml
 from yaml import CLoader
 
+PKG_PATH = os.path.expanduser('~/catkin_ws/src/forest_fire_detection_system/')
 
 class PotentialFireIrFinder():
     def __init__(self):
 
         # read the camera parameters
         config = open(
-            "/home/shun/catkin_ws/src/forest_fire_detection_system/config/H20T_Camera.yaml"
+            PKG_PATH+"config/H20T_Camera.yaml"
         )
         self.H20T = yaml.load(config, Loader=CLoader)
 
@@ -45,7 +48,7 @@ class PotentialFireIrFinder():
         self.pot_fire_pos = SingleFirePosIR()
         self.pot_fire_pos.is_pot_fire = False
 
-        rospy.wait_for_message("dji_osdk_ros/main_camera_images", Image)
+        rospy.wait_for_message("forest_fire_detection_system/main_camera_ir_image", Image)
         self.image_sub = rospy.Subscriber(
             "forest_fire_detection_system/main_camera_ir_image", Image,
             self.image_cb)
@@ -111,7 +114,10 @@ class PotentialFireIrFinder():
 
     def run(self):
         while not rospy.is_shutdown():
-            _, binary = cv2.threshold(self.ir_img[:, :, 2], 25, 255,
+            # lab_ir_img = cv2.cvtColor(self.ir_img, cv2.COLOR_BGR2LAB)
+            # _, binary = cv2.threshold(lab_ir_img[:,:,2], 150, 255,
+            #                           cv2.THRESH_BINARY)
+            _, binary = cv2.threshold(self.ir_img[:,:,2], 25, 255,
                                       cv2.THRESH_BINARY)
             # opening operation
             kernel = np.ones((2, 2), dtype="uint8")

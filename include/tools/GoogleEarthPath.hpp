@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2014 Andres Gongora
+ * <https://yalneb.blogspot.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* modified by Shun Li */
+
 /**
  *  ID: GoogleEarthPath.hpp
  *   EDITED:  23-09-2014
@@ -40,25 +59,6 @@
  *
  **/
 
-/*
- * Copyright (C) 2014 Andres Gongora
- * <https://yalneb.blogspot.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/* modified by Shun Li */
-
 #ifndef INCLUDE_TOOLS_GOOGLEEARTHPATH_HPP_
 #define INCLUDE_TOOLS_GOOGLEEARTHPATH_HPP_
 
@@ -76,7 +76,7 @@ class GoogleEarthPath {
                                  // inside googleearth)
   ~GoogleEarthPath();            // Default destructor
 
-  inline void addPoint(double, double);
+  inline void addPoint(const double, const double);
 
  private:
   std::fstream fileDescriptor;  // File descriptor
@@ -124,7 +124,8 @@ inline GoogleEarthPath::~GoogleEarthPath() {
   }
 }
 
-inline void GoogleEarthPath::addPoint(double longitude, double latitude) {
+inline void GoogleEarthPath::addPoint(const double longitude,
+                                      const double latitude) {
   if (fileDescriptor) {
     fileDescriptor << std::setprecision(13) << longitude << ","
                    << std::setprecision(13) << latitude << ",0\n"

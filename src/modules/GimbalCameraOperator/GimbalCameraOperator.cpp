@@ -148,4 +148,43 @@ bool FFDS::MODULES::GimbalCameraOperator::resetGimbal() {
   return gimbalAction.response.result;
 }
 
-bool FFDS::MODULES::GimbalCameraOperator::zoomCamera() { return false; }
+bool FFDS::MODULES::GimbalCameraOperator::setCameraZoom(const float factor) {
+  cameraSetZoomPara.request.payload_index =
+      static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
+  cameraSetZoomPara.request.factor = factor;
+  cameraSetZoomParaClient.call(cameraSetZoomPara);
+  return cameraSetZoomPara.response.result;
+}
+
+bool FFDS::MODULES::GimbalCameraOperator::resetCameraZoom() {
+  return setCameraZoom(2.0);
+}
+
+bool FFDS::MODULES::GimbalCameraOperator::setCameraFocusePoint(const float x,
+                                                               const float y) {
+  cameraFocusPoint.request.payload_index =
+      static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
+  cameraFocusPoint.request.x = x;
+  cameraFocusPoint.request.y = y;
+  cameraSetFocusPointClient.call(cameraFocusPoint);
+  return cameraFocusPoint.response.result;
+}
+
+bool FFDS::MODULES::GimbalCameraOperator::resetCameraFocusePoint() {
+  return setCameraFocusePoint(0.5, 0.5);
+}
+
+bool FFDS::MODULES::GimbalCameraOperator::setTapZoomPoint(
+    const float multiplier, const float x, const float y) {
+  cameraTapZoomPoint.request.payload_index =
+      static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
+  cameraTapZoomPoint.request.multiplier = multiplier;
+  cameraTapZoomPoint.request.x = x;
+  cameraTapZoomPoint.request.y = y;
+  cameraSetTapZoomPointClient.call(cameraTapZoomPoint);
+  return cameraFocusPoint.response.result;
+}
+
+bool FFDS::MODULES::GimbalCameraOperator::resetTapZoomPoint() {
+  return setTapZoomPoint(2.0, 0.5, 0.5);
+}

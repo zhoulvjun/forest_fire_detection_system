@@ -5,7 +5,7 @@
 #
 #   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
 #
-#   @Filename: find_img_boundary.py
+#   @Filename: print_img_boundary_in_aligned_img.py
 #
 #   @Author: Shun Li
 #
@@ -19,12 +19,9 @@
 
 import cv2
 from cv_bridge import CvBridge
-from forest_fire_detection_system.msg import SingleFirePosIR
 import numpy as np
 import rospy
 from sensor_msgs.msg import Image
-import yaml
-from yaml import CLoader
 
 class ImgBoundaryFinder(object):
     def __init__(self):

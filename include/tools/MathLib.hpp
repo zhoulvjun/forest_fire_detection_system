@@ -19,7 +19,6 @@
 
 #include <cmath>
 #include <common/CommonTypes.hpp>
-#include <iostream>
 
 namespace FFDS {
 namespace TOOLS {
@@ -28,27 +27,16 @@ const double EARTH_R = 6378137.0;
 const double CONSTANTS_ONE_G = 9.80665;
 
 inline bool isEqualf(const float a, const float b) {
-  if (fabs(a - b) <= 1e-6) {
-    return true;
-  } else {
-    return false;
-  }
+  return (fabs(a - b) <= 1e-6);
 }
 
 inline bool isEquald(const double a, const double b) {
-  if (fabs(a - b) <= 1e-15) {
-    return true;
-  } else {
-    return false;
-  }
+  return (fabs(a - b) <= 1e-15);
 }
 
 template <typename T>
 bool isFinite(const T a) {
-  if ((fabs(a) > 0.02) && (fabs(a) < 1000)) {
-    return true;
-  }
-  return false;
+  return ((fabs(a) > 0.02) && (fabs(a) < 1000));
 }
 
 template <typename T>
@@ -67,27 +55,27 @@ T Min(const T a, const T b) {
 }
 
 template <typename T>
-void Quaternion2Euler(T quat[4], T angle[3]) {
-  angle[0] = atan2(2.0 * (quat[3] * quat[2] + quat[0] * quat[1]),
+void Quaternion2Euler(const T quat[4], T euler[3]) {
+  euler[0] = atan2(2.0 * (quat[3] * quat[2] + quat[0] * quat[1]),
                    1.0 - 2.0 * (quat[1] * quat[1] + quat[2] * quat[2]));
-  angle[1] = asin(2.0 * (quat[2] * quat[0] - quat[3] * quat[1]));
-  angle[2] = atan2(2.0 * (quat[3] * quat[0] + quat[1] * quat[2]),
+  euler[1] = asin(2.0 * (quat[2] * quat[0] - quat[3] * quat[1]));
+  euler[2] = atan2(2.0 * (quat[3] * quat[0] + quat[1] * quat[2]),
                    -1.0 + 2.0 * (quat[0] * quat[0] + quat[1] * quat[1]));
 }
 
 template <typename T>
-void Euler2Quaternion(T angle[3], T quat[4]) {
-  T cosPhi_2 = cos(static_cast<T>(angle[0]) / 2.0);
+void Euler2Quaternion(const T euler[3], T quat[4]) {
+  T cosPhi_2 = cos(static_cast<T>(euler[0]) / 2.0);
 
-  T sinPhi_2 = sin(static_cast<T>(angle[0]) / 2.0);
+  T sinPhi_2 = sin(static_cast<T>(euler[0]) / 2.0);
 
-  T cosTheta_2 = cos(static_cast<T>(angle[1]) / 2.0);
+  T cosTheta_2 = cos(static_cast<T>(euler[1]) / 2.0);
 
-  T sinTheta_2 = sin(static_cast<T>(angle[1]) / 2.0);
+  T sinTheta_2 = sin(static_cast<T>(euler[1]) / 2.0);
 
-  T cosPsi_2 = cos(static_cast<T>(angle[2]) / 2.0);
+  T cosPsi_2 = cos(static_cast<T>(euler[2]) / 2.0);
 
-  T sinPsi_2 = sin(static_cast<T>(angle[2]) / 2.0);
+  T sinPsi_2 = sin(static_cast<T>(euler[2]) / 2.0);
 
   quat[0] = static_cast<T>(cosPhi_2 * cosTheta_2 * cosPsi_2 +
                            sinPhi_2 * sinTheta_2 * sinPsi_2);
@@ -103,22 +91,23 @@ void Euler2Quaternion(T angle[3], T quat[4]) {
 }
 
 template <typename T>
-void MatrixByVector3(T vector_a[3], T rotmax[3][3], T vector_b[3]) {
-  vector_a[0] = rotmax[0][0] * vector_b[0] + rotmax[0][1] * vector_b[1] +
-                rotmax[0][2] * vector_b[2];
+void MatrixByVector3(T vector_res[3], const T rotmax[3][3],
+                     const T vector_b[3]) {
+  vector_res[0] = rotmax[0][0] * vector_b[0] + rotmax[0][1] * vector_b[1] +
+                  rotmax[0][2] * vector_b[2];
 
-  vector_a[1] = rotmax[1][0] * vector_b[0] + rotmax[1][1] * vector_b[1] +
-                rotmax[1][2] * vector_b[2];
+  vector_res[1] = rotmax[1][0] * vector_b[0] + rotmax[1][1] * vector_b[1] +
+                  rotmax[1][2] * vector_b[2];
 
-  vector_a[2] = rotmax[2][0] * vector_b[0] + rotmax[2][1] * vector_b[1] +
-                rotmax[2][2] * vector_b[2];
+  vector_res[2] = rotmax[2][0] * vector_b[0] + rotmax[2][1] * vector_b[1] +
+                  rotmax[2][2] * vector_b[2];
 }
 
 /**
  * create rotation matrix for the quaternion
  */
 template <typename T>
-void Quat2Rotmax(T q[4], T R[3][3]) {
+void Quat2Rotmax(const T q[4], T R[3][3]) {
   T aSq = q[0] * q[0];
   T bSq = q[1] * q[1];
   T cSq = q[2] * q[2];
@@ -145,7 +134,7 @@ T Deg2Rad(const T deg) {
 }
 
 template <typename T>
-void Meter2LatLongAlt(T ref[3], COMMON::LocalPosition<T> local_pos,
+void Meter2LatLongAlt(const T ref[3], const COMMON::LocalPosition<T>& local_pos,
                       T result[3]) {
   if (local_pos.x == 0 && local_pos.y == 0) {
     result[0] = ref[0];
@@ -163,7 +152,7 @@ void Meter2LatLongAlt(T ref[3], COMMON::LocalPosition<T> local_pos,
 
 /* 参考点是a点，lat，long，alt */
 template <typename T>
-void LatLong2Meter(T a_pos[2], T b_pos[2], T m[2]) {
+void LatLong2Meter(const T a_pos[2], const T b_pos[2], T m[2]) {
   T lat1 = a_pos[0];
   T lon1 = a_pos[1];
 
