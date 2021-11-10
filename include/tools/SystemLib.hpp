@@ -39,14 +39,14 @@ inline float getRosTimeInterval(const ros::Time& begin) {
 }
 
 /* return as ms */
-inline long getSysTime() {
+inline int32_t getSysTime() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 /* return as ms */
-inline long getTimeInterval(const long begin_time) {
+inline int32_t getTimeInterval(const int32_t begin_time) {
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return (tv.tv_sec * 1000 + tv.tv_usec / 1000 - begin_time);
@@ -55,7 +55,7 @@ inline long getTimeInterval(const long begin_time) {
 template <typename T>
 void write2Files(const std::string file_path_name, const std::string item,
                  const T data) {
-  long time_stamp = getSysTime();
+  int32_t time_stamp = getSysTime();
   std::fstream oufile;
 
   oufile.open(file_path_name.c_str(), std::ios::app | std::ios::out);
@@ -69,11 +69,6 @@ void write2Files(const std::string file_path_name, const std::string item,
   oufile.close();
 }
 
-/**
- * @Input: string
- * @Output:string
- * @Description:将两个string合并
- */
 inline std::string addStr(const std::string a, const std::string b) {
   return a + b;
 }

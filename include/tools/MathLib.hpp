@@ -27,27 +27,16 @@ const double EARTH_R = 6378137.0;
 const double CONSTANTS_ONE_G = 9.80665;
 
 inline bool isEqualf(const float a, const float b) {
-  if (fabs(a - b) <= 1e-6) {
-    return true;
-  } else {
-    return false;
-  }
+  return (fabs(a - b) <= 1e-6);
 }
 
 inline bool isEquald(const double a, const double b) {
-  if (fabs(a - b) <= 1e-15) {
-    return true;
-  } else {
-    return false;
-  }
+  return (fabs(a - b) <= 1e-15);
 }
 
 template <typename T>
 bool isFinite(const T a) {
-  if ((fabs(a) > 0.02) && (fabs(a) < 1000)) {
-    return true;
-  }
-  return false;
+  return ((fabs(a) > 0.02) && (fabs(a) < 1000));
 }
 
 template <typename T>

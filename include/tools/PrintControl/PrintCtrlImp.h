@@ -1,19 +1,17 @@
-
-/**
- *
- *@file Print control
- *
- *@author lee-shun
- *
- *@data 2020-08-10
- *
- *@version
- *
- *@brief control the output level
- *
- *@copyright
- *
- */
+/*******************************************************************************
+*   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
+*
+*   @Filename: PrintCtrlImp.h
+*
+*   @Author: Shun Li
+*
+*   @Email: 2015097272@qq.com
+*
+*   @Date: 2021-11-10
+*
+*   @Description: 
+*
+*******************************************************************************/
 
 /* NOTE: namespace can not control macros in Cpp! */
 
