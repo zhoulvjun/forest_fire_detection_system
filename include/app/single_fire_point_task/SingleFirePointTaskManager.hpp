@@ -23,8 +23,8 @@
 #include <dji_osdk_ros/WaypointV2MissionEventPush.h>
 #include <dji_osdk_ros/WaypointV2MissionStatePush.h>
 #include <geometry_msgs/QuaternionStamped.h>
-#include <ros/ros.h>
 #include <ros/package.h>
+#include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
 
@@ -62,6 +62,7 @@ class SingleFirePointTaskManager {
    * ros srv
    * */
 
+  dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
   dji_osdk_ros::SubscribeWaypointV2Event subscribeWaypointV2Event_;
   dji_osdk_ros::SubscribeWaypointV2State subscribeWaypointV2State_;
 
@@ -98,11 +99,9 @@ class SingleFirePointTaskManager {
     obtain_ctrl_authority_client =
         nh.serviceClient<dji_osdk_ros::ObtainControlAuthority>(
             "obtain_release_control_authority");
-
     waypointV2_mission_state_push_client =
         nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
             "dji_osdk_ros/waypointV2_subscribeMissionState");
-
     waypointV2_mission_event_push_client =
         nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2State>(
             "dji_osdk_ros/waypointV2_subscribeMissionEvent");
@@ -110,40 +109,60 @@ class SingleFirePointTaskManager {
     gpsPositionSub =
         nh.subscribe("dji_osdk_ros/gps_position", 10,
                      &SingleFirePointTaskManager::gpsPositionSubCallback, this);
-
     attitudeSub =
         nh.subscribe("dji_osdk_ros/attitude", 10,
                      &SingleFirePointTaskManager::attitudeSubCallback, this);
-
     waypointV2EventSub = nh.subscribe(
         "dji_osdk_ros/waypointV2_mission_event", 10,
         &SingleFirePointTaskManager::waypointV2MissionEventSubCallback, this);
-
     waypointV2StateSub = nh.subscribe(
         "dji_osdk_ros/waypointV2_mission_state", 10,
         &SingleFirePointTaskManager::waypointV2MissionStateSubCallback, this);
 
+    /* obtain the authorization when really needed... Now :) */
+    obtainCtrlAuthority.request.enable_obtain = true;
+    obtain_ctrl_authority_client.call(obtainCtrlAuthority);
+    if (obtainCtrlAuthority.response.result) {
+      PRINT_INFO("get control authority!");
+    } else {
+      PRINT_ERROR("can NOT get control authority!");
+      return;
+    }
+
     /* get the WpV2Mission states to be published ... */
-  subscribeWaypointV2Event_.request.enable_sub = true;
-  subscribeWaypointV2State_.request.enable_sub = true;
-  waypointV2_mission_state_push_client.call(subscribeWaypointV2State_);
-  waypointV2_mission_event_push_client.call(subscribeWaypointV2Event_);
-  if (subscribeWaypointV2State_.response.result){
+    subscribeWaypointV2Event_.request.enable_sub = true;
+    subscribeWaypointV2State_.request.enable_sub = true;
+    waypointV2_mission_state_push_client.call(subscribeWaypointV2State_);
+    waypointV2_mission_event_push_client.call(subscribeWaypointV2Event_);
+    if (subscribeWaypointV2State_.response.result) {
       PRINT_INFO("get WpV2Mission state published!");
-  } else{
-          PRINT_ERROR("can NOT get WpV2Mission state published!");
-      }
-  if (subscribeWaypointV2Event_.response.result){
+    } else {
+      PRINT_ERROR("can NOT get WpV2Mission state published!");
+      return;
+    }
+    if (subscribeWaypointV2Event_.response.result) {
       PRINT_INFO("get WpV2Mission event published!");
-  } else{
-          PRINT_ERROR("can NOT get WpV2Mission event published!");
-      }
+    } else {
+      PRINT_ERROR("can NOT get WpV2Mission event published!");
+      return;
+    }
 
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
+    /* open a thread to call the states in case of the long wait... */
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
 
-  ros::Duration(3.0).sleep();
-  PRINT_INFO("initializing Done");
+    ros::Duration(3.0).sleep();
+    PRINT_INFO("initializing Done");
+  }
+
+  ~SingleFirePointTaskManager() {
+    obtainCtrlAuthority.request.enable_obtain = false;
+    obtain_ctrl_authority_client.call(obtainCtrlAuthority);
+    if (obtainCtrlAuthority.response.result) {
+      PRINT_INFO("release control authority!");
+    } else {
+      PRINT_ERROR("can NOT release control authority!");
+    }
   }
 
   void run();
