@@ -17,6 +17,7 @@
 #ifndef INCLUDE_APP_SINGLE_FIRE_POINT_TASK_SINGLEFIREPOINTTASKMANAGER_HPP_
 #define INCLUDE_APP_SINGLE_FIRE_POINT_TASK_SINGLEFIREPOINTTASKMANAGER_HPP_
 
+#include <dji_osdk_ros/FlightTaskControl.h>
 #include <dji_osdk_ros/ObtainControlAuthority.h>
 #include <dji_osdk_ros/SubscribeWaypointV2Event.h>
 #include <dji_osdk_ros/SubscribeWaypointV2State.h>
@@ -29,6 +30,7 @@
 #include <tools/PrintControl/PrintCtrlImp.h>
 
 #include <PX4-Matrix/matrix/Euler.hpp>
+#include <modules/GimbalCameraOperator/GimbalCameraOperator.hpp>
 #include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 #include <modules/WayPointOperator/WpV2Operator.hpp>
 #include <tools/SystemLib.hpp>
@@ -45,6 +47,7 @@ class SingleFirePointTaskManager {
   ros::Subscriber waypointV2EventSub;
   ros::Subscriber waypointV2StateSub;
 
+  ros::ServiceClient task_control_client;
   ros::ServiceClient obtain_ctrl_authority_client;
   ros::ServiceClient waypointV2_mission_state_push_client;
   ros::ServiceClient waypointV2_mission_event_push_client;
@@ -62,6 +65,7 @@ class SingleFirePointTaskManager {
    * ros srv
    * */
 
+  dji_osdk_ros::FlightTaskControl control_task;
   dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
   dji_osdk_ros::SubscribeWaypointV2Event subscribeWaypointV2Event_;
   dji_osdk_ros::SubscribeWaypointV2State subscribeWaypointV2State_;
@@ -95,75 +99,10 @@ class SingleFirePointTaskManager {
           &waypointV2MissionStatePush);
 
  public:
-  SingleFirePointTaskManager() {
-    obtain_ctrl_authority_client =
-        nh.serviceClient<dji_osdk_ros::ObtainControlAuthority>(
-            "obtain_release_control_authority");
-    waypointV2_mission_state_push_client =
-        nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
-            "dji_osdk_ros/waypointV2_subscribeMissionState");
-    waypointV2_mission_event_push_client =
-        nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2State>(
-            "dji_osdk_ros/waypointV2_subscribeMissionEvent");
+  SingleFirePointTaskManager();
+  ~SingleFirePointTaskManager();
 
-    gpsPositionSub =
-        nh.subscribe("dji_osdk_ros/gps_position", 10,
-                     &SingleFirePointTaskManager::gpsPositionSubCallback, this);
-    attitudeSub =
-        nh.subscribe("dji_osdk_ros/attitude", 10,
-                     &SingleFirePointTaskManager::attitudeSubCallback, this);
-    waypointV2EventSub = nh.subscribe(
-        "dji_osdk_ros/waypointV2_mission_event", 10,
-        &SingleFirePointTaskManager::waypointV2MissionEventSubCallback, this);
-    waypointV2StateSub = nh.subscribe(
-        "dji_osdk_ros/waypointV2_mission_state", 10,
-        &SingleFirePointTaskManager::waypointV2MissionStateSubCallback, this);
-
-    /* obtain the authorization when really needed... Now :) */
-    obtainCtrlAuthority.request.enable_obtain = true;
-    obtain_ctrl_authority_client.call(obtainCtrlAuthority);
-    if (obtainCtrlAuthority.response.result) {
-      PRINT_INFO("get control authority!");
-    } else {
-      PRINT_ERROR("can NOT get control authority!");
-      return;
-    }
-
-    /* get the WpV2Mission states to be published ... */
-    subscribeWaypointV2Event_.request.enable_sub = true;
-    subscribeWaypointV2State_.request.enable_sub = true;
-    waypointV2_mission_state_push_client.call(subscribeWaypointV2State_);
-    waypointV2_mission_event_push_client.call(subscribeWaypointV2Event_);
-    if (subscribeWaypointV2State_.response.result) {
-      PRINT_INFO("get WpV2Mission state published!");
-    } else {
-      PRINT_ERROR("can NOT get WpV2Mission state published!");
-      return;
-    }
-    if (subscribeWaypointV2Event_.response.result) {
-      PRINT_INFO("get WpV2Mission event published!");
-    } else {
-      PRINT_ERROR("can NOT get WpV2Mission event published!");
-      return;
-    }
-
-    /* open a thread to call the states in case of the long wait... */
-    ros::AsyncSpinner spinner(1);
-    spinner.start();
-
-    ros::Duration(3.0).sleep();
-    PRINT_INFO("initializing Done");
-  }
-
-  ~SingleFirePointTaskManager() {
-    obtainCtrlAuthority.request.enable_obtain = false;
-    obtain_ctrl_authority_client.call(obtainCtrlAuthority);
-    if (obtainCtrlAuthority.response.result) {
-      PRINT_INFO("release control authority!");
-    } else {
-      PRINT_ERROR("can NOT release control authority!");
-    }
-  }
+  void goHomeLand();
 
   void run();
 };

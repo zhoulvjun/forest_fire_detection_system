@@ -24,6 +24,7 @@
 #include <dji_osdk_ros/common_type.h>
 #include <forest_fire_detection_system/SingleFirePosIR.h>
 #include <geometry_msgs/Vector3Stamped.h>
+#include <ros/package.h>
 #include <ros/ros.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
 
@@ -68,6 +69,7 @@ class GimbalCameraOperator {
 
   bool ctrlRotateGimbal(const float setPosXPix, const float setPosYPix,
                         const int times, const float tolErrPix);
+  bool ctrlRotateGimbal(const int times, const float tolErrPix);
   bool resetGimbal();
 
   bool setCameraZoom(const float factor);
