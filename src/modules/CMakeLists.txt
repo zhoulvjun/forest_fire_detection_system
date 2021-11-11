@@ -33,4 +33,5 @@ endforeach()
 target_link_libraries(ZigzagPathPlanner WpV2Operator)
 
 # GimbalCameraOperator
+target_link_libraries(GimbalCameraOperator ${YAML_CPP_LIBRARIES})
 add_dependencies(GimbalCameraOperator ${PROJECT_NAME}_generate_messages_cpp)

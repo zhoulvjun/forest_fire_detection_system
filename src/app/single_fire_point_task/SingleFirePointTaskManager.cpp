@@ -284,43 +284,72 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
   /* Step: 4 call for the potential fire detecting  */
   bool isPotentialFire = true;
 
-  /* Step: 5 main loop */
-  /* 0x6 -> exit mission */
+  /**
+   * Step: 5 main loop
+   * 1. "break" in the following while-loop is only for serious error and task exit...
+   * 2. 0x6 == exit waypointV2 mission
+   **/
   while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) {
     if (!isPotentialFire) {
       continue;
+    }
+
+    PRINT_INFO("potential fire FOUND! call to pause the mission!")
+    dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
+    if (!(wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_))) {
+      PRINT_ERROR("failed to pause the mission, please use remoter to cancle!");
+      break;
+    }
+
+    PRINT_INFO(
+        "pause mission successfully, call for gimbal and camera to focus...")
+    FFDS::MODULES::GimbalCameraOperator gcOperator;
+
+    if (gcOperator.ctrlRotateGimbal(10, 20.0)) {
+      PRINT_INFO("rotate done! zoom the camera!")
     } else {
-      PRINT_INFO("potential fire FOUND! call to pause the mission!")
-      dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
-      if (!(wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_))) {
-        PRINT_ERROR(
-            "failed to pause the mission, please use remoter to cancle!");
-        break;
+      PRINT_WARN("failed to rotate camera, use bigger tolerance!");
+      if (gcOperator.ctrlRotateGimbal(10, 30.0)) {
+        PRINT_INFO("rotate done wuth bigger tolerance!");
       } else {
-        PRINT_INFO(
-            "potential fire detected, call for gimbal and camera to focus...")
-        FFDS::MODULES::GimbalCameraOperator gcOperator;
-
-        if (gcOperator.ctrlRotateGimbal(10, 20.0)) {
-          PRINT_INFO("rotate done! zoom the camera!")
-        } else {
-          PRINT_WARN("failed to rotate camera, zoom anyway~");
-        }
-        if (gcOperator.setCameraZoom(5.0)) {
-          PRINT_INFO("zoom done! call for further detecting!")
-        } else {
-          PRINT_WARN("failed to zoom camera, further detect anyway~");
-        }
-        ros::Duration(10.0).sleep();
-
-        PRINT_INFO("further detecting done! go home now!")
-        dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
-        wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_);
-
-        goHomeLand();
-        break;
+        PRINT_WARN(
+            "failed to rotate camera with bigger tolerance! ZOOM anyway!");
       }
     }
+
+    if (gcOperator.setCameraZoom(5.0)) {
+      PRINT_INFO("zoom done! call for further detecting!")
+    } else {
+      PRINT_WARN("failed to zoom camera, further detect anyway~");
+    }
+
+    /* call for detecting */
+    ros::Duration(10.0).sleep();
+
+    PRINT_INFO("further detecting done! reset gimbal and camera!")
+    if (gcOperator.resetGimbal()) {
+      PRINT_INFO("reset gimbal done! zoom the camera!")
+    } else {
+      PRINT_WARN("failed to reset gimbal!");
+    }
+
+    if (gcOperator.resetCameraZoom()) {
+      PRINT_INFO("reset zoom done!")
+    } else {
+      PRINT_WARN("failed to zoom camera");
+    }
+
+    PRINT_INFO("go home and land...")
+    dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
+    if (!wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_)) {
+      PRINT_ERROR("can not stop waypointV2 mission, please use the remoter!");
+      break;
+    }
+
+    goHomeLand();
+    break;
+
+    ros::Rate(10).sleep();
   }
 
   spinner.stop();
