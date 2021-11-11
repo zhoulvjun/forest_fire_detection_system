@@ -53,6 +53,22 @@ matrix::Vector3f FFDS::MODULES::GimbalCameraOperator::camera2NED(
   return eularMatrix * d_attInCamera;
 }
 
+bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
+    const int times, const float tolErrPix) {
+  PRINT_INFO("use the thermal camera image center as the target!");
+
+  const std::string package_path =
+      ros::package::getPath("forest_fire_detection_system");
+  const std::string config_path = package_path + "/config/H20T_Camera.yaml";
+  PRINT_INFO("get camera params from %s", config_path.c_str());
+  YAML::Node node = YAML::LoadFile(config_path);
+
+  float IR_img_width = FFDS::TOOLS::getParam(node, "pure_IR_width", 960.0);
+  float IR_img_height = FFDS::TOOLS::getParam(node, "pure_IR_height", 770.0);
+
+  return ctrlRotateGimbal(IR_img_width / 2, IR_img_height / 2, times,
+                          tolErrPix);
+}
 /**
  * @param[in]  x and y set position on the IR image, the controlling time and
  * finally control stop error.
@@ -67,6 +83,9 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
     const float setPosXPix, const float setPosYPix, const int times,
     const float tolErrPix) {
   PRINT_INFO("Start controlling the gimbal using controller!");
+
+  pidYaw.reset();
+  pidPitch.reset();
 
   int ctrl_times = 0;
   while (ros::ok()) {
@@ -86,10 +105,12 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
         return false;
       }
 
+      PRINT_INFO("current control times: %d, tolerance: %d", ctrl_times, times);
+
       float errX = setPosXPix - firePosPix.x;
       float errY = setPosYPix - firePosPix.y;
-      PRINT_DEBUG("firePosition x %f", firePosPix.x);
-      PRINT_DEBUG("firePosition y %f", firePosPix.y);
+      PRINT_DEBUG("err Yaw:%f pixel", errX);
+      PRINT_DEBUG("err Pitch:%f pixel", errY);
 
       if (fabs(errX) <= fabs(tolErrPix) && fabs(errY) <= fabs(tolErrPix)) {
         PRINT_INFO(
@@ -98,9 +119,6 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
             ctrl_times, errX, errY);
         return true;
       }
-
-      PRINT_DEBUG("err Yaw:%f pixel", errX);
-      PRINT_DEBUG("err Pitch:%f pixel", errY);
 
       /* +x error -> - inc yaw */
       /* +y error -> + inc pitch */
@@ -149,6 +167,7 @@ bool FFDS::MODULES::GimbalCameraOperator::resetGimbal() {
 }
 
 bool FFDS::MODULES::GimbalCameraOperator::setCameraZoom(const float factor) {
+  PRINT_INFO("setting camera zoom to %f", factor);
   cameraSetZoomPara.request.payload_index =
       static_cast<uint8_t>(dji_osdk_ros::PayloadIndex::PAYLOAD_INDEX_0);
   cameraSetZoomPara.request.factor = factor;
@@ -157,6 +176,7 @@ bool FFDS::MODULES::GimbalCameraOperator::setCameraZoom(const float factor) {
 }
 
 bool FFDS::MODULES::GimbalCameraOperator::resetCameraZoom() {
+  PRINT_INFO("reset the camera zoom!")
   return setCameraZoom(2.0);
 }
 

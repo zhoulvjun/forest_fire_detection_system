@@ -16,6 +16,74 @@
 
 #include <app/single_fire_point_task/SingleFirePointTaskManager.hpp>
 
+FFDS::APP::SingleFirePointTaskManager::SingleFirePointTaskManager() {
+  task_control_client =
+      nh.serviceClient<dji_osdk_ros::FlightTaskControl>("/flight_task_control");
+  obtain_ctrl_authority_client =
+      nh.serviceClient<dji_osdk_ros::ObtainControlAuthority>(
+          "obtain_release_control_authority");
+  waypointV2_mission_state_push_client =
+      nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
+          "dji_osdk_ros/waypointV2_subscribeMissionState");
+  waypointV2_mission_event_push_client =
+      nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2State>(
+          "dji_osdk_ros/waypointV2_subscribeMissionEvent");
+
+  gpsPositionSub =
+      nh.subscribe("dji_osdk_ros/gps_position", 10,
+                   &SingleFirePointTaskManager::gpsPositionSubCallback, this);
+  attitudeSub =
+      nh.subscribe("dji_osdk_ros/attitude", 10,
+                   &SingleFirePointTaskManager::attitudeSubCallback, this);
+  waypointV2EventSub = nh.subscribe(
+      "dji_osdk_ros/waypointV2_mission_event", 10,
+      &SingleFirePointTaskManager::waypointV2MissionEventSubCallback, this);
+  waypointV2StateSub = nh.subscribe(
+      "dji_osdk_ros/waypointV2_mission_state", 10,
+      &SingleFirePointTaskManager::waypointV2MissionStateSubCallback, this);
+
+  /* obtain the authorization when really needed... Now :) */
+  obtainCtrlAuthority.request.enable_obtain = true;
+  obtain_ctrl_authority_client.call(obtainCtrlAuthority);
+  if (obtainCtrlAuthority.response.result) {
+    PRINT_INFO("get control authority!");
+  } else {
+    PRINT_ERROR("can NOT get control authority!");
+    return;
+  }
+
+  /* get the WpV2Mission states to be published ... */
+  subscribeWaypointV2Event_.request.enable_sub = true;
+  subscribeWaypointV2State_.request.enable_sub = true;
+  waypointV2_mission_state_push_client.call(subscribeWaypointV2State_);
+  waypointV2_mission_event_push_client.call(subscribeWaypointV2Event_);
+  if (subscribeWaypointV2State_.response.result) {
+    PRINT_INFO("get WpV2Mission state published!");
+  } else {
+    PRINT_ERROR("can NOT get WpV2Mission state published!");
+    return;
+  }
+  if (subscribeWaypointV2Event_.response.result) {
+    PRINT_INFO("get WpV2Mission event published!");
+  } else {
+    PRINT_ERROR("can NOT get WpV2Mission event published!");
+    return;
+  }
+
+  ros::Duration(3.0).sleep();
+  PRINT_INFO("initializing Done");
+}
+
+FFDS::APP::SingleFirePointTaskManager::~SingleFirePointTaskManager() {
+  obtainCtrlAuthority.request.enable_obtain = false;
+  obtain_ctrl_authority_client.call(obtainCtrlAuthority);
+  if (obtainCtrlAuthority.response.result) {
+    PRINT_INFO("release control authority!");
+  } else {
+    PRINT_ERROR("can NOT release control authority!");
+  }
+}
+
 void FFDS::APP::SingleFirePointTaskManager::attitudeSubCallback(
     const geometry_msgs::QuaternionStampedConstPtr &attitudeData) {
   attitude_data_ = *attitudeData;
@@ -30,32 +98,6 @@ void FFDS::APP::SingleFirePointTaskManager::waypointV2MissionEventSubCallback(
     const dji_osdk_ros::WaypointV2MissionEventPush::ConstPtr
         &waypointV2MissionEventPush) {
   waypoint_V2_mission_event_push_ = *waypointV2MissionEventPush;
-
-  ROS_INFO("waypoint_V2_mission_event_push_.event ID :0x%x\n",
-           waypoint_V2_mission_event_push_.event);
-
-  if (waypoint_V2_mission_event_push_.event == 0x01) {
-    ROS_INFO("interruptReason:0x%x\n",
-             waypoint_V2_mission_event_push_.interruptReason);
-  }
-  if (waypoint_V2_mission_event_push_.event == 0x02) {
-    ROS_INFO("recoverProcess:0x%x\n",
-             waypoint_V2_mission_event_push_.recoverProcess);
-  }
-  if (waypoint_V2_mission_event_push_.event == 0x03) {
-    ROS_INFO("finishReason:0x%x\n",
-             waypoint_V2_mission_event_push_.finishReason);
-  }
-
-  if (waypoint_V2_mission_event_push_.event == 0x10) {
-    ROS_INFO("current waypointIndex:%d\n",
-             waypoint_V2_mission_event_push_.waypointIndex);
-  }
-
-  if (waypoint_V2_mission_event_push_.event == 0x11) {
-    ROS_INFO("currentMissionExecNum:%d\n",
-             waypoint_V2_mission_event_push_.currentMissionExecNum);
-  }
 }
 
 /*
@@ -71,18 +113,6 @@ void FFDS::APP::SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
     const dji_osdk_ros::WaypointV2MissionStatePush::ConstPtr
         &waypointV2MissionStatePush) {
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
-
-  ROS_INFO("waypointV2MissionStateSubCallback");
-  ROS_INFO("missionStatePushAck->commonDataVersion:%d\n",
-           waypoint_V2_mission_state_push_.commonDataVersion);
-  ROS_INFO("missionStatePushAck->commonDataLen:%d\n",
-           waypoint_V2_mission_state_push_.commonDataLen);
-  ROS_INFO("missionStatePushAck->data.state:0x%x\n",
-           waypoint_V2_mission_state_push_.state);
-  ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n",
-           waypoint_V2_mission_state_push_.curWaypointIndex);
-  ROS_INFO("missionStatePushAck->data.velocity:%d\n",
-           waypoint_V2_mission_state_push_.velocity);
 }
 
 sensor_msgs::NavSatFix
@@ -134,27 +164,27 @@ matrix::Eulerf FFDS::APP::SingleFirePointTaskManager::getInitAttAverage(
 }
 
 void FFDS::APP::SingleFirePointTaskManager::initMission(
-    dji_osdk_ros::InitWaypointV2Setting *initWaypointV2Setting_) {
+    dji_osdk_ros::InitWaypointV2Setting *initWaypointV2SettingPtr) {
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
-  PRINT_INFO("--------------------- Home Gpos ---------------------")
-  ROS_INFO_STREAM("latitude:" << homeGPos.latitude);
-  ROS_INFO_STREAM("longitude:" << homeGPos.longitude);
-  ROS_INFO_STREAM("altitude:" << homeGPos.altitude);
+  PRINT_DEBUG("--------------------- Home Gpos ---------------------")
+  PRINT_DEBUG("latitude: %f deg", homeGPos.latitude);
+  PRINT_DEBUG("longitude: %f deg", homeGPos.longitude);
+  PRINT_DEBUG("altitude: %f deg", homeGPos.altitude);
 
   matrix::Eulerf initAtt = getInitAttAverage(100);
-  PRINT_INFO("--------------------- Init ENU Attitude ---------------------")
-  ROS_INFO_STREAM(
-      "roll angle phi in ENU frame is:" << TOOLS::Rad2Deg(initAtt.phi()));
-  ROS_INFO_STREAM(
-      "pitch angle theta in ENU frame is:" << TOOLS::Rad2Deg(initAtt.theta()));
-  ROS_INFO_STREAM(
-      "yaw angle psi in ENU frame is:" << TOOLS::Rad2Deg(initAtt.psi()));
+  PRINT_DEBUG("--------------------- Init ENU Attitude ---------------------")
+  PRINT_DEBUG("roll angle phi in ENU frame is: %f",
+              TOOLS::Rad2Deg(initAtt.phi()));
+  PRINT_DEBUG("pitch angle theta in ENU frame is: %f",
+              TOOLS::Rad2Deg(initAtt.theta()));
+  PRINT_DEBUG("yaw angle psi in ENU frame is: %f",
+              TOOLS::Rad2Deg(initAtt.psi()));
 
   /* read the zigzag path shape parameters from yaml */
   const std::string package_path =
       ros::package::getPath("forest_fire_detection_system");
   const std::string config_path = package_path + "/config/ZigzagPathShape.yaml";
-  ROS_INFO_STREAM("Load zigzag shape from:"+ config_path);
+  PRINT_INFO("Load zigzag shape from:%s", config_path.c_str());
   YAML::Node node = YAML::LoadFile(config_path);
 
   int num = TOOLS::getParam(node, "num", 10);
@@ -164,83 +194,136 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
 
   MODULES::ZigzagPathPlanner pathPlanner(homeGPos, num, len, wid, height);
 
-  initWaypointV2Setting_->request.polygonNum = 0;
+  initWaypointV2SettingPtr->request.polygonNum = 0;
 
-  initWaypointV2Setting_->request.radius = 3;
+  initWaypointV2SettingPtr->request.radius = 3;
 
-  initWaypointV2Setting_->request.actionNum = 0;
+  initWaypointV2SettingPtr->request.actionNum = 0;
 
-  initWaypointV2Setting_->request.waypointV2InitSettings.repeatTimes = 1;
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.repeatTimes = 1;
 
-  initWaypointV2Setting_->request.waypointV2InitSettings.finishedAction =
-      initWaypointV2Setting_->request.waypointV2InitSettings
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.finishedAction =
+      initWaypointV2SettingPtr->request.waypointV2InitSettings
           .DJIWaypointV2MissionFinishedGoHome;
 
-  initWaypointV2Setting_->request.waypointV2InitSettings.maxFlightSpeed = 10;
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.maxFlightSpeed = 10;
 
-  initWaypointV2Setting_->request.waypointV2InitSettings.autoFlightSpeed = 2;
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.autoFlightSpeed = 2;
 
-  initWaypointV2Setting_->request.waypointV2InitSettings
+  initWaypointV2SettingPtr->request.waypointV2InitSettings
       .exitMissionOnRCSignalLost = 1;
 
-  initWaypointV2Setting_->request.waypointV2InitSettings.gotoFirstWaypointMode =
-      initWaypointV2Setting_->request.waypointV2InitSettings
+  initWaypointV2SettingPtr->request.waypointV2InitSettings
+      .gotoFirstWaypointMode =
+      initWaypointV2SettingPtr->request.waypointV2InitSettings
           .DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
 
-  initWaypointV2Setting_->request.waypointV2InitSettings.mission =
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.mission =
       pathPlanner.getWpV2Vec(true, true, initAtt.psi());
 
-  initWaypointV2Setting_->request.waypointV2InitSettings.missTotalLen =
-      initWaypointV2Setting_->request.waypointV2InitSettings.mission.size();
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.missTotalLen =
+      initWaypointV2SettingPtr->request.waypointV2InitSettings.mission.size();
+}
+
+void FFDS::APP::SingleFirePointTaskManager::goHomeLand() {
+  PRINT_INFO("going home now");
+  control_task.request.task =
+      dji_osdk_ros::FlightTaskControl::Request::TASK_GOHOME;
+  task_control_client.call(control_task);
+  if (control_task.response.result == true) {
+    PRINT_INFO("go home successful");
+  } else {
+    PRINT_WARN("go home failed.");
+  }
+
+  control_task.request.task =
+      dji_osdk_ros::FlightTaskControl::Request::TASK_LAND;
+  PRINT_INFO(
+      "Landing request sending ... need your confirmation on the remoter!");
+  task_control_client.call(control_task);
+  if (control_task.response.result == true) {
+    PRINT_INFO("land task successful");
+  } else {
+    PRINT_ERROR("land task failed.");
+  }
 }
 
 void FFDS::APP::SingleFirePointTaskManager::run() {
-  dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
-  obtainCtrlAuthority.request.enable_obtain = true;
-  obtain_ctrl_authority_client.call(obtainCtrlAuthority);
+  /* Step: 1 open a thread to call the mission states and events in case of the
+   * long wait... */
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
 
   MODULES::WpV2Operator wpV2Operator(nh);
 
-  /* Step: 1 init the mission */
+  /* Step: 1 init the mission, create the basic waypointV2 vector... */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
   initMission(&initWaypointV2Setting_);
   if (!wpV2Operator.initWaypointV2Setting(&initWaypointV2Setting_)) {
     PRINT_ERROR("Quit!");
     return;
   }
+  ros::Duration(1.0).sleep();
 
-  /* Step: 2 upload mission */
+  /* Step: 2 upload mission, empty srv works */
   dji_osdk_ros::UploadWaypointV2Mission uploadWaypointV2Mission_;
   if (!wpV2Operator.uploadWaypointV2Mission(&uploadWaypointV2Mission_)) {
     PRINT_ERROR("Quit!");
     return;
   }
+  ros::Duration(1.0).sleep();
 
-  /* Step: 3 start mission */
+  /* Step: 3 start mission, empty srv works */
   dji_osdk_ros::StartWaypointV2Mission startWaypointV2Mission_;
   if (!wpV2Operator.startWaypointV2Mission(&startWaypointV2Mission_)) {
     PRINT_ERROR("Quit!");
     return;
   }
+  ros::Duration(30.0).sleep();
 
-  /* Step: 4 call for the potential fire detecting */
+  /* Step: 4 call for the potential fire detecting  */
   bool isPotentialFire = true;
 
   /* Step: 5 main loop */
+  /* 0x6 -> exit mission */
   while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) {
     if (!isPotentialFire) {
       continue;
     } else {
+      PRINT_INFO("potential fire FOUND! call to pause the mission!")
       dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
-      if (!wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_)) {
-        PRINT_ERROR("Quit!");
-        return;
-      }
+      if (!(wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_))) {
+        PRINT_ERROR(
+            "failed to pause the mission, please use remoter to cancle!");
+        break;
+      } else {
+        PRINT_INFO(
+            "potential fire detected, call for gimbal and camera to focus...")
+        FFDS::MODULES::GimbalCameraOperator gcOperator;
 
-      PRINT_INFO("need to call the camera_gimbal!")
+        if (gcOperator.ctrlRotateGimbal(10, 20.0)) {
+          PRINT_INFO("rotate done! zoom the camera!")
+        } else {
+          PRINT_WARN("failed to rotate camera, zoom anyway~");
+        }
+        if (gcOperator.setCameraZoom(5.0)) {
+          PRINT_INFO("zoom done! call for further detecting!")
+        } else {
+          PRINT_WARN("failed to zoom camera, further detect anyway~");
+        }
+        ros::Duration(10.0).sleep();
+
+        PRINT_INFO("further detecting done! go home now!")
+        dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
+        wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_);
+
+        goHomeLand();
+        break;
+      }
     }
   }
 
+  spinner.stop();
   return;
 }
 

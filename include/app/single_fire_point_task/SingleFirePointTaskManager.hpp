@@ -17,18 +17,20 @@
 #ifndef INCLUDE_APP_SINGLE_FIRE_POINT_TASK_SINGLEFIREPOINTTASKMANAGER_HPP_
 #define INCLUDE_APP_SINGLE_FIRE_POINT_TASK_SINGLEFIREPOINTTASKMANAGER_HPP_
 
+#include <dji_osdk_ros/FlightTaskControl.h>
 #include <dji_osdk_ros/ObtainControlAuthority.h>
 #include <dji_osdk_ros/SubscribeWaypointV2Event.h>
 #include <dji_osdk_ros/SubscribeWaypointV2State.h>
 #include <dji_osdk_ros/WaypointV2MissionEventPush.h>
 #include <dji_osdk_ros/WaypointV2MissionStatePush.h>
 #include <geometry_msgs/QuaternionStamped.h>
-#include <ros/ros.h>
 #include <ros/package.h>
+#include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
 #include <tools/PrintControl/PrintCtrlImp.h>
 
 #include <PX4-Matrix/matrix/Euler.hpp>
+#include <modules/GimbalCameraOperator/GimbalCameraOperator.hpp>
 #include <modules/PathPlanner/ZigzagPathPlanner.hpp>
 #include <modules/WayPointOperator/WpV2Operator.hpp>
 #include <tools/SystemLib.hpp>
@@ -45,6 +47,7 @@ class SingleFirePointTaskManager {
   ros::Subscriber waypointV2EventSub;
   ros::Subscriber waypointV2StateSub;
 
+  ros::ServiceClient task_control_client;
   ros::ServiceClient obtain_ctrl_authority_client;
   ros::ServiceClient waypointV2_mission_state_push_client;
   ros::ServiceClient waypointV2_mission_event_push_client;
@@ -57,6 +60,15 @@ class SingleFirePointTaskManager {
   geometry_msgs::QuaternionStamped attitude_data_;
   dji_osdk_ros::WaypointV2MissionEventPush waypoint_V2_mission_event_push_;
   dji_osdk_ros::WaypointV2MissionStatePush waypoint_V2_mission_state_push_;
+
+  /**
+   * ros srv
+   * */
+
+  dji_osdk_ros::FlightTaskControl control_task;
+  dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
+  dji_osdk_ros::SubscribeWaypointV2Event subscribeWaypointV2Event_;
+  dji_osdk_ros::SubscribeWaypointV2State subscribeWaypointV2State_;
 
   /**
    * member functions
@@ -87,38 +99,10 @@ class SingleFirePointTaskManager {
           &waypointV2MissionStatePush);
 
  public:
-  SingleFirePointTaskManager() {
-    obtain_ctrl_authority_client =
-        nh.serviceClient<dji_osdk_ros::ObtainControlAuthority>(
-            "obtain_release_control_authority");
+  SingleFirePointTaskManager();
+  ~SingleFirePointTaskManager();
 
-    waypointV2_mission_state_push_client =
-        nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2Event>(
-            "dji_osdk_ros/waypointV2_subscribeMissionState");
-
-    waypointV2_mission_event_push_client =
-        nh.serviceClient<dji_osdk_ros::SubscribeWaypointV2State>(
-            "dji_osdk_ros/waypointV2_subscribeMissionEvent");
-
-    gpsPositionSub =
-        nh.subscribe("dji_osdk_ros/gps_position", 10,
-                     &SingleFirePointTaskManager::gpsPositionSubCallback, this);
-
-    attitudeSub =
-        nh.subscribe("dji_osdk_ros/attitude", 10,
-                     &SingleFirePointTaskManager::attitudeSubCallback, this);
-
-    waypointV2EventSub = nh.subscribe(
-        "dji_osdk_ros/waypointV2_mission_event", 10,
-        &SingleFirePointTaskManager::waypointV2MissionEventSubCallback, this);
-
-    waypointV2StateSub = nh.subscribe(
-        "dji_osdk_ros/waypointV2_mission_state", 10,
-        &SingleFirePointTaskManager::waypointV2MissionStateSubCallback, this);
-
-    ros::Duration(3.0).sleep();
-    PRINT_INFO("initializing Done");
-  }
+  void goHomeLand();
 
   void run();
 };

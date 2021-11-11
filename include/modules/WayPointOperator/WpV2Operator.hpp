@@ -45,7 +45,43 @@ class WpV2Operator {
    **/
 
  public:
-  explicit WpV2Operator(ros::NodeHandle &handle) : nh(handle) {}
+  explicit WpV2Operator(ros::NodeHandle &handle) : nh(handle) {
+    waypointV2_init_setting_client =
+        nh.serviceClient<dji_osdk_ros::InitWaypointV2Setting>(
+            "dji_osdk_ros/waypointV2_initSetting");
+    waypointV2_generate_actions_client =
+        nh.serviceClient<dji_osdk_ros::GenerateWaypointV2Action>(
+            "dji_osdk_ros/waypointV2_generateActions");
+    waypointV2_upload_mission_client =
+        nh.serviceClient<dji_osdk_ros::UploadWaypointV2Mission>(
+            "dji_osdk_ros/waypointV2_uploadMission");
+    waypointV2_upload_action_client =
+        nh.serviceClient<dji_osdk_ros::UploadWaypointV2Action>(
+            "dji_osdk_ros/waypointV2_uploadAction");
+    waypointV2_download_mission_client =
+        nh.serviceClient<dji_osdk_ros::DownloadWaypointV2Mission>(
+            "dji_osdk_ros/waypointV2_downloadMission");
+    waypointV2_start_mission_client =
+        nh.serviceClient<dji_osdk_ros::StartWaypointV2Mission>(
+            "dji_osdk_ros/waypointV2_startMission");
+    waypointV2_stop_mission_client =
+        nh.serviceClient<dji_osdk_ros::StopWaypointV2Mission>(
+            "dji_osdk_ros/waypointV2_stopMission");
+    waypointV2_pause_mission_client =
+        nh.serviceClient<dji_osdk_ros::PauseWaypointV2Mission>(
+            "dji_osdk_ros/waypointV2_pauseMission");
+    waypointV2_resume_mission_client =
+        nh.serviceClient<dji_osdk_ros::ResumeWaypointV2Mission>(
+            "dji_osdk_ros/waypointV2_resumeMission");
+    waypointV2_set_global_cruisespeed_client =
+        nh.serviceClient<dji_osdk_ros::SetGlobalCruisespeed>(
+            "dji_osdk_ros/waypointV2_setGlobalCruisespeed");
+    waypointV2_get_global_cruisespeed_client =
+        nh.serviceClient<dji_osdk_ros::GetGlobalCruisespeed>(
+            "dji_osdk_ros/waypointV2_getGlobalCruisespeed");
+
+    ros::Duration(3.0).sleep();
+  }
 
   static void setWaypointV2Defaults(dji_osdk_ros::WaypointV2 *waypointV2Ptr);
 
