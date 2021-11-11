@@ -22,6 +22,7 @@ target_link_libraries(
   SingleFirePointTaskManager
   WpV2Operator
   ZigzagPathPlanner
+  GimbalCameraOperator
   ${catkin_LIBRARIES}
   ${YAML_CPP_LIBRARIES}
 )
