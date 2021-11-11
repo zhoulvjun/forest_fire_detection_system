@@ -31,31 +31,31 @@ void FFDS::APP::SingleFirePointTaskManager::waypointV2MissionEventSubCallback(
         &waypointV2MissionEventPush) {
   waypoint_V2_mission_event_push_ = *waypointV2MissionEventPush;
 
-  ROS_INFO("waypoint_V2_mission_event_push_.event ID :0x%x\n",
-           waypoint_V2_mission_event_push_.event);
+  /* ROS_INFO("waypoint_V2_mission_event_push_.event ID :0x%x\n", */
+  /*          waypoint_V2_mission_event_push_.event); */
 
-  if (waypoint_V2_mission_event_push_.event == 0x01) {
-    ROS_INFO("interruptReason:0x%x\n",
-             waypoint_V2_mission_event_push_.interruptReason);
-  }
-  if (waypoint_V2_mission_event_push_.event == 0x02) {
-    ROS_INFO("recoverProcess:0x%x\n",
-             waypoint_V2_mission_event_push_.recoverProcess);
-  }
-  if (waypoint_V2_mission_event_push_.event == 0x03) {
-    ROS_INFO("finishReason:0x%x\n",
-             waypoint_V2_mission_event_push_.finishReason);
-  }
+  /* if (waypoint_V2_mission_event_push_.event == 0x01) { */
+  /*   ROS_INFO("interruptReason:0x%x\n", */
+  /*            waypoint_V2_mission_event_push_.interruptReason); */
+  /* } */
+  /* if (waypoint_V2_mission_event_push_.event == 0x02) { */
+  /*   ROS_INFO("recoverProcess:0x%x\n", */
+  /*            waypoint_V2_mission_event_push_.recoverProcess); */
+  /* } */
+  /* if (waypoint_V2_mission_event_push_.event == 0x03) { */
+  /*   ROS_INFO("finishReason:0x%x\n", */
+  /*            waypoint_V2_mission_event_push_.finishReason); */
+  /* } */
 
-  if (waypoint_V2_mission_event_push_.event == 0x10) {
-    ROS_INFO("current waypointIndex:%d\n",
-             waypoint_V2_mission_event_push_.waypointIndex);
-  }
+  /* if (waypoint_V2_mission_event_push_.event == 0x10) { */
+  /*   ROS_INFO("current waypointIndex:%d\n", */
+  /*            waypoint_V2_mission_event_push_.waypointIndex); */
+  /* } */
 
-  if (waypoint_V2_mission_event_push_.event == 0x11) {
-    ROS_INFO("currentMissionExecNum:%d\n",
-             waypoint_V2_mission_event_push_.currentMissionExecNum);
-  }
+  /* if (waypoint_V2_mission_event_push_.event == 0x11) { */
+  /*   ROS_INFO("currentMissionExecNum:%d\n", */
+  /*            waypoint_V2_mission_event_push_.currentMissionExecNum); */
+  /* } */
 }
 
 /*
@@ -72,17 +72,17 @@ void FFDS::APP::SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
         &waypointV2MissionStatePush) {
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
 
-  ROS_INFO("waypointV2MissionStateSubCallback");
-  ROS_INFO("missionStatePushAck->commonDataVersion:%d\n",
-           waypoint_V2_mission_state_push_.commonDataVersion);
-  ROS_INFO("missionStatePushAck->commonDataLen:%d\n",
-           waypoint_V2_mission_state_push_.commonDataLen);
-  ROS_INFO("missionStatePushAck->data.state:0x%x\n",
-           waypoint_V2_mission_state_push_.state);
-  ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n",
-           waypoint_V2_mission_state_push_.curWaypointIndex);
-  ROS_INFO("missionStatePushAck->data.velocity:%d\n",
-           waypoint_V2_mission_state_push_.velocity);
+  /* ROS_INFO("waypointV2MissionStateSubCallback"); */
+  /* ROS_INFO("missionStatePushAck->commonDataVersion:%d\n", */
+  /*          waypoint_V2_mission_state_push_.commonDataVersion); */
+  /* ROS_INFO("missionStatePushAck->commonDataLen:%d\n", */
+  /*          waypoint_V2_mission_state_push_.commonDataLen); */
+  /* ROS_INFO("missionStatePushAck->data.state:0x%x\n", */
+  /*          waypoint_V2_mission_state_push_.state); */
+  /* ROS_INFO("missionStatePushAck->data.curWaypointIndex:%d\n", */
+  /*          waypoint_V2_mission_state_push_.curWaypointIndex); */
+  /* ROS_INFO("missionStatePushAck->data.velocity:%d\n", */
+  /*          waypoint_V2_mission_state_push_.velocity); */
 }
 
 sensor_msgs::NavSatFix
@@ -137,9 +137,9 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
     dji_osdk_ros::InitWaypointV2Setting *initWaypointV2Setting_) {
   sensor_msgs::NavSatFix homeGPos = getHomeGPosAverage(100);
   PRINT_INFO("--------------------- Home Gpos ---------------------")
-  ROS_INFO_STREAM("latitude:" << homeGPos.latitude);
-  ROS_INFO_STREAM("longitude:" << homeGPos.longitude);
-  ROS_INFO_STREAM("altitude:" << homeGPos.altitude);
+  PRINT_DEBUG("latitude: %f deg" , homeGPos.latitude);
+  PRINT_DEBUG("longitude: %f deg" , homeGPos.longitude);
+  PRINT_DEBUG("altitude: %f deg" , homeGPos.altitude);
 
   matrix::Eulerf initAtt = getInitAttAverage(100);
   PRINT_INFO("--------------------- Init ENU Attitude ---------------------")
@@ -195,6 +195,8 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
 }
 
 void FFDS::APP::SingleFirePointTaskManager::run() {
+
+
   dji_osdk_ros::ObtainControlAuthority obtainCtrlAuthority;
   obtainCtrlAuthority.request.enable_obtain = true;
   obtain_ctrl_authority_client.call(obtainCtrlAuthority);
@@ -235,12 +237,14 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
       continue;
     } else {
       dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
-      if (!wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_)) {
+      if (!(wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_))) {
         PRINT_ERROR("Quit!");
         return;
+      }else{
+      PRINT_INFO("need to call the camera_gimbal! Later...")
+          return;
       }
 
-      PRINT_INFO("need to call the camera_gimbal!")
     }
   }
 

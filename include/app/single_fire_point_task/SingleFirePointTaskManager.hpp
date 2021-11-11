@@ -59,6 +59,13 @@ class SingleFirePointTaskManager {
   dji_osdk_ros::WaypointV2MissionStatePush waypoint_V2_mission_state_push_;
 
   /**
+   * ros srv
+   * */
+
+  dji_osdk_ros::SubscribeWaypointV2Event subscribeWaypointV2Event_;
+  dji_osdk_ros::SubscribeWaypointV2State subscribeWaypointV2State_;
+
+  /**
    * member functions
    * */
 
@@ -116,8 +123,27 @@ class SingleFirePointTaskManager {
         "dji_osdk_ros/waypointV2_mission_state", 10,
         &SingleFirePointTaskManager::waypointV2MissionStateSubCallback, this);
 
-    ros::Duration(3.0).sleep();
-    PRINT_INFO("initializing Done");
+    /* get the WpV2Mission states to be published ... */
+  subscribeWaypointV2Event_.request.enable_sub = true;
+  subscribeWaypointV2State_.request.enable_sub = true;
+  waypointV2_mission_state_push_client.call(subscribeWaypointV2State_);
+  waypointV2_mission_event_push_client.call(subscribeWaypointV2Event_);
+  if (subscribeWaypointV2State_.response.result){
+      PRINT_INFO("get WpV2Mission state published!");
+  } else{
+          PRINT_ERROR("can NOT get WpV2Mission state published!");
+      }
+  if (subscribeWaypointV2Event_.response.result){
+      PRINT_INFO("get WpV2Mission event published!");
+  } else{
+          PRINT_ERROR("can NOT get WpV2Mission event published!");
+      }
+
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+
+  ros::Duration(3.0).sleep();
+  PRINT_INFO("initializing Done");
   }
 
   void run();
