@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*- #
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 #
-#   Copyright (C) 2021 Concordia NAVLab. All rights reserved.
+#   Copyright (C) 2021 Lee Ltd. All rights reserved.
 #
 #   @Filename: detection.py
 #
@@ -11,11 +11,11 @@
 #
 #   @Date: 2021-09-29
 #
-#   @Email: 742954173@qq.com
+#   @Email: 2015097272@qq.com
 #
-#   @Description:
+#   @Description: 
 #
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 from albumentations.pytorch.transforms import ToTensor
 import torch
 import albumentations as A
@@ -23,9 +23,9 @@ from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
-from LightUnetModel import UnetLight
+from fastaiunetmodel000 import pureunet
 
-from LightUnetUtils import (
+from fastaiunetutils000 import (
     load_checkpoint,
     save_checkpoint,
     get_loaders,
@@ -36,31 +36,29 @@ from LightUnetUtils import (
 # hyper-parameters etc.
 LEARNING_RATE = 1e-6
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-BATCH_SIZE = 2  # 32
-NUM_EPOCHS = 1
+BATCH_SIZE = 1 # 32
+NUM_EPOCHS = 5
 NUM_WORKERS = 2
-IMAGE_HEIGHT = 255  # original 1280
-IMAGE_WIDTH = 255  # original 1918
+IMAGE_HEIGHT = 255 # original 1280
+IMAGE_WIDTH = 255 # original 1918
 PIN_MEMORY = True
 # LOAD_MODEL = False # original
 LOAD_MODEL = False
-TRAIN_IMG_DIR = '../datas/Smoke_segmentation/all_image/'
-TRAIN_MASK_DIR = '../datas/Smoke_segmentation/all_mask'
-VAL_IMG_DIR = '../datas/Smoke_segmentation/testing'
-VAL_MASK_DIR = '../datas/Smoke_segmentation/gt_testing'
-
+TRAIN_IMG_DIR = 'datas/fs'
+TRAIN_MASK_DIR = 'datas/fslabel'
+VAL_IMG_DIR = 'datas/fs'
+VAL_MASK_DIR = 'datas/fslabel'
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
     for batch_idx, (data, targets) in enumerate(loop):
-        data = data.to(device=DEVICE)
-        targets = targets.float().unsqueeze(1).to(
-            device=DEVICE)  # float, cross-entropy
-
+        data = data.to(device = DEVICE)
+        targets = targets.float().unsqueeze(1).to(device = DEVICE) # float, cross-entropy
+        
         # forward
-        # with torch.cuda.amp.autocast():
-        predictions = model(data)
-        loss = loss_fn(predictions, targets)
+        with torch.cuda.amp.autocast():
+            predictions = model(data)
+            loss = loss_fn(predictions, targets)
 
         # backward
         optimizer.zero_grad()
@@ -69,21 +67,21 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         scaler.update()
 
         # update tqam loop show loss
-        loop.set_postfix(loss=loss.item())  # for 1 epoch
+        loop.set_postfix(loss = loss.item()) # for 1 epoch
 
 
 # data augmentation
 def main():
     train_transform = A.Compose(
         [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Rotate(limit=35, p=1.0),  # rotation
-            A.HorizontalFlip(p=0.5),  # flip
-            A.VerticalFlip(p=0.1),
+            A.Resize(height = IMAGE_HEIGHT, width = IMAGE_WIDTH),
+            A.Rotate(limit = 35, p = 1.0), # rotation
+            A.HorizontalFlip(p = 0.5), # flip
+            A.VerticalFlip(p = 0.1),
             A.Normalize(
-                mean=[0.0, 0.0, 0.0],
-                std=[1.0, 1.0, 1.0],
-                max_pixel_value=255.0  # deviding by 255
+                mean = [0.0, 0.0, 0.0],
+                std = [1.0, 1.0, 1.0],
+                max_pixel_value = 255.0 # deviding by 255
             ),
             ToTensorV2()
         ]
@@ -91,23 +89,23 @@ def main():
 
     val_transforms = A.Compose(
         [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Rotate(limit=35, p=1.0),  # rotation
-            A.HorizontalFlip(p=0.5),  # flip
-            A.VerticalFlip(p=0.1),
+            A.Resize(height = IMAGE_HEIGHT, width = IMAGE_WIDTH),
+            A.Rotate(limit = 35, p = 1.0), # rotation
+            A.HorizontalFlip(p = 0.5), # flip
+            A.VerticalFlip(p = 0.1),
             A.Normalize(
-                mean=[0.0, 0.0, 0.0],
-                std=[1.0, 1.0, 1.0],
-                max_pixel_value=255.0  # deviding by 255
+                mean = [0.0, 0.0, 0.0],
+                std = [1.0, 1.0, 1.0],
+                max_pixel_value = 255.0 # deviding by 255
             ),
             ToTensorV2()
         ]
     )
 
-    model = UnetLight().to(DEVICE)
-    loss_fn = nn.BCEWithLogitsLoss()  # binary cross-entropy with logits
+    model = pureunet(in_channels=3, out_channels=1).to(DEVICE)
+    loss_fn = nn.BCEWithLogitsLoss() # binary cross-entropy with logits
     # loss_fn = nn.BCELoss()
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = optim.Adam(model.parameters(), lr = LEARNING_RATE)
 
     # data_loader
     train_loader, val_loader = get_loaders(
@@ -123,19 +121,19 @@ def main():
     )
 
     if LOAD_MODEL:
-        load_checkpoint(torch.load("final.pth"), model)
+        load_checkpoint(torch.load("pureunet.pth.tar"), model)
 
     scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(NUM_EPOCHS):
         train_fn(train_loader, model, optimizer, loss_fn, scaler)
 
-        # save model
+        # save model 
         checkpoint = {
             "state_dict": model.state_dict(),
             "optimizer": optimizer.state_dict()
         }
-        # save_checkpoint(checkpoint)
+        #ßsave_checkpoint(checkpoint)
 
         # check accuracy
         check_accuracy(val_loader, model, device=DEVICE)
@@ -146,7 +144,6 @@ def main():
         # )
 
     torch.save(model.state_dict(), 'final.pth')
-
 
 if __name__ == '__main__':
     main()
