@@ -1,13 +1,34 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- #
+
+# ------------------------------------------------------------------------------
+#
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
+#
+#   @Filename: resnet34_inference.py
+#
+#   @Author: Linhan Qiao
+#
+#   @Date: 2021-11-11
+#
+#   @Email:
+#
+#   @Description:
+#
+# ------------------------------------------------------------------------------
+
+
 import torch
 import cv2
 import torchvision.transforms as transforms
 import argparse
 from resnet34_model import build_model
+
 # construct the argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--input', 
-    default='input/test_data/cloudy.jpeg',
-    help='path to the input image')
+parser.add_argument('-i', '--input',
+                    default='input/test_data/cloudy.jpeg',
+                    help='path to the input image')
 args = vars(parser.parse_args())
 # the computation device
 device = 'cpu'
@@ -31,7 +52,7 @@ transform = transforms.Compose([
         mean=[0.485, 0.456, 0.406],
         std=[0.229, 0.224, 0.225]
     )
-]) 
+])
 
 # read and preprocess the image
 image = cv2.imread(args['input'])
@@ -47,23 +68,20 @@ with torch.no_grad():
     outputs = model(image.to(device))
 output_label = torch.topk(outputs, 1)
 pred_class = labels[int(output_label.indices)]
-cv2.putText(orig_image, 
-    f"GT: {gt_class}",
-    (10, 25),
-    cv2.FONT_HERSHEY_SIMPLEX, 
-    1, (0, 255, 0), 2, cv2.LINE_AA
-)
-cv2.putText(orig_image, 
-    f"Pred: {pred_class}",
-    (10, 55),
-    cv2.FONT_HERSHEY_SIMPLEX, 
-    1, (0, 0, 255), 2, cv2.LINE_AA
-)
+cv2.putText(orig_image,
+            f"GT: {gt_class}",
+            (10, 25),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1, (0, 255, 0), 2, cv2.LINE_AA
+            )
+cv2.putText(orig_image,
+            f"Pred: {pred_class}",
+            (10, 55),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1, (0, 0, 255), 2, cv2.LINE_AA
+            )
 print(f"GT: {gt_class}, pred: {pred_class}")
 cv2.imshow('Result', orig_image)
 cv2.waitKey(0)
 cv2.imwrite(f"outputs/{gt_class}.png",
-    orig_image)
-
-
-# python resnet34_inference.py --input input/test_data
+            orig_image)
