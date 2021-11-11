@@ -1,0 +1,4 @@
+<launch>
+    <node name="org_image_recorder" pkg="image_view" type="video_recorder" args="image:=/camera/rgb/image_raw" respawn="true" output="screen"></node>
+</launch>
+
