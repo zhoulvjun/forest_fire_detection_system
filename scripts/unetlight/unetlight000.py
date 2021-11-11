@@ -1,6 +1,6 @@
 # 2021-10-5
 # To decrease complexity and decrease numorous of params
-# so taht the U-net could work on M300
+# so that the U-net could work on M300
 # based on the strucutre https://ieeexplore.ieee.org/abstract/document/9319207
 # attention not applied yet
 

@@ -15,6 +15,7 @@ class Conv0(nn.Module):
         )
     def forward(self, x):   
         return self.conv0(x)
+        
 # conv layer in residual blocks
 class Block(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -40,7 +41,7 @@ class Block(nn.Module):
         x += residual
         x = self.relu(x)
         return x
-        
+
 ###################
 # # test: to match the blocked shapes
 # x_block = torch.randn((1, 3, 255, 255))
