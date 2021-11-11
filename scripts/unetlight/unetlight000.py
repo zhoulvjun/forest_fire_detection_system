@@ -2,7 +2,7 @@
 # To decrease complexity and decrease numorous of params
 # so that the U-net could work on M300
 # based on the strucutre https://ieeexplore.ieee.org/abstract/document/9319207
-# attention not applied yet
+# 2021-11-11: added squeeze structure and attention gate
 
 from typing_extensions import Concatenate
 import torch
