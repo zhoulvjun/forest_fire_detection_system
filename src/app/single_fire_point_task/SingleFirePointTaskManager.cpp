@@ -314,7 +314,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
       isPotFireNum += 1;
     }
 
-    if (isPotFireNum < 5) {
+    if (isPotFireNum < 25) {
       PRINT_INFO("potential fire FOUND %d times! NOT stable enough!",
                  isPotFireNum);
     } else {
