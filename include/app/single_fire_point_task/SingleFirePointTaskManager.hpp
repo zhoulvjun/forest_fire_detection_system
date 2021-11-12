@@ -23,6 +23,7 @@
 #include <dji_osdk_ros/SubscribeWaypointV2State.h>
 #include <dji_osdk_ros/WaypointV2MissionEventPush.h>
 #include <dji_osdk_ros/WaypointV2MissionStatePush.h>
+#include <forest_fire_detection_system/SingleFirePosIR.h>
 #include <geometry_msgs/QuaternionStamped.h>
 #include <ros/package.h>
 #include <ros/ros.h>
@@ -60,6 +61,7 @@ class SingleFirePointTaskManager {
   geometry_msgs::QuaternionStamped attitude_data_;
   dji_osdk_ros::WaypointV2MissionEventPush waypoint_V2_mission_event_push_;
   dji_osdk_ros::WaypointV2MissionStatePush waypoint_V2_mission_state_push_;
+  forest_fire_detection_system::SingleFirePosIR signleFirePos;
 
   /**
    * ros srv
@@ -97,6 +99,9 @@ class SingleFirePointTaskManager {
   void waypointV2MissionStateSubCallback(
       const dji_osdk_ros::WaypointV2MissionStatePush::ConstPtr
           &waypointV2MissionStatePush);
+
+  void singleFirePosIRCallback(
+      const forest_fire_detection_system::SingleFirePosIR::ConstPtr &sfPos);
 
  public:
   SingleFirePointTaskManager();

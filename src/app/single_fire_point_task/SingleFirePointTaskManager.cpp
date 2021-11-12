@@ -115,6 +115,11 @@ void FFDS::APP::SingleFirePointTaskManager::waypointV2MissionStateSubCallback(
   waypoint_V2_mission_state_push_ = *waypointV2MissionStatePush;
 }
 
+void FFDS::APP::SingleFirePointTaskManager::singleFirePosIRCallback(
+    const forest_fire_detection_system::SingleFirePosIR::ConstPtr &sfPos) {
+  signleFirePos = *sfPos;
+}
+
 sensor_msgs::NavSatFix
 FFDS::APP::SingleFirePointTaskManager::getHomeGPosAverage(int times) {
   sensor_msgs::NavSatFix homeGPos;
@@ -273,24 +278,31 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
   }
   ros::Duration(1.0).sleep();
 
+  PRINT_INFO("WpV2Mission init finish, are you ready to start? y/n");
+  char inputConfirm;
+  std::cin >> inputConfirm;
+  if (inputConfirm == 'n') {
+    PRINT_WARN("exist!");
+    return;
+  }
+
   /* Step: 3 start mission, empty srv works */
   dji_osdk_ros::StartWaypointV2Mission startWaypointV2Mission_;
   if (!wpV2Operator.startWaypointV2Mission(&startWaypointV2Mission_)) {
     PRINT_ERROR("Quit!");
     return;
   }
-  ros::Duration(30.0).sleep();
-
-  /* Step: 4 call for the potential fire detecting  */
-  bool isPotentialFire = true;
+  ros::Duration(1.0).sleep();
 
   /**
-   * Step: 5 main loop
-   * 1. "break" in the following while-loop is only for serious error and task exit...
+   * Step: 4 main loop
+   * 1. "break" in the following while-loop is only for serious error and task
+   *exit...
    * 2. 0x6 == exit waypointV2 mission
    **/
   while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) {
-    if (!isPotentialFire) {
+    if (!signleFirePos.is_pot_fire) {
+      ros::Duration(0.5).sleep();
       continue;
     }
 
@@ -324,7 +336,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
     }
 
     /* call for detecting */
-    ros::Duration(10.0).sleep();
+    ros::Duration(30.0).sleep();
 
     PRINT_INFO("further detecting done! reset gimbal and camera!")
     if (gcOperator.resetGimbal()) {
@@ -348,8 +360,6 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
 
     goHomeLand();
     break;
-
-    ros::Rate(10).sleep();
   }
 
   spinner.stop();
