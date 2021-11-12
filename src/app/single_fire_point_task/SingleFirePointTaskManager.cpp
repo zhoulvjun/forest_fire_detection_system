@@ -41,6 +41,9 @@ FFDS::APP::SingleFirePointTaskManager::SingleFirePointTaskManager() {
   waypointV2StateSub = nh.subscribe(
       "dji_osdk_ros/waypointV2_mission_state", 10,
       &SingleFirePointTaskManager::waypointV2MissionStateSubCallback, this);
+    singleFirePosIRSub =
+      nh.subscribe("forest_fire_detection_system/single_fire_pos_ir_img", 10,
+                    &SingleFirePointTaskManager::singleFirePosIRCallback, this);
 
   /* obtain the authorization when really needed... Now :) */
   obtainCtrlAuthority.request.enable_obtain = true;

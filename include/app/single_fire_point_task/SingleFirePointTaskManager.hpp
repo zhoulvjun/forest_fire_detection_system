@@ -47,6 +47,7 @@ class SingleFirePointTaskManager {
   ros::Subscriber attitudeSub;
   ros::Subscriber waypointV2EventSub;
   ros::Subscriber waypointV2StateSub;
+  ros::Subscriber singleFirePosIRSub;
 
   ros::ServiceClient task_control_client;
   ros::ServiceClient obtain_ctrl_authority_client;
