@@ -37,6 +37,7 @@
 #include <tools/SystemLib.hpp>
 
 namespace FFDS {
+
 namespace APP {
 
 class SingleFirePointTaskManager {

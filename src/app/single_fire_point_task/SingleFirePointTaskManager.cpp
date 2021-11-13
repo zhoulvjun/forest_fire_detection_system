@@ -257,11 +257,6 @@ void FFDS::APP::SingleFirePointTaskManager::goHomeLand() {
 }
 
 void FFDS::APP::SingleFirePointTaskManager::run() {
-  /* Step: 1 open a thread to call the mission states and events in case of the
-   * long wait... */
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
   FFDS::MODULES::WpV2Operator wpV2Operator;
   FFDS::MODULES::GimbalCameraOperator gcOperator;
 
@@ -306,17 +301,19 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
    **/
   int isPotFireNum = 0;
   while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) {
+    ros::spinOnce();
     if (!signleFirePos.is_pot_fire) {
       isPotFireNum = 0;
-      ros::Duration(0.5).sleep();
       continue;
     } else {
       isPotFireNum += 1;
     }
 
     if (isPotFireNum < 25) {
-      PRINT_INFO("potential fire FOUND %d times! NOT stable enough!",
-                 isPotFireNum);
+      PRINT_INFO(
+          "potential fire FOUND %d times! NOT stable enough, check again!",
+          isPotFireNum);
+      ros::Rate(2).sleep();
     } else {
       PRINT_INFO("potential fire FOUND %d times! call to pause the mission!",
                  isPotFireNum);
@@ -376,7 +373,6 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
     }
   }
 
-  spinner.stop();
   return;
 }
 
