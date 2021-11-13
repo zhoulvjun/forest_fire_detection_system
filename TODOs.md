@@ -1,0 +1,4 @@
+- [ ] send the camera to the ground computer to do futher segmentation.
+- [ ] classifier: YOLOv3 and IR threshold.
+- [x] Gimbal controller PID
+- [ ] 
