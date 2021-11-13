@@ -260,6 +260,13 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
   FFDS::MODULES::WpV2Operator wpV2Operator;
   FFDS::MODULES::GimbalCameraOperator gcOperator;
 
+  /* Step: 0 reset the camera and gimbal */
+  if (gcOperator.resetCameraZoom() && gcOperator.resetGimbal()) {
+    PRINT_INFO("reset camera and gimbal successfully!")
+  } else {
+    PRINT_WARN("reset camera and gimbal failed!")
+  }
+
   /* Step: 1 init the mission, create the basic waypointV2 vector... */
   dji_osdk_ros::InitWaypointV2Setting initWaypointV2Setting_;
   initMission(&initWaypointV2Setting_);
