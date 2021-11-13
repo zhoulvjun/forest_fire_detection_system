@@ -306,6 +306,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
    *exit...
    * 2. 0x6 == exit waypointV2 mission
    **/
+  PRINT_INFO("start find the potential fire~");
   int isPotFireNum = 0;
   while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) {
     ros::spinOnce();
@@ -316,7 +317,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
       isPotFireNum += 1;
     }
 
-    if (isPotFireNum < 25) {
+    if (isPotFireNum < 10) {
       PRINT_INFO(
           "potential fire FOUND %d times! NOT stable enough, check again!",
           isPotFireNum);
