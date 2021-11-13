@@ -88,19 +88,19 @@ class PotentialFireIrFinder():
             best_pos = coord_list[best_index]
 
             self.pot_fire_pos.is_pot_fire = True
-            self.pot_fire_pos.x = best_pos[0] + windowSize[0] / 2
-            self.pot_fire_pos.y = best_pos[1] + windowSize[1] / 2
+            self.pot_fire_pos.img_x = best_pos[0] + windowSize[0] / 2
+            self.pot_fire_pos.img_y = best_pos[1] + windowSize[1] / 2
 
-            rospy.loginfo("pot_fire_pos.x: %d", self.pot_fire_pos.x)
-            rospy.loginfo("pot_fire_pos.y: %d", self.pot_fire_pos.y)
+            rospy.loginfo("pot_fire_pos.x: %d", self.pot_fire_pos.img_x)
+            rospy.loginfo("pot_fire_pos.y: %d", self.pot_fire_pos.img_y)
 
             cv2.rectangle(
                 self.ir_img, (best_pos[0], best_pos[1]),
                 (best_pos[0] + windowSize[0], best_pos[1] + windowSize[1]),
                 (0, 255, 0), 2)
         else:
-            self.pot_fire_pos.x = -1
-            self.pot_fire_pos.y = -1
+            self.pot_fire_pos.img_x = -1
+            self.pot_fire_pos.img_y = -1
             self.pot_fire_pos.is_pot_fire = False
             rospy.loginfo("no potential fire currently!")
 

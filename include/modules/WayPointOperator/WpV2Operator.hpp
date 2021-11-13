@@ -45,7 +45,7 @@ class WpV2Operator {
    **/
 
  public:
-  explicit WpV2Operator(ros::NodeHandle &handle) : nh(handle) {
+  WpV2Operator() {
     waypointV2_init_setting_client =
         nh.serviceClient<dji_osdk_ros::InitWaypointV2Setting>(
             "dji_osdk_ros/waypointV2_initSetting");
@@ -121,7 +121,7 @@ class WpV2Operator {
       dji_osdk_ros::GetGlobalCruisespeed *getGlobalCruisespeedPtr);
 
  private:
-  ros::NodeHandle &nh;
+  ros::NodeHandle nh;
 
   ros::ServiceClient waypointV2_init_setting_client;
   ros::ServiceClient waypointV2_generate_actions_client;

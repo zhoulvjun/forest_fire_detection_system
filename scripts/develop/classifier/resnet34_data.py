@@ -1,3 +1,23 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- #
+
+# ------------------------------------------------------------------------------
+#
+#   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
+#
+#   @Filename: resnet34_data.py
+#
+#   @Author: Linhan qiao
+#
+#   @Date: 2021-11-11
+#
+#   @Email:
+#
+#   @Description:
+#
+# ------------------------------------------------------------------------------
+
+
 import torch
 from torch.utils.data import DataLoader, Subset
 from torchvision import datasets, transforms
@@ -50,3 +70,4 @@ train_loader = DataLoader(
 valid_loader = DataLoader(
     dataset_valid, batch_size=batch_size, shuffle=False, num_workers=4
 )
+
