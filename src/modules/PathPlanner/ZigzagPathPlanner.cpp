@@ -104,8 +104,6 @@ void FFDS::MODULES::ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
   }
 }
 
-/* FIXME: if use "position", will encouter the waypoint position exceed radius
- * limit... */
 void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec() {
   dji_osdk_ros::WaypointV2 wpV2;
   MODULES::WpV2Operator::setWaypointV2Defaults(&wpV2);

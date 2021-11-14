@@ -4,7 +4,8 @@
 
 - [x] Class waypointV2Operation.cpp in common.
 - [x] the beginning coordinates? Use a simple static rotation...
-- [ ] use the position instead of the gps position first.
+- [x] use the position instead of the gps position first. it NOT the local
+  position, it is hotpoint position...
 - [x] pay attention to the heading.
 
 ## about the find potential fire position

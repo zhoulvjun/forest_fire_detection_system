@@ -146,7 +146,6 @@ bool TestSimpleCommand::moveByPosOffset(
   return task.response.result;
 }
 
-/* TODO: To test the control authority! */
 int TestSimpleCommand::run(float desired_height, float zigzag_len,
                            float zigzag_wid, float zigzag_num) {
   ros::Rate rate(1);
