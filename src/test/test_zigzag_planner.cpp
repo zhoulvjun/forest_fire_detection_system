@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
   float heading = FFDS::TOOLS::Deg2Rad(60);
 
-  waypointVec = zigzagPlanner.getWpV2Vec(true, true, heading);
+  waypointVec = zigzagPlanner.getWpV2Vec(true, heading);
 
   FFDS::TOOLS::GoogleEarthPath path("/home/ls/path1.kml", "path1");
   double longitude, latitude;
