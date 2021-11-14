@@ -1,4 +1,13 @@
-- [ ] Class waypointV2Operation.cpp in commom
-- [ ] the beginning coordinates?
+# TODOs
+
+## about the app
+
+- [x] Class waypointV2Operation.cpp in commom
+- [x] the beginning coordinates?
 - [ ] use the position instead of the gps position first.
-- [ ] pay attention to the heading.
+- [x] pay attention to the heading.
+
+## about the find potential fire position
+
+- [ ] send the camera to the ground computer to do further segmentation.
+- [ ] classifier: YOLOv3 and IR threshold.
