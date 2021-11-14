@@ -105,16 +105,16 @@ std::vector<dji_osdk_ros::WaypointV2> generatePolygonWaypoints(
   dji_osdk_ros::WaypointV2 startPoint;
   dji_osdk_ros::WaypointV2 waypointV2;
 
+  wpv2operator.setWaypointV2Defaults(&startPoint);
   startPoint.latitude = gps_position_.latitude * M_PI / 180.0;
   startPoint.longitude = gps_position_.longitude * M_PI / 180.0;
   startPoint.relativeHeight = 15;
-  wpv2operator.setWaypointV2Defaults(&startPoint);
   waypointList.push_back(startPoint);
 
   // Iterative algorithm
   for (int i = 0; i < polygonNum; i++) {
-    DJI::OSDK::float32_t angle = i * 2 * M_PI / polygonNum;
     wpv2operator.setWaypointV2Defaults(&waypointV2);
+    DJI::OSDK::float32_t angle = i * 2 * M_PI / polygonNum;
     DJI::OSDK::float32_t X = radius * cos(angle);
     DJI::OSDK::float32_t Y = radius * sin(angle);
     waypointV2.latitude = Y / FFDS::TOOLS::EARTH_R + startPoint.latitude;
