@@ -214,9 +214,9 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
       initWaypointV2SettingPtr->request.waypointV2InitSettings
           .DJIWaypointV2MissionFinishedGoHome;
 
-  initWaypointV2SettingPtr->request.waypointV2InitSettings.maxFlightSpeed = 10;
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.maxFlightSpeed = 5;
 
-  initWaypointV2SettingPtr->request.waypointV2InitSettings.autoFlightSpeed = 2;
+  initWaypointV2SettingPtr->request.waypointV2InitSettings.autoFlightSpeed = 1;
 
   initWaypointV2SettingPtr->request.waypointV2InitSettings
       .exitMissionOnRCSignalLost = 1;
@@ -227,7 +227,7 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
           .DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
 
   initWaypointV2SettingPtr->request.waypointV2InitSettings.mission =
-      pathPlanner.getWpV2Vec(true, true, initAtt.psi());
+      pathPlanner.getWpV2Vec(false, true, initAtt.psi());
 
   initWaypointV2SettingPtr->request.waypointV2InitSettings.missTotalLen =
       initWaypointV2SettingPtr->request.waypointV2InitSettings.mission.size();
