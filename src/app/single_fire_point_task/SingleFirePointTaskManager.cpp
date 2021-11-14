@@ -227,7 +227,7 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(
           .DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
 
   initWaypointV2SettingPtr->request.waypointV2InitSettings.mission =
-      pathPlanner.getWpV2Vec(false, true, initAtt.psi());
+      pathPlanner.getWpV2Vec(true, true, initAtt.psi());
 
   initWaypointV2SettingPtr->request.waypointV2InitSettings.missTotalLen =
       initWaypointV2SettingPtr->request.waypointV2InitSettings.mission.size();
