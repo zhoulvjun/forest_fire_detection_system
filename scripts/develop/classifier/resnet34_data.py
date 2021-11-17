@@ -24,7 +24,7 @@ from torchvision import datasets, transforms
 # ratio of data to use for validation
 valid_split = 0.2
 # batch size
-batch_size = 8
+batch_size = 4
 # path to the data root directory
 root_dir = '/home/qiao/dev/giao/dataset/imgs/M300test01/trainused/'
 
