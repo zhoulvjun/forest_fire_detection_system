@@ -107,8 +107,8 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
 
       PRINT_INFO("current control times: %d, tolerance: %d", ctrl_times, times);
 
-      float errX = setPosXPix - firePosPix.x;
-      float errY = setPosYPix - firePosPix.y;
+      float errX = setPosXPix - firePosPix.img_x;
+      float errY = setPosYPix - firePosPix.img_y;
       PRINT_DEBUG("err Yaw:%f pixel", errX);
       PRINT_DEBUG("err Pitch:%f pixel", errY);
 

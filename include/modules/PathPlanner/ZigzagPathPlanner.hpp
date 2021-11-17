@@ -46,8 +46,7 @@ class ZigzagPathPlanner : public MODULES::PathPlannerBase {
   void setParams(sensor_msgs::NavSatFix home, int num, float len, float wid,
                  float height);
 
-  std::vector<dji_osdk_ros::WaypointV2>& getWpV2Vec(bool isGlobal,
-                                                    bool useInitHeadDirection,
+  std::vector<dji_osdk_ros::WaypointV2>& getWpV2Vec(bool useInitHeadDirection,
                                                     float homeHeadRad);
 
  private:
@@ -74,7 +73,7 @@ class ZigzagPathPlanner : public MODULES::PathPlannerBase {
 
   void HEarth2Earth(float homeHeadRad);
 
-  void feedWp2Vec(bool isGlobal);
+  void feedWp2Vec();
 };
 
 }  // namespace MODULES

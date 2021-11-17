@@ -16,7 +16,6 @@
 
 #include <modules/WayPointOperator/WpV2Operator.hpp>
 
-/* TODO: to deal with the local_pos and gpos, as well as the test */
 void FFDS::MODULES::WpV2Operator::setWaypointV2Defaults(
     dji_osdk_ros::WaypointV2 *waypointV2Ptr) {
   waypointV2Ptr->waypointType =
@@ -25,15 +24,19 @@ void FFDS::MODULES::WpV2Operator::setWaypointV2Defaults(
   waypointV2Ptr->config.useLocalCruiseVel = 0;
   waypointV2Ptr->config.useLocalMaxVel = 0;
 
-  waypointV2Ptr->dampingDistance = 20;
+  waypointV2Ptr->dampingDistance = 20.0;
   waypointV2Ptr->heading = 0;
   waypointV2Ptr->turnMode = DJI::OSDK::DJIWaypointV2TurnModeClockwise;
 
-  waypointV2Ptr->positionX = 0;
-  waypointV2Ptr->positionY = 0;
-  waypointV2Ptr->positionZ = 0;
-  waypointV2Ptr->maxFlightSpeed = 9;
-  waypointV2Ptr->autoFlightSpeed = 2;
+  waypointV2Ptr->positionX = 0.0;
+  waypointV2Ptr->positionY = 0.0;
+  waypointV2Ptr->positionZ = 0.0;
+  waypointV2Ptr->relativeHeight = 0.0;
+  waypointV2Ptr->longitude = 0.0;
+  waypointV2Ptr->latitude = 0.0;
+
+  waypointV2Ptr->maxFlightSpeed = 5.0;
+  waypointV2Ptr->autoFlightSpeed = 1.0;
 }
 
 bool FFDS::MODULES::WpV2Operator::initWaypointV2Setting(

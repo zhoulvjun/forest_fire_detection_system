@@ -104,7 +104,7 @@ void FFDS::MODULES::ZigzagPathPlanner::HEarth2Earth(float homeHeadRad) {
   }
 }
 
-void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
+void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec() {
   dji_osdk_ros::WaypointV2 wpV2;
   MODULES::WpV2Operator::setWaypointV2Defaults(&wpV2);
 
@@ -116,27 +116,22 @@ void FFDS::MODULES::ZigzagPathPlanner::feedWp2Vec(bool isGlobal) {
   for (int i = 0; i < LocalPosVec.size(); ++i) {
     MODULES::WpV2Operator::setWaypointV2Defaults(&wpV2);
 
-    if (isGlobal) {
-      /* NOTE: gps is represented by rad in DJI. */
-      TOOLS::Meter2LatLongAlt<double>(ref, LocalPosVec[i], result);
-      wpV2.latitude = TOOLS::Deg2Rad(result[0]);
-      wpV2.longitude = TOOLS::Deg2Rad(result[1]);
-      wpV2.relativeHeight = LocalPosVec[i].z;
-
-    } else {
-      wpV2.positionX = LocalPosVec[i].x;
-      wpV2.positionY = LocalPosVec[i].y;
-      wpV2.positionZ = LocalPosVec[i].z;
-    }
+    /* NOTE: gps is represented by rad in DJI, but use degree in the
+     * NOTE: HotpointMission ......
+     * NOTE: use x->latitude(north and south), use y->longitude(west and east)
+     * NOTE: so we use loal as NED.
+     */
+    TOOLS::Meter2LatLongAlt<double>(ref, LocalPosVec[i], result);
+    wpV2.latitude = TOOLS::Deg2Rad(result[0]);
+    wpV2.longitude = TOOLS::Deg2Rad(result[1]);
+    wpV2.relativeHeight = LocalPosVec[i].z;
 
     wpV2Vec.push_back(wpV2);
   }
 }
 
-/* NOTE: The gps pos is in RAD!!  */
 std::vector<dji_osdk_ros::WaypointV2>&
-FFDS::MODULES::ZigzagPathPlanner::getWpV2Vec(bool isGlobal,
-                                             bool useInitHeadDirection,
+FFDS::MODULES::ZigzagPathPlanner::getWpV2Vec(bool useInitHeadDirection,
                                              float homeHeadRad) {
   /* Step: 1 generate the local zigzag LocalPosVec */
   calLocalPos();
@@ -147,7 +142,7 @@ FFDS::MODULES::ZigzagPathPlanner::getWpV2Vec(bool isGlobal,
   }
 
   /* Step: 3 to global gps position*/
-  feedWp2Vec(isGlobal);
+  feedWp2Vec();
 
   return wpV2Vec;
 }
