@@ -30,7 +30,15 @@ def save_model(epochs, model, optimizer, criterion):
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': criterion,
-    }, 'outputs/model.pth')
+    }, 'C_processingparam_resnet34.pth')
+
+def save_entire_model(epochs, model, optimizer, criterion):
+    torch.save({
+        'epoch': epochs,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'loss': criterion,
+    }, 'C_param_resnet34.pth')
 
 # save the figures of loss and accuracy
 def save_plots(train_acc, valid_acc, train_loss, valid_loss):
@@ -47,7 +55,7 @@ def save_plots(train_acc, valid_acc, train_loss, valid_loss):
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.savefig('outputs/accuracy.png')
+    plt.savefig('C_accuracy_resnet34.png')
 
     # loss
     plt.figure(figsize=(10, 7))
@@ -62,5 +70,5 @@ def save_plots(train_acc, valid_acc, train_loss, valid_loss):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig('outputs/loss.png')
+    plt.savefig('C_loss_resnet34.png')
 

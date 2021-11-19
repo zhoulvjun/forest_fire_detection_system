@@ -22,8 +22,8 @@ import torch
 import argparse
 import torch.nn as nn
 import torch.optim as optim
-from resnet34_model import model
-from resnet34_utils import save_model, save_plots
+from resnet34_model import Resnet34
+from resnet34_utils import save_model, save_entire_model, save_plots
 from resnet34_data import train_loader, valid_loader, dataset
 from tqdm.auto import tqdm
 
@@ -32,17 +32,17 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-e',
                     '--epochs',
                     type=int,
-                    default=10,
+                    default=14, # training epochs
                     help='number of epochs to train our network for')
 args = vars(parser.parse_args())
 
 # learning rate
 lr = 1e-4
-
 epochs = args['epochs']
 device = ('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Computation device: {device}\n")
 # build the model
+model = Resnet34(img_channels=3, num_classes=3)
 model = model.to(device)
 # total parameters and trainable parameters
 total_params = sum(p.numel() for p in model.parameters())
@@ -86,9 +86,8 @@ def train(model, trainloader, optimizer, criterion):
     epoch_acc = 100. * (train_running_correct / len(trainloader.dataset))
     return epoch_loss, epoch_acc
 
-    # validation
 
-
+# validation
 def validate(model, testloader, criterion, class_names):
     model.eval()
     print('Validation')
@@ -121,6 +120,7 @@ def validate(model, testloader, criterion, class_names):
             for i in range(len(preds)):
                 label = labels[i]
                 class_correct[label] += correct[i].item()
+                # class_correct[label] += correct.item()
                 class_total[label] += 1
 
     # loss and accuracy for the complete epoch
@@ -159,10 +159,12 @@ if __name__ == '__main__':
         print(
             f"Validation loss: {valid_epoch_loss:.3f}, validation acc: {valid_epoch_acc:.3f}"
         )
+        print('saving model params')
+        save_model(epochs, model, optimizer, criterion)
         print('-' * 50)
 
 
-    save_model(epochs, model, optimizer, criterion)
 
     save_plots(train_acc, valid_acc, train_loss, valid_loss)
+    save_entire_model(epochs, model, optimizer, criterion)
     print('TRAINING COMPLETE')

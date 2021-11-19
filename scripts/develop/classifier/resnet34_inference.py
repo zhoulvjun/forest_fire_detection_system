@@ -22,25 +22,23 @@ import torch
 import cv2
 import torchvision.transforms as transforms
 import argparse
-from resnet34_model import build_model
+from resnet34_model import Resnet34
 
 # construct the argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input',
-                    default='input/test_data/cloudy.jpeg',
+                    default='/home/qiao/dev/giao/dataset/imgs/M300test01/trainused/fire/pexels-fototeam-8131521.jpg', # import the test data path
                     help='path to the input image')
 args = vars(parser.parse_args())
 # the computation device
 device = 'cpu'
 
 # list containing all the labels
-labels = ['normal', 'smoke', 'flame']
+labels = ['fire', 'normal','smoke']
 # initialize the model and load the trained weights
-model = build_model(
-    pretrained=False, fine_tune=False, num_classes=4
-).to(device)
+model = Resnet34(3, 3).to(device)
 print('[INFO]: Loading custom-trained weights...')
-checkpoint = torch.load('outputs/model.pth', map_location=device)
+checkpoint = torch.load('/home/qiao/dev/giao/havingfun/classifier/C_param_resnet34.pth', map_location=device)
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
 # define preprocess transforms
@@ -82,6 +80,6 @@ cv2.putText(orig_image,
             )
 print(f"GT: {gt_class}, pred: {pred_class}")
 cv2.imshow('Result', orig_image)
-cv2.waitKey(0)
-cv2.imwrite(f"outputs/{gt_class}.png",
+cv2.waitKey()
+cv2.imwrite(f"C_{gt_class}_resnet34.png",
             orig_image)
