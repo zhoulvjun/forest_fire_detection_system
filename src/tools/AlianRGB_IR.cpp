@@ -19,7 +19,6 @@
 #include <opencv2/highgui/highgui.hpp>
 
 void showColorGrayView(const sensor_msgs::ImageConstPtr msgImg) {
-  printf("hello:%d", COMPILED_CV_BRIDGE);
   cv_bridge::CvImagePtr cvImgPtr;
   try {
     cvImgPtr = cv_bridge::toCvCopy(msgImg, sensor_msgs::image_encodings::BGR8);
