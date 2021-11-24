@@ -11,9 +11,19 @@ find_library(YAML_CPP_LIBRARIES yaml-cpp)
 ## is used, also find other catkin packages
 # NOTE: OpenCV and cv_bridge
 set(OpenCV_DIR /usr/local/opencv4/lib/cmake/opencv4/)
-set(cv_bridge_DIR ~/cv_bridge_ws/install/share/cv_bridge/cmake)
 find_package(OpenCV 4 REQUIRED)
+
+set(cv_bridge_DIR ~/cv_bridge_ws/install/share/cv_bridge/cmake)
 find_package(cv_bridge  REQUIRED)
+
+# find_package(PkgConfig)
+# pkg_search_module(cv_bridge REQUIRED cv_bridge)
+# include & link directories
+message(STATUS ${cv_bridge_LIBRARIES})
+message(STATUS ${cv_bridge_INCLUDE_DIRS})
+
+include_directories(${cv_bridge_INCLUDE_DIRS})
+link_directories(${cv_bridge_LIBRARY_DIRS})
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
@@ -24,7 +34,6 @@ find_package(catkin REQUIRED COMPONENTS
     message_generation
     )
 
-message("cv_bridge path :${cv_bridge_INCLUDE_DIRS}")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
