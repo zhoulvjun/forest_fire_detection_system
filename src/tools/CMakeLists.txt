@@ -6,7 +6,7 @@
 #
 #   @Author: Shun Li
 #
-#   @Date: 2021-10-22
+#   @Date: 2021-11-23
 #
 #   @Email: 2015097272@qq.com
 #
@@ -14,17 +14,15 @@
 #
 #------------------------------------------------------------------------------
 
-# common library
-add_subdirectory(common)
 
-# modules library
-add_subdirectory(modules)
+add_executable(AlianRGB_IR AlianRGB_IR.cpp)
+target_link_libraries(AlianRGB_IR
+    ${OpenCV_LIBRARIES}
+)
+target_link_libraries(AlianRGB_IR
+    ${cv_bridge_LIBRARIES}
+)
+target_link_libraries(AlianRGB_IR
+    ${catkin_LIBRARIES}
+)
 
-# executable tools
-add_subdirectory(tools)
-
-# executable test
-add_subdirectory(test)
-
-# executable application
-add_subdirectory(app)
