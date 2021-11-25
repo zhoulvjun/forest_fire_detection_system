@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
       nh.subscribe("forest_fire_detection_system/main_camera_rgb_image", 10,
                    &rgbImgCallback);
   ros::Subscriber irSub = nh.subscribe(
-      "forest_fire_detection_system/main_camera_ir_image", 10, &rgbImgCallback);
+      "forest_fire_detection_system/main_camera_ir_image", 10, &irImgCallback);
   ros::Duration(3.0).sleep();
 
   std::string distance_as_name;
@@ -64,10 +64,10 @@ int main(int argc, char** argv) {
       cv::imwrite("~/RGB_"+distance_as_name+".jpg", rgbImg);
       cv::imwrite("~/IR_"+distance_as_name+".jpg", irImg);
       PRINT_INFO("images saved...");
+      break;
     }
 
     ros::Rate(1.0).sleep();
-    break;
   }
 
   return 0;
