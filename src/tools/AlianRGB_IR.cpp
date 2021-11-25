@@ -61,8 +61,8 @@ int main(int argc, char** argv) {
       cv::imshow("IR", irImg);
       cv::waitKey(0);
 
-      cv::imwrite("~/RGB_"+distance_as_name+".jpg", rgbImg);
-      cv::imwrite("~/IR_"+distance_as_name+".jpg", irImg);
+      cv::imwrite("./RGB_"+distance_as_name+".jpg", rgbImg);
+      cv::imwrite("./IR_"+distance_as_name+".jpg", irImg);
       PRINT_INFO("images saved...");
       break;
     }
