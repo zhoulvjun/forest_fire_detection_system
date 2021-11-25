@@ -13,38 +13,62 @@
  *
  *******************************************************************************/
 #include <cv_bridge/cv_bridge.h>
-#include <image_transport/image_transport.h>
 #include <ros/ros.h>
+#include <tools/PrintControl/PrintCtrlImp.h>
 
 #include <opencv2/highgui/highgui.hpp>
 
-void showColorGrayView(const sensor_msgs::ImageConstPtr msgImg) {
-  cv_bridge::CvImagePtr cvImgPtr;
-  try {
-    cvImgPtr = cv_bridge::toCvCopy(msgImg, sensor_msgs::image_encodings::BGR8);
-  } catch (cv_bridge::Exception e) {
-    ROS_ERROR_STREAM("Cv_bridge Exception:" << e.what());
-    return;
-  }
-  cv::Mat cvColorImgMat = cvImgPtr->image;
-  cv::Mat cvGrayImgMat;
-  cv::cvtColor(cvColorImgMat, cvGrayImgMat, CV_BGR2GRAY);
-  cv::imshow("colorview", cvColorImgMat);
-  cv::imshow("grayview", cvGrayImgMat);
-  cv::waitKey(5);
+#include "ros/init.h"
+
+cv_bridge::CvImagePtr rgbImgPtr;
+cv_bridge::CvImagePtr irImgPtr;
+cv::Mat rgbImg;
+cv::Mat irImg;
+
+void rgbImgCallback(const sensor_msgs::ImageConstPtr msg) {
+  rgbImgPtr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+  rgbImg = rgbImgPtr->image;
+}
+
+void irImgCallback(const sensor_msgs::ImageConstPtr msg) {
+  irImgPtr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+  irImg = irImgPtr->image;
 }
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "grayview");
   ros::NodeHandle nh;
-  image_transport::ImageTransport it(nh);
-  cv::namedWindow("colorview", cv::WINDOW_NORMAL);
-  cv::moveWindow("colorview", 100, 100);
-  cv::namedWindow("grayview", cv::WINDOW_NORMAL);
-  cv::moveWindow("grayview", 600, 100);
-  image_transport::Subscriber sub =
-      it.subscribe("/rgb/image_raw", 1, showColorGrayView);
-  ros::spin();
+
+  ros::Subscriber rgbSub =
+      nh.subscribe("forest_fire_detection_system/main_camera_rgb_image", 10,
+                   &rgbImgCallback);
+  ros::Subscriber irSub = nh.subscribe(
+      "forest_fire_detection_system/main_camera_ir_image", 10, &rgbImgCallback);
+  ros::Duration(3.0).sleep();
+
+  std::string distance_as_name;
+  std::cin >> distance_as_name;
+
+  while (ros::ok()) {
+    ros::spinOnce();
+
+    PRINT_INFO("the size of rgb image is %dx%d", rgbImg.rows, rgbImg.cols);
+    PRINT_INFO("the size of rgb image is %dx%d", irImg.rows, irImg.cols);
+    if (rgbImg.empty() || irImg.empty()) {
+      PRINT_WARN("wait for image!");
+    } else {
+      cv::imshow("RGB", rgbImg);
+      cv::imshow("IR", irImg);
+      cv::waitKey(0);
+
+      cv::imwrite("~/RGB_"+distance_as_name+".jpg", rgbImg);
+      cv::imwrite("~/IR_"+distance_as_name+".jpg", irImg);
+      PRINT_INFO("images saved...");
+    }
+
+    ros::Rate(1.0).sleep();
+    break;
+  }
 
   return 0;
 }
