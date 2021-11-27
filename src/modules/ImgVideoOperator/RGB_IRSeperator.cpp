@@ -40,7 +40,7 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
   int irUpLeft_x = 0;
   int irUpLeft_y = upperBound;
 
-  int rgbUpLeft_x = irImgWid + 1;
+  int rgbUpLeft_x = irImgWid;
   int rgbUpLeft_y = upperBound;
 
   while (ros::ok()) {
