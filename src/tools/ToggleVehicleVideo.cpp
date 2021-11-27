@@ -35,8 +35,7 @@ int main(int argc, char** argv) {
     setupCameraStream_.request.cameraType = setupCameraStream_.request.MAIN_CAM;
     setupCameraStream_.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_);
-    ROS_INFO_STREAM(
-        "open the main camera:" << setupCameraStream_.response.result);
+    PRINT_INFO("open the main camera: %d", setupCameraStream_.response.result);
 
     if (!setupCameraStream_.response.result) {
       PRINT_ERROR("Open vehicle camera stream failed!");
@@ -53,8 +52,7 @@ int main(int argc, char** argv) {
     setupCameraStream_.request.cameraType = setupCameraStream_.request.MAIN_CAM;
     setupCameraStream_.request.start = 0;
     setup_camera_stream_client.call(setupCameraStream_);
-    ROS_INFO_STREAM(
-        "close the main camera:" << setupCameraStream_.response.result);
+    PRINT_INFO("open the main camera: %d", setupCameraStream_.response.result);
     return 0;
   } else {
     ROS_ERROR_STREAM("Wrong Input! usage: open or close!");
