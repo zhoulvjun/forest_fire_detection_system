@@ -75,8 +75,8 @@ def cal_scale_offset(IR_pos, RGB_pos):
 
 if __name__ == '__main__':
     scale, off_x, off_y = cal_scale_offset(got_IR_pos, got_RGB_pos)
-    rgb_img = cv2.imread("./RGB_3.5.jpg")
-    ir_img = cv2.imread("./IR_3.5.jpg")
+    rgb_img = cv2.imread("../3.5m_2/RGB_3.5.jpg")
+    ir_img = cv2.imread("../3.5m_2/IR_3.5.jpg")
     print(ir_img.shape)
 
     ir_scale_width = round(ir_img.shape[1] * scale)
@@ -96,5 +96,6 @@ if __name__ == '__main__':
                 rgb_img[index_y][index_x] = ir_resized_img[j][
                     i] * 0.9 + rgb_img[index_y][index_x] * 0.1
 
+    cv2.imwrite("../3.5m_2/alianed.jpg", rgb_img)
     cv2.imshow("alianed img", rgb_img)
     cv2.waitKey(0)
