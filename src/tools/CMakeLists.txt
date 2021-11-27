@@ -32,5 +32,9 @@ target_link_libraries(
 add_executable(ToggleVehicleVideo ToggleVehicleVideo.cpp)
 target_link_libraries(
   ToggleVehicleVideo
+  RGB_IRSeperator
+)
+target_link_libraries(
+  ToggleVehicleVideo
   ${catkin_LIBRARIES}
 )

@@ -30,8 +30,31 @@ foreach(MODULE_PATH ${MODULE_PATH_LIST})
 endforeach()
 
 # ZigzagPathPlanner
-target_link_libraries(ZigzagPathPlanner WpV2Operator)
+target_link_libraries(
+  ZigzagPathPlanner
+  WpV2Operator
+)
 
 # GimbalCameraOperator
-target_link_libraries(GimbalCameraOperator ${YAML_CPP_LIBRARIES})
-add_dependencies(GimbalCameraOperator ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(
+  GimbalCameraOperator
+  ${PROJECT_NAME}_generate_messages_cpp
+)
+target_link_libraries(
+  GimbalCameraOperator
+  ${YAML_CPP_LIBRARIES}
+)
+
+# ImgVideoOperator
+target_link_libraries(
+  RGB_IRSeperator
+  ${YAML_CPP_LIBRARIES}
+)
+target_link_libraries(
+  RGB_IRSeperator
+  ${OpenCV_LIBRARIES}
+)
+target_link_libraries(
+  RGB_IRSeperator
+  ${cv_bridge_LIBRARIES}
+)

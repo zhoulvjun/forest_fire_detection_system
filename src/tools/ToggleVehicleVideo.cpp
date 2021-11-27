@@ -17,6 +17,7 @@
 #include <sensor_msgs/Image.h>
 
 #include <iostream>
+#include <modules/ImgVideoOperator/RGB_IRSeperator.hpp>
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "camera_stream_node");
@@ -38,7 +39,10 @@ int main(int argc, char** argv) {
         "open the main camera:" << setupCameraStream_.response.result);
 
     ROS_INFO_STREAM("start separate the ir and RGB image...");
-    /* TODO: */
+
+    FFDS::MODULES::RGB_IRSeperator seperator;
+    seperator.run();
+
     return 0;
   } else if (static_cast<std::string>(argv[1]) == "close") {
     setupCameraStream_.request.cameraType = setupCameraStream_.request.MAIN_CAM;
