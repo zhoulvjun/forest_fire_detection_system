@@ -10,19 +10,27 @@
 #
 #   @Email: 2015097272@qq.com
 #
-#   @Description: 
+#   @Description:
 #
 #------------------------------------------------------------------------------
 
 
 add_executable(AlianRGB_IR AlianRGB_IR.cpp)
-target_link_libraries(AlianRGB_IR
-    ${OpenCV_LIBRARIES}
+target_link_libraries(
+  AlianRGB_IR
+  ${OpenCV_LIBRARIES}
 )
-target_link_libraries(AlianRGB_IR
-    ${cv_bridge_LIBRARIES}
+target_link_libraries(
+  AlianRGB_IR
+  ${cv_bridge_LIBRARIES}
 )
-target_link_libraries(AlianRGB_IR
-    ${catkin_LIBRARIES}
+target_link_libraries(
+  AlianRGB_IR
+  ${catkin_LIBRARIES}
 )
 
+add_executable(ToggleVehicleVideo ToggleVehicleVideo.cpp)
+target_link_libraries(
+  ToggleVehicleVideo
+  ${catkin_LIBRARIES}
+)
