@@ -38,6 +38,11 @@ int main(int argc, char** argv) {
     ROS_INFO_STREAM(
         "open the main camera:" << setupCameraStream_.response.result);
 
+    if (!setupCameraStream_.response.result) {
+      PRINT_ERROR("Open vehicle camera stream failed!");
+      return 1;
+    }
+
     ROS_INFO_STREAM("start separate the ir and RGB image...");
 
     FFDS::MODULES::RGB_IRSeperator seperator;

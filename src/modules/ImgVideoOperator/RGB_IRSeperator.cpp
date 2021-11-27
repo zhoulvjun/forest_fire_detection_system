@@ -45,6 +45,8 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
 
   while (ros::ok()) {
     ros::spinOnce();
+    PRINT_INFO("in, raw size:%dx%d", rawImg.rows, rawImg.cols);
+
     cv::Mat irImg =
         rawImg(cv::Rect(irUpLeft_x, irUpLeft_y, irImgWid, irImgHet));
     cv::Mat rgbImg =
