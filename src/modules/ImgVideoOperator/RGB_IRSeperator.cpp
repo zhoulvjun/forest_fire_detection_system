@@ -46,12 +46,14 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
   while (ros::ok()) {
     ros::spinOnce();
 
+    PRINT_INFO("raw size:%dx%d", rawImg.rows, rawImg.cols);
     cv::Mat irImg =
         rawImg(cv::Rect(irUpLeft_x, irUpLeft_y, irImgWid, irImgHet));
+    PRINT_INFO("raw size:%dx%d", irImg.rows, irImg.cols);
+
     cv::Mat rgbImg =
         rawImg(cv::Rect(rgbUpLeft_x, rgbUpLeft_y, rgbImgWid, rgbImgHet));
-    PRINT_INFO("raw size:%dx%d", irImg.rows, rawImg.cols);
-    PRINT_INFO("raw size:%dx%d", rgbImg.rows, rawImg.cols);
+    PRINT_INFO("raw size:%dx%d", rgbImg.rows, rgbImg.cols);
 
     sensor_msgs::ImagePtr irMsg =
         cv_bridge::CvImage(std_msgs::Header(), "bgr8", irImg).toImageMsg();
