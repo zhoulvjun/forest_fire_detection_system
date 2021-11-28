@@ -35,11 +35,12 @@ class RGB_IRSeperator {
   RGB_IRSeperator() {
     imageSub = nh.subscribe("dji_osdk_ros/main_camera_images", 10,
                             &RGB_IRSeperator::imageCallback, this);
-
     imageIRPub =
         it.advertise("forest_fire_detection_system/main_camera_ir_image", 1);
     imageRGBPub =
         it.advertise("forest_fire_detection_system/main_camera_rgb_image", 1);
+
+    ros::Duration(3.0).sleep();
   }
 
   void run();

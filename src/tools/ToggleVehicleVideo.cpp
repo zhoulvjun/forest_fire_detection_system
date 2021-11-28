@@ -20,14 +20,14 @@
 #include <modules/ImgVideoOperator/RGB_IRSeperator.hpp>
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "camera_stream_node");
+  ros::init(argc, argv, "rgb_ir_seperator_node");
   ros::NodeHandle nh;
   auto setup_camera_stream_client =
       nh.serviceClient<dji_osdk_ros::SetupCameraStream>("setup_camera_stream");
   dji_osdk_ros::SetupCameraStream setupCameraStream_;
 
   if (argc != 2) {
-    ROS_ERROR_STREAM("Wrong Params number!");
+    PRINT_ERROR("Wrong Params number!");
     return 1;
   }
 
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
       return 1;
     }
 
-    ROS_INFO_STREAM("start separate the ir and RGB image...");
+    PRINT_INFO("start separate the ir and RGB image...");
 
     FFDS::MODULES::RGB_IRSeperator seperator;
     seperator.run();
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
     PRINT_INFO("close the main camera: %d", setupCameraStream_.response.result);
     return 0;
   } else {
-    ROS_ERROR_STREAM("Wrong Input! usage: open or close!");
+    PRINT_ERROR("Wrong Input! usage: open or close!");
     return 1;
   }
 }
