@@ -22,9 +22,9 @@ void FFDS::MODULES::GimbalCameraOperator::gimbalAttCallback(
 }
 
 void FFDS::MODULES::GimbalCameraOperator::singleFirePosIRCallback(
-    const forest_fire_detection_system::SingleFirePosIR::ConstPtr&
+    const forest_fire_detection_system::SingleFireIR::ConstPtr&
         firePosition) {
-  firePosPix = *firePosition;
+  heatPosPix = *firePosition;
 }
 
 void FFDS::MODULES::GimbalCameraOperator::setGimbalActionDefault() {
@@ -91,7 +91,7 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
   while (ros::ok()) {
     ros::spinOnce();
 
-    if (!firePosPix.is_pot_fire) {
+    if (heatPosPix.target_type != heatPosPix.IS_HEAT) {
       pidYaw.reset();
       pidPitch.reset();
       ctrl_times = 0;
@@ -107,8 +107,8 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
 
       PRINT_INFO("current control times: %d, tolerance: %d", ctrl_times, times);
 
-      float errX = setPosXPix - firePosPix.img_x;
-      float errY = setPosYPix - firePosPix.img_y;
+      float errX = setPosXPix - heatPosPix.img_x;
+      float errY = setPosYPix - heatPosPix.img_y;
       PRINT_DEBUG("err Yaw:%f pixel", errX);
       PRINT_DEBUG("err Pitch:%f pixel", errY);
 

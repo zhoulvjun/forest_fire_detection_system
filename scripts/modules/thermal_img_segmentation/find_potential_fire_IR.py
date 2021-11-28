@@ -20,7 +20,7 @@
 import os
 import cv2
 from cv_bridge import CvBridge
-from forest_fire_detection_system.msg import SingleFirePosIR
+from forest_fire_detection_system.msg import SingleFireIR
 import numpy as np
 import rospy
 from sensor_msgs.msg import Image
@@ -45,8 +45,8 @@ class PotentialFireIrFinder():
         self.ros_image = Image()
 
         self.convertor = CvBridge()
-        self.pot_fire_pos = SingleFirePosIR()
-        self.pot_fire_pos.is_pot_fire = False
+        self.pot_fire_pos = SingleFireIR()
+        self.pot_fire_pos.target_type = self.pot_fire_pos.IS_UNKNOWN
 
         rospy.wait_for_message("forest_fire_detection_system/main_camera_ir_image", Image)
         self.image_sub = rospy.Subscriber(
@@ -54,7 +54,7 @@ class PotentialFireIrFinder():
             self.image_cb)
         self.fire_pos_pub = rospy.Publisher(
             "forest_fire_detection_system/single_fire_pos_ir_img",
-            SingleFirePosIR,
+            SingleFireIR,
             queue_size=10)
 
     def image_cb(self, msg):
@@ -87,7 +87,7 @@ class PotentialFireIrFinder():
             best_index = judge_list.index(max(judge_list))
             best_pos = coord_list[best_index]
 
-            self.pot_fire_pos.is_pot_fire = True
+            self.pot_fire_pos.target_type = self.pot_fire_pos.IS_HEAT
             self.pot_fire_pos.img_x = best_pos[0] + windowSize[0] / 2
             self.pot_fire_pos.img_y = best_pos[1] + windowSize[1] / 2
 
@@ -101,7 +101,7 @@ class PotentialFireIrFinder():
         else:
             self.pot_fire_pos.img_x = -1
             self.pot_fire_pos.img_y = -1
-            self.pot_fire_pos.is_pot_fire = False
+            self.pot_fire_pos.target_type = self.pot_fire_pos.IS_BACKGROUND
             rospy.loginfo("no potential fire currently!")
 
         self.pot_fire_pos.img_width = self.ir_img.shape[1]

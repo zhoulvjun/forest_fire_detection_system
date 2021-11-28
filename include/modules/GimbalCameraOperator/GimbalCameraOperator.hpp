@@ -22,7 +22,7 @@
 #include <dji_osdk_ros/CameraTapZoomPoint.h>
 #include <dji_osdk_ros/GimbalAction.h>
 #include <dji_osdk_ros/common_type.h>
-#include <forest_fire_detection_system/SingleFirePosIR.h>
+#include <forest_fire_detection_system/SingleFireIR.h>
 #include <geometry_msgs/Vector3Stamped.h>
 #include <ros/package.h>
 #include <ros/ros.h>
@@ -100,10 +100,10 @@ class GimbalCameraOperator {
   dji_osdk_ros::CameraTapZoomPoint cameraTapZoomPoint;
 
   geometry_msgs::Vector3Stamped gimbalAtt;
-  forest_fire_detection_system::SingleFirePosIR firePosPix;
+  forest_fire_detection_system::SingleFireIR heatPosPix;
 
   void singleFirePosIRCallback(
-      const forest_fire_detection_system::SingleFirePosIR::ConstPtr&
+      const forest_fire_detection_system::SingleFireIR::ConstPtr&
           firePosition);
 
   void gimbalAttCallback(const geometry_msgs::Vector3Stamped::ConstPtr& att);
